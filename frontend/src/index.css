@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-white text-inktext font-sans;
+}
+
+.btn-primary {
+  @apply bg-navy text-white px-4 py-2 rounded-md font-medium hover:bg-steel transition-colors;
+}
+
+.btn-gold {
+  @apply bg-gold text-navy px-4 py-2 rounded-md font-medium hover:brightness-95 transition;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-sm border border-panel p-5;
+}
+
+.section-title {
+  @apply text-2xl md:text-3xl font-bold text-navy mb-2;
+}
+
+.section-divider {
+  @apply w-16 h-1 bg-gold rounded mb-6;
+}
