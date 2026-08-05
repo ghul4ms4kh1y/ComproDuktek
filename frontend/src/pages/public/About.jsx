@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
-import { ShieldCheck, Cpu, Lock, Cog, Terminal, Wrench, Server } from 'lucide-react';
+import { ShieldCheck, Cpu, Lock, Cog } from 'lucide-react';
+import RevealSection from '../../components/common/RevealSection';
 
 const logo_elements = [
   {
@@ -24,46 +24,13 @@ const logo_elements = [
   }
 ];
 
-// Helper Component untuk Animasi Smooth Reveal Scroll
-function RevealSection({ children, className = '' }) {
-  const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.15 }
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out transform ${isVisible
-        ? 'opacity-100 translate-y-0 scale-100'
-        : 'opacity-0 translate-y-10 scale-[0.98]'
-        } ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
-
 export default function About() {
   return (
     <div className="bg-white text-inktext min-h-screen">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-12 space-y-24">
 
         {/* Section 1: Hero Profile */}
-        <RevealSection className="bg-white rounded-[2.5rem] p-8 md:p-12 -mt-20 relative overflow-hidden">
+        <RevealSection threshold={0.15} className="bg-white rounded-[2.5rem] p-8 md:p-12 -mt-20 relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-6">
               <h2 className="text-3xl md:text-5xl font-bold text-navy leading-tight tracking-tight">
@@ -137,7 +104,7 @@ export default function About() {
           </div>
         </RevealSection>
 
-        {/* Section 2: Makna Logo (Layout 2 Grid: Kiri Foto, Kanan 4 Container) */}
+        {/* Section 2: Makna Logo */}
         <RevealSection className="space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-bold tracking-widest text-navy uppercase bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200 inline-block">
@@ -151,10 +118,8 @@ export default function About() {
             </p>
           </div>
 
-          {/* Grid Utama 2 Kolom */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-
-            {/* Grid Kiri: Foto / Emblem Logo */}
+            {/* Grid Kiri: Emblem Logo */}
             <div className="lg:col-span-5 bg-white border border-gray-100 rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden shadow-sm group">
               <div className="absolute inset-0 bg-gradient-to-br from-navy/30 via-transparent to-navy/5 pointer-events-none" />
 
@@ -200,9 +165,9 @@ export default function About() {
                 );
               })}
             </div>
-
           </div>
         </RevealSection>
+
       </div>
     </div>
   );

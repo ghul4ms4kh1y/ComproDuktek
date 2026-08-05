@@ -44,7 +44,7 @@ export default function Footer() {
 
           {/* Kolom 2 (lg:col-span-3): Navigasi Cepat (Grid 2 Kolom @ 4 Navigasi) */}
           <div className="lg:col-span-3">
-            <h4 className="text-navy font-bold text-xs mb-4 tracking-tight uppercase">
+            <h4 className="text-navy font-bold mb-4 tracking-tight uppercase text-xs">
               Navigasi Halaman
             </h4>
 
@@ -151,7 +151,7 @@ export default function Footer() {
               <iframe
                 title="Google Maps PUSSIBERAD"
                 src={gmapsUrl}
-                className="w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-500"
+                className="w-full h-full border-0 transition-all duration-500"
                 loading="lazy"
                 allowFullScreen
               />
