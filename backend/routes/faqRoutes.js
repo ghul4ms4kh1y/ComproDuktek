@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const crudFactory = require('../controllers/crudFactory');
+const faqController = require('../controllers/faqController');
 const { Faq } = require('../models');
 const { requireAuth } = require('../middleware/auth');
 
@@ -11,6 +12,11 @@ const controller = crudFactory(Faq, {
 });
 
 router.get('/', controller.index);
+
+// PENTING: route statis '/reorder' harus didefinisikan SEBELUM '/:id',
+// kalau tidak Express akan menganggap 'reorder' sebagai nilai :id.
+router.put('/reorder', requireAuth, faqController.reorder);
+
 router.get('/:id', controller.show);
 
 router.post('/', requireAuth, controller.create);
