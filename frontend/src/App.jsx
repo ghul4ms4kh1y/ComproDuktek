@@ -9,6 +9,7 @@ import Landing from './pages/public/Landing';
 import About from './pages/public/About';
 import OrgStructure from './pages/public/OrgStructure';
 import Products from './pages/public/Products';
+import ProductDetail from './pages/public/ProductDetail';
 import Gallery from './pages/public/Gallery';
 import News from './pages/public/News';
 import NewsDetail from './pages/public/NewsDetail';
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/tentang-kami" element={<About />} />
         <Route path="/struktur-organisasi" element={<OrgStructure />} />
         <Route path="/produk" element={<Products />} />
+        <Route path='/produk/:id' element={<ProductDetail />} />
         <Route path="/galeri" element={<Gallery />} />
         <Route path="/berita" element={<News />} />
         <Route path="/berita/:id" element={<NewsDetail />} />

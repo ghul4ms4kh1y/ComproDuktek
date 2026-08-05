@@ -1,49 +1,232 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import {
+  PackageSearch,
+  Cpu,
+  Search,
+  Filter,
+  ArrowUpRight,
+  SlidersHorizontal
+} from 'lucide-react';
+
+// Helper Component untuk Animasi Smooth Reveal Scroll
+function RevealSection({ children, className = '' }) {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out transform ${isVisible
+        ? 'opacity-100 translate-y-0 scale-100'
+        : 'opacity-0 translate-y-10 scale-[0.98]'
+        } ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function Products() {
   const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState('');
   const [category, setCategory] = useState('Semua');
   const [status, setStatus] = useState('Semua');
 
   useEffect(() => {
-    api.get('/products', { params: { limit: 100 } }).then((r) => setProducts(r.data.data)).catch(() => {});
+    api
+      .get('/products', { params: { limit: 100 } })
+      .then((r) => setProducts(r.data.data))
+      .catch(() => { });
   }, []);
 
   const categories = useMemo(
-    () => ['Semua', ...new Set(products.map((p) => p.category))],
+    () => ['Semua', ...new Set(products.map((p) => p.category).filter(Boolean))],
     [products]
   );
+
   const statuses = ['Semua', 'Aktif', 'Dalam Pengembangan', 'Nonaktif'];
 
-  const filtered = products.filter(
-    (p) => (category === 'Semua' || p.category === category) && (status === 'Semua' || p.status === status)
-  );
+  const filtered = products.filter((p) => {
+    const matchesSearch =
+      p.name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.description?.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = category === 'Semua' || p.category === category;
+    const matchesStatus = status === 'Semua' || p.status === status;
+
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
 
   return (
-    <div>
-      <div className="max-w-7xl mx-auto px-4 py-14">
-        <div className="flex flex-wrap gap-3 mb-8">
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="border border-panel rounded-md px-3 py-2 text-sm">
-            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="border border-panel rounded-md px-3 py-2 text-sm">
-            {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
+    <div className="bg-white text-inktext min-h-screen pb-20">
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.length === 0 && <p className="text-sm text-inktext/60">Belum ada produk yang sesuai.</p>}
-          {filtered.map((p) => (
-            <div key={p.id} className="card">
-              {p.image && <img src={p.image} alt={p.name} className="rounded-md mb-3 h-40 w-full object-cover" />}
-              <h3 className="font-semibold text-navy">{p.name}</h3>
-              <p className="text-xs text-inktext/60 mb-2">{p.category} • {p.unit_pengampu}</p>
-              <span className="inline-block text-xs bg-gold/20 text-navy px-2 py-0.5 rounded">{p.status}</span>
-              {p.description && <p className="text-sm text-inktext/80 mt-3">{p.description}</p>}
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-10 space-y-10">
+
+        {/* Searchbar */}
+        <RevealSection className="bg-[#f8fafc] border border-gray-100 p-6 md:p-8 rounded-[2rem] shadow-sm">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+
+            {/* Input Pencarian */}
+            <div className="relative flex-1">
+              <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-inktext/40" />
+              <input
+                type="text"
+                placeholder="Cari produk atau solusi siber..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy transition-all shadow-sm"
+              />
             </div>
-          ))}
-        </div>
+
+            {/* Filter Dropdowns */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2 bg-white border border-gray-200 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-navy shadow-sm shrink-0">
+                <SlidersHorizontal className="w-4 h-4 text-navy" />
+                <span>Filter:</span>
+              </div>
+
+              {/* Select Kategori */}
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="bg-white border border-gray-200 hover:border-navy rounded-xl px-4 py-3 text-xs font-semibold text-navy focus:outline-none transition-all cursor-pointer shadow-sm"
+              >
+                {categories.map((c) => (
+                  <option key={c} value={c}>
+                    Kategori: {c}
+                  </option>
+                ))}
+              </select>
+
+              {/* Select Status */}
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="bg-white border border-gray-200 hover:border-navy rounded-xl px-4 py-3 text-xs font-semibold text-navy focus:outline-none transition-all cursor-pointer shadow-sm"
+              >
+                {statuses.map((s) => (
+                  <option key={s} value={s}>
+                    Status: {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+          </div>
+        </RevealSection>
+
+        {/* Produk Section*/}
+        <RevealSection>
+          {filtered.length === 0 ? (
+            /* Empty State */
+            <div className="bg-[#f8fafc] border border-dashed border-gray-200 rounded-[2rem] p-16 text-center flex flex-col items-center justify-center my-8">
+              <div className="w-16 h-16 rounded-2xl bg-navy flex items-center justify-center text-white mb-4 shadow-inner">
+                <PackageSearch className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-navy mb-2">
+                Tidak Ada Produk Ditemukan
+              </h3>
+              <p className="text-inktext/60 text-sm max-w-md leading-relaxed">
+                Tidak ada produk yang cocok dengan kriteria pencarian atau filter yang Anda pilih. Coba sesuaikan kata kunci atau reset filter.
+              </p>
+              <button
+                onClick={() => {
+                  setSearch('');
+                  setCategory('Semua');
+                  setStatus('Semua');
+                }}
+                className="mt-6 text-xs font-semibold text-navy hover:text-white bg-white hover:bg-blue-600 border border-gray-200 px-5 py-2.5 rounded-xl transition-all shadow-sm"
+              >
+                Reset Filter & Pencarian
+              </button>
+            </div>
+          ) : (
+            /* Cards Grid */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {filtered.map((p) => (
+                <Link
+                  to={`/produk/${p.id}`}
+                  key={p.id}
+                  className="group bg-[#f8fafc] border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Thumbnail Image Container */}
+                    <div className="relative overflow-hidden rounded-xl mb-5 h-52 bg-slate-900">
+                      {p.image ? (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-slate-900 via-navy to-slate-900 flex flex-col items-center justify-center text-white/40 p-4">
+                          <Cpu className="w-10 h-10 mb-2 opacity-50" />
+                          <span className="text-xs font-medium tracking-wider uppercase">
+                            Sistem Siber
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Status Badge */}
+                      <div className="absolute top-3 left-3">
+                        <span className="text-[11px] font-bold bg-white/95 backdrop-blur-md text-navy px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm border border-white/20">
+                          {p.status || 'Aktif'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Metadata Kategori & Unit */}
+                    <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">
+                      <span>{p.category || 'Teknologi Siber'}</span>
+                      {p.unit_pengampu && (
+                        <>
+                          <span className="text-gray-300">•</span>
+                          <span className="text-inktext/60 font-semibold">{p.unit_pengampu}</span>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Nama Produk */}
+                    <h3 className="font-bold text-xl text-navy mb-2 transition-colors line-clamp-1">
+                      {p.name}
+                    </h3>
+
+                    {/* Deskripsi Singkat */}
+                    <p className="text-inktext/70 text-sm leading-relaxed line-clamp-2 mb-6">
+                      {p.description ||
+                        'Solusi teknologi siber terapan yang dikembangkan khusus untuk mendukung keandalan sistem pertahanan.'}
+                    </p>
+                  </div>
+
+                  {/* Card Footer Link */}
+                  <div className="pt-4 border-t border-gray-200/60 flex items-center justify-between text-xs font-semibold text-navy group-hover:text-blue-600">
+                    <span>Lihat Detail Produk</span>
+                    <div className="w-7 h-7 rounded-full bg-white group-hover:bg-blue-50 flex items-center justify-center transition-colors shadow-sm">
+                      <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </RevealSection>
+
       </div>
     </div>
   );

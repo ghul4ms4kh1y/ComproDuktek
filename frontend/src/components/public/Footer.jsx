@@ -44,7 +44,7 @@ export default function Footer() {
 
           {/* Kolom 2 (lg:col-span-3): Navigasi Cepat (Grid 2 Kolom @ 4 Navigasi) */}
           <div className="lg:col-span-3">
-            <h4 className="text-navy font-bold text-base mb-4 tracking-tight uppercase text-xs">
+            <h4 className="text-navy font-bold text-xs mb-4 tracking-tight uppercase">
               Navigasi Halaman
             </h4>
 
@@ -133,7 +133,7 @@ export default function Footer() {
           {/* Kolom 4 (lg:col-span-3): Interactive Google Maps Preview */}
           <div className="lg:col-span-3 flex flex-col justify-start">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-navy font-bold text-base tracking-tight uppercase text-xs">
+              <h4 className="text-navy font-bold tracking-tight uppercase text-xs">
                 Lokasi Satuan
               </h4>
               <a

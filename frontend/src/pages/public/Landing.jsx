@@ -14,7 +14,6 @@ import {
   Calendar,
   Plus,
   Minus,
-  HelpCircle
 } from 'lucide-react';
 
 const highlights = [
@@ -95,8 +94,8 @@ function RevealSection({ children, className = '' }) {
     <div
       ref={ref}
       className={`transition-all duration-700 ease-out transform ${isVisible
-          ? 'opacity-100 translate-y-0 scale-100'
-          : 'opacity-0 translate-y-10 scale-[0.98]'
+        ? 'opacity-100 translate-y-0 scale-100'
+        : 'opacity-0 translate-y-10 scale-[0.98]'
         } ${className}`}
     >
       {children}
@@ -112,7 +111,7 @@ export default function Landing() {
 
   useEffect(() => {
     api.get('/news', { params: { limit: 3 } }).then((r) => setNews(r.data.data)).catch(() => { });
-    api.get('/products', { params: { limit: 3 } }).then((r) => setProducts(r.data.data)).catch(() => { });
+    api.get('/products', { params: { limit: 4 } }).then((r) => setProducts(r.data.data)).catch(() => { });
     api.get('/faqs', { params: { limit: 10 } }).then((r) => setFaqs(r.data.data)).catch(() => { });
   }, []);
 
@@ -133,7 +132,7 @@ export default function Landing() {
             backgroundPosition: 'center',
           }}
         >
-          <div className="absolute inset-0 bg-[#0c1839]/40 bg-gradient-to-r from-[#0c1839]/90 via-[#0c1839]/75 to-transparent" />
+          <div className="absolute inset-0 bg-[#0c1839]/40 bg-gradient-to-r from-[#0c1839]/80 via-[#0c1839]/60 to-transparent" />
 
           <div className="relative z-10 px-8 md:px-16 lg:px-24 py-20 max-w-5xl animate-fade-in-up text-left">
             <span className="text-xs font-bold tracking-widest text-blue-400 uppercase bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 inline-block mb-6 shadow-inner">
@@ -293,7 +292,7 @@ export default function Landing() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
               {products.map((p) => (
                 <Link
                   to={`/produk/${p.id || '#'}`}
@@ -523,11 +522,6 @@ export default function Landing() {
                 Informasi penting mengenai tugas, semboyan, filosofi logo, dan kapabilitas teknis Satlak Dukteksi PUSSIBERAD.
               </p>
             </div>
-
-            <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-navy bg-gray-50 px-4 py-2.5 rounded-xl border border-gray-200 shadow-sm">
-              <HelpCircle className="w-4 h-4 text-blue-600" />
-              Pusat Edukasi Siber
-            </div>
           </div>
 
           {/* Grid FAQ 2 Kolom */}
@@ -538,8 +532,8 @@ export default function Landing() {
                 <div
                   key={idx}
                   className={`transition-all duration-300 rounded-2xl p-6 border ${isOpen
-                      ? 'bg-white border-blue-200 shadow-md ring-1 ring-blue-500/10'
-                      : 'bg-[#f8fafc] border-gray-100 hover:border-gray-200 hover:bg-gray-50/80'
+                    ? 'bg-white border-blue-200 shadow-md ring-1 ring-blue-500/10'
+                    : 'bg-[#f8fafc] border-gray-100 hover:border-gray-200 hover:bg-gray-50/80'
                     }`}
                 >
                   <button
@@ -553,8 +547,8 @@ export default function Landing() {
 
                     {/* Icon Toggle Box (+ / -) */}
                     <div className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all ${isOpen
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                        : 'bg-gray-200/70 text-navy group-hover:bg-blue-600 group-hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                      : 'bg-gray-200/70 text-navy group-hover:bg-blue-600 group-hover:text-white'
                       }`}>
                       {isOpen ? (
                         <Minus className="w-5 h-5 stroke-[2.5]" />
