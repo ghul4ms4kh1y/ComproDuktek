@@ -8,6 +8,7 @@ html {
 
 body {
   @apply bg-panel text-inktext font-sans;
+  font-family: 'Manrope', sans-serif !important;
 }
 
 .btn-primary {

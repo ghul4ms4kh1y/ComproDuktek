@@ -1,29 +1,208 @@
-import PageHeader from '../../components/public/PageHeader';
+import { useEffect, useState, useRef } from 'react';
+import { ShieldCheck, Cpu, Lock, Cog, Terminal, Wrench, Server } from 'lucide-react';
+
+const logo_elements = [
+  {
+    icon: ShieldCheck,
+    title: 'Perisai, Pedang & Sayap',
+    desc: 'Melambangkan ksatria di medan perang siber. Pedang yang disarungkan menandakan serangan adalah upaya terakhir; perlindungan adalah prioritas utama (Sapta Marga, Sumpah Prajurit, 8 Wajib TNI).'
+  },
+  {
+    icon: Cpu,
+    title: 'Otak Bercahaya',
+    desc: 'Melambangkan logika, kreativitas, dan kecerdasan dalam "Perang Asimetris". Menunjukkan kesadaran situasional tinggi untuk pengambilan keputusan cepat.'
+  },
+  {
+    icon: Lock,
+    title: 'Gembok & Lingkaran Cahaya',
+    desc: 'Melambangkan prinsip kehati-hatian dan ketelitian. Menutup setiap titik lemah untuk menjaga aset data dan informasi.'
+  },
+  {
+    icon: Cog,
+    title: 'Roda Gigi',
+    desc: 'Melambangkan harmonisasi sistem dan efisiensi operasional melalui kolaborasi tim yang solid.'
+  }
+];
+
+// Helper Component untuk Animasi Smooth Reveal Scroll
+function RevealSection({ children, className = '' }) {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out transform ${isVisible
+        ? 'opacity-100 translate-y-0 scale-100'
+        : 'opacity-0 translate-y-10 scale-[0.98]'
+        } ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function About() {
   return (
-    <div>
-      <PageHeader
-        title="Tentang Kami"
-        subtitle="Profil, kedudukan, serta peran dan fungsi Satlak Dukteksi dalam struktur Pussiberad TNI AD."
-      />
-      <div className="max-w-4xl mx-auto px-4 py-14 space-y-8">
-        <div>
-          <h2 className="text-xl font-semibold text-navy mb-2">Profil Institusi</h2>
-          <p className="text-inktext/90 leading-relaxed">
-            Satlak Dukungan Teknologi Siber (Dukteksi) merupakan satuan pelaksana di bawah Pusat Siber
-            Angkatan Darat (Pussiberad) TNI AD yang berperan dalam mendukung kesiapan, ketahanan, dan
-            inovasi teknologi siber bagi kepentingan pertahanan negara.
-            {/* Konten ini dapat diperbarui melalui Dashboard Admin pada fase pengembangan lanjutan (CMS page). */}
-          </p>
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold text-navy mb-2">Peran & Fungsi</h2>
-          <p className="text-inktext/90 leading-relaxed">
-            Menjalankan dukungan teknologi siber meliputi riset, pengembangan produk, serta pengelolaan
-            kapabilitas siber guna mendukung tugas pokok satuan induk.
-          </p>
-        </div>
+    <div className="bg-white text-inktext min-h-screen">
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-12 space-y-24">
+
+        {/* Section 1: Hero Profile */}
+        <RevealSection className="bg-white rounded-[2.5rem] p-8 md:p-12 -mt-20 relative overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-7 space-y-6">
+              <h2 className="text-3xl md:text-5xl font-bold text-navy leading-tight tracking-tight">
+                Krtrima Raksa Mandalam
+              </h2>
+
+              <p className="text-inktext/80 text-base md:text-lg leading-relaxed font-light">
+                Satuan Pelaksana Dukungan Teknologi Siber (Satlak Dukteksi) bertugas menyelenggarakan riset terapan, rekayasa terbalik, serta pemeliharaan infrastruktur siber pertahanan untuk menjaga aset informasi kedaulatan TNI AD.
+              </p>
+
+              {/* Bullet Points Arti Semboyan */}
+              <div className="pt-2 space-y-3">
+                <h4 className="text-sm font-bold text-navy uppercase tracking-wider">
+                  Arti Semboyan & Motto Satuan:
+                </h4>
+                <ul className="space-y-2.5 text-sm md:text-base text-inktext/80">
+                  <li className="flex items-start gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-600 mt-2 shrink-0" />
+                    <span>
+                      <strong className="text-navy font-bold">KRTRIMA (Tidak Tampak):</strong> Merujuk pada dunia digital / ruang siber yang tak kasat mata.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-600 mt-2 shrink-0" />
+                    <span>
+                      <strong className="text-navy font-bold">RAKSA (Mengamankan):</strong> Tindakan mempertahankan dan melindungi kedaulatan.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-600 mt-2 shrink-0" />
+                    <span>
+                      <strong className="text-navy font-bold">MANDALAM (Ruang Sistem):</strong> Suatu ruang sistem yang menyeluruh dan menyelimuti.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 relative flex items-center justify-center min-h-[380px]">
+              <div className="absolute left-0 bottom-4 w-44 md:w-56 h-60 md:h-72 rounded-b-full overflow-hidden border-4 border-white shadow-xl bg-slate-900 group hover:scale-105 transition-transform duration-500 z-10">
+                <img
+                  src="/logo.png"
+                  alt="Logo Satlak Dukteksi"
+                  className="w-full h-full object-contain p-6 bg-gradient-to-br from-slate-900 via-navy to-slate-900 group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+
+              <div className="absolute right-2 top-0 w-52 md:w-60 h-72 md:h-84 rounded-t-full overflow-hidden border-4 border-white shadow-2xl bg-navy group hover:scale-105 transition-transform duration-500 z-20">
+                <img
+                  src="/pussiberad_logo.png"
+                  alt="Logo PUSSIBERAD"
+                  className="w-full h-full object-contain p-8 bg-gradient-to-tr from-navy via-slate-900 to-navy group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-16 -mt-2">
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-navy">Tugas Pokok Institusi</h3>
+              <p className="text-inktext/70 text-sm md:text-base leading-relaxed">
+                Menyelenggarakan pembinaan kemampuan, kekuatan, serta kesiapan operasional dukungan teknologi siber melalui pengembangan teknologi, rekayasa terbalik, serta pemeliharaan dan instalasi guna mendukung tugas pokok Pusat Siber Angkatan Darat.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-navy">Fungsi Utama Satuan</h3>
+              <p className="text-inktext/70 text-sm md:text-base leading-relaxed">
+                Melaksanakan riset dan pembuatan solusi teknologi siber terapan mandiri, analisis mendalam perangkat lunak dan sistem (reverse engineering), serta instalasi, perawatan infrastruktur siber, dan pengamanan data berkelanjutan untuk menjaga aset kedaulatan informasi instansi.
+              </p>
+            </div>
+          </div>
+        </RevealSection>
+
+        {/* Section 2: Makna Logo (Layout 2 Grid: Kiri Foto, Kanan 4 Container) */}
+        <RevealSection className="space-y-10">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <span className="text-xs font-bold tracking-widest text-navy uppercase bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200 inline-block">
+              FILOSOFI LOGO SATLAK DUKTEKSI
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-navy">
+              Elemen Logo & Makna
+            </h2>
+            <p className="text-inktext/70 text-sm md:text-base">
+              Setiap simbol pada identitas Satlak Dukteksi mengandung nilai ksatria, ketelitian, dan efisiensi dalam perang siber.
+            </p>
+          </div>
+
+          {/* Grid Utama 2 Kolom */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+            {/* Grid Kiri: Foto / Emblem Logo */}
+            <div className="lg:col-span-5 bg-white border border-gray-100 rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden shadow-sm group">
+              <div className="absolute inset-0 bg-gradient-to-br from-navy/30 via-transparent to-navy/5 pointer-events-none" />
+
+              <div className="relative w-56 h-56 md:w-80 md:h-80 rounded-full p-6 bg-white border border-gray-100 shadow-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                <img
+                  src="/logo.png"
+                  alt="Logo Satlak Dukteksi"
+                  className="h-60 object-contain filter drop-shadow-md"
+                />
+              </div>
+
+              <div className="mt-8 text-center relative z-10 space-y-1">
+                <h3 className="font-extrabold text-navy text-lg tracking-wide uppercase">
+                  SATLAK DUKTEKSI
+                </h3>
+                <p className="text-xs font-bold text-blue-600 tracking-widest uppercase">
+                  PUSSIBERAD TNI AD
+                </p>
+              </div>
+            </div>
+
+            {/* Grid Kanan: 4 Container Informasi Logo */}
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {logo_elements.map((item, idx) => {
+                const IconComp = item.icon;
+                return (
+                  <div
+                    key={idx}
+                    className="group bg-white border border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="w-12 h-12 rounded-xl bg-navy group-hover:bg-blue-600 flex items-center justify-center text-white mb-4 transition-colors duration-300 shadow-md shadow-blue-500/10">
+                        <IconComp className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-bold text-navy group-hover:text-blue-600 transition-colors duration-300 text-base mb-2">
+                        {item.title}
+                      </h4>
+                      <p className="text-inktext/70 text-xs leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+          </div>
+        </RevealSection>
       </div>
     </div>
   );

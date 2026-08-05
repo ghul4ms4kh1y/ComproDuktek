@@ -12,7 +12,7 @@ export default {
         darkbg: '#051221',      // Background yang lebih gelap (Soteria style)
       },
       fontFamily: {
-        sans: ['Quicksand', 'sans-serif'],
+        sans: ['Manrope', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.8s ease-out forwards',
