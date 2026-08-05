@@ -114,23 +114,23 @@ export default function FaqManage() {
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h1 className="text-h4 text-ink">Kelola FAQ</h1>
-        <button onClick={openCreate} className="btn-accent text-sm">+ Tambah</button>
+        <h1 className="text-xl font-bold text-navy">FAQ</h1>
+        <button onClick={openCreate} className="btn-primary text-sm">+ Tambah</button>
       </div>
 
       <p className="text-sm text-mgray mb-4">
         Seret ikon <span className="font-mono">⠿</span> pada tiap baris untuk mengubah urutan tampil FAQ di halaman publik. Urutan tersimpan otomatis.
       </p>
 
-      <div className="bg-white rounded-card border border-offwhite shadow-e1 overflow-hidden">
-        {/* Header list, konsisten dengan halaman Kelola lainnya */}
-        <div className="hidden md:flex items-center gap-3 px-4 py-3 bg-offwhite text-ink text-sm font-semibold">
-          <span className="w-5 shrink-0" />
-          <span className="w-6 shrink-0">No</span>
-          <span className="flex-1">Pertanyaan</span>
-          <span className="shrink-0 w-24">Aksi</span>
-        </div>
+      {/* Header list, konsisten dengan halaman Kelola lainnya */}
+      <div className="hidden md:flex items-center gap-3 px-4 py-3 bg-offwhite text-ink text-sm font-semibold">
+        <span className="w-5 shrink-0" />
+        <span className="w-6 shrink-0">No</span>
+        <span className="flex-1">Pertanyaan</span>
+        <span className="shrink-0 w-24">Aksi</span>
+      </div>
 
+      <div className="bg-white rounded-card border border-offwhite shadow-e1 overflow-hidden">
         <div className="divide-y divide-offwhite">
           {loading && <div className="px-4 py-6 text-center text-mgray">Memuat...</div>}
           {!loading && items.length === 0 && <div className="px-4 py-6 text-center text-mgray">Belum ada data.</div>}
@@ -143,9 +143,8 @@ export default function FaqManage() {
               onDragOver={(e) => handleDragOver(e, item.id)}
               onDrop={handleDrop}
               onDragEnd={() => setDragId(null)}
-              className={`flex items-center gap-3 px-4 py-3 bg-white transition-opacity ${
-                dragId === item.id ? 'opacity-40' : 'opacity-100'
-              }`}
+              className={`flex items-center gap-3 px-4 py-3 bg-white transition-opacity ${dragId === item.id ? 'opacity-40' : 'opacity-100'
+                }`}
             >
               <span
                 className="w-5 shrink-0 cursor-grab active:cursor-grabbing select-none text-mgray text-lg leading-none"
