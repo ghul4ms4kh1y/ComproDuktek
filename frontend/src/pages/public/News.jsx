@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import PageHeader from '../../components/public/PageHeader';
 import api from '../../services/api';
 
 export default function News() {
@@ -21,7 +20,6 @@ export default function News() {
 
   return (
     <div>
-      <PageHeader title="Berita" subtitle="Berita dan pengumuman resmi Satlak Dukteksi." />
       <div className="max-w-7xl mx-auto px-4 py-14">
         <input
           type="text"

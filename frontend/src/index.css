@@ -2,26 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  @apply bg-white text-inktext font-sans;
+  @apply bg-panel text-inktext font-sans;
+  font-family: 'Manrope', sans-serif !important;
 }
 
 .btn-primary {
-  @apply bg-navy text-white px-4 py-2 rounded-md font-medium hover:bg-steel transition-colors;
+  @apply bg-navy text-white px-5 py-2.5 rounded shadow-md font-medium hover:bg-steel hover:shadow-lg transition-all duration-300;
 }
 
 .btn-gold {
-  @apply bg-gold text-navy px-4 py-2 rounded-md font-medium hover:brightness-95 transition;
+  @apply bg-gold text-navy px-5 py-2.5 rounded shadow-md font-bold hover:brightness-110 hover:shadow-lg transition-all duration-300;
 }
 
 .card {
-  @apply bg-white rounded-lg shadow-sm border border-panel p-5;
+  @apply bg-white rounded-xl shadow-md border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden;
 }
 
 .section-title {
-  @apply text-2xl md:text-3xl font-bold text-navy mb-2;
+  @apply text-3xl md:text-4xl font-extrabold text-navy mb-3 tracking-tight;
 }
 
 .section-divider {
-  @apply w-16 h-1 bg-gold rounded mb-6;
+  @apply w-20 h-1.5 bg-gold rounded-full mb-8;
+}
+
+/* Glassmorphism for Navbar when scrolled */
+.glass-nav {
+  @apply bg-navy/90 backdrop-blur-md shadow-lg border-b border-white/10;
 }

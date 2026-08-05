@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 
-const menu = [
+const MENU_ITEMS = [
   { label: 'Beranda', to: '/' },
   { label: 'Tentang Kami', to: '/tentang-kami' },
-  { label: 'Sejarah', to: '/sejarah' },
-  { label: 'Visi & Misi', to: '/visi-misi' },
   { label: 'Struktur Organisasi', to: '/struktur-organisasi' },
   { label: 'Produk', to: '/produk' },
   { label: 'Galeri', to: '/galeri' },
@@ -15,55 +14,112 @@ const menu = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+      if (open) setOpen(false); // Otomatis tutup menu mobile jika user melakukan scroll
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 bg-navy shadow-md">
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
-        <NavLink to="/" className="text-white font-bold tracking-wide">
-          SATLAK DUKTEKSI
+    <header
+      className={`sticky top-0 z-50 bg-white transition-all duration-300 ${scrolled ? 'shadow-md py-2.5' : 'py-4'
+        }`}
+    >
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 flex items-center justify-between">
+
+        {/* Logo Satlak */}
+        <NavLink to="/" className="flex items-center gap-3 group">
+          <img
+            src="/logo.png"
+            alt="Logo Dukteksi"
+            className="h-10 w-auto object-contain"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <div className="flex flex-col">
+            <span className="text-navy group-hover:text-blue-600 transition-colors font-extrabold text-lg md:text-xl tracking-tight uppercase leading-none">
+              SATLAK DUKTEKSI
+            </span>
+          </div>
         </NavLink>
 
-        <nav className="hidden lg:flex gap-1">
-          {menu.map((m) => (
-            <NavLink
-              key={m.to}
-              to={m.to}
-              end={m.to === '/'}
-              className={({ isActive }) =>
-                `px-3 py-2 text-sm rounded-md transition-colors ${
-                  isActive ? 'text-gold font-semibold' : 'text-white/85 hover:text-gold'
-                }`
-              }
-            >
-              {m.label}
-            </NavLink>
-          ))}
-        </nav>
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center gap-8">
+          <nav className="flex items-center gap-6">
+            {MENU_ITEMS.slice(0, 6).map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  `text-sm font-semibold transition-colors duration-200 py-1 ${isActive
+                    ? 'text-navy font-bold border-b-2 border-navy'
+                    : 'text-inktext/70 hover:text-blue-600'
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
 
+          {/* Action Button */}
+          <NavLink
+            to="/kontak"
+            className="bg-navy hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md shrink-0"
+          >
+            Hubungi Kami
+          </NavLink>
+        </div>
+
+        {/* Mobile Toggle Button */}
         <button
-          className="lg:hidden text-white"
+          className="lg:hidden text-navy hover:text-blue-600 p-2 rounded-lg transition-colors focus:outline-none"
           onClick={() => setOpen(!open)}
           aria-label="Buka menu navigasi"
         >
-          {open ? '✕' : '☰'}
+          {open ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
+      {/* Mobile Navigation Menu Dropdown */}
       {open && (
-        <nav className="lg:hidden bg-steel px-4 pb-4 flex flex-col gap-1">
-          {menu.map((m) => (
+        <nav className="lg:hidden bg-white border-t border-gray-100 px-6 py-5 flex flex-col gap-2 shadow-xl absolute w-full left-0 animate-fade-in">
+          {MENU_ITEMS.map((item) => (
             <NavLink
-              key={m.to}
-              to={m.to}
-              end={m.to === '/'}
+              key={item.to}
+              to={item.to}
+              end={item.to === '/'}
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
-                `px-2 py-2 text-sm rounded-md ${isActive ? 'text-gold font-semibold' : 'text-white/90'}`
+                `px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors ${isActive
+                  ? 'bg-blue-50 text-blue-600'
+                  : 'text-inktext/80 hover:bg-gray-50 hover:text-blue-600'
+                }`
               }
             >
-              {m.label}
+              {item.label}
             </NavLink>
           ))}
+
+          <NavLink
+            to="/kontak"
+            onClick={() => setOpen(false)}
+            className="bg-navy hover:bg-blue-600 text-white px-4 py-3 mt-2 rounded-xl text-sm font-semibold text-center transition-colors shadow-sm"
+          >
+            Hubungi Kami
+          </NavLink>
         </nav>
       )}
     </header>

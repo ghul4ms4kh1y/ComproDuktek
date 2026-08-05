@@ -1,5 +1,3 @@
-import PageHeader from '../../components/public/PageHeader';
-
 const struktur = [
   { jabatan: 'Kepala Satlak Dukteksi', level: 0 },
   { jabatan: 'Wakil Kepala', level: 1 },
@@ -11,7 +9,6 @@ const struktur = [
 export default function OrgStructure() {
   return (
     <div>
-      <PageHeader title="Struktur Organisasi" subtitle="Bagan hierarki kepemimpinan dan unit di lingkungan Satlak Dukteksi." />
       <div className="max-w-3xl mx-auto px-4 py-14">
         <div className="space-y-3">
           {struktur.map((s, i) => (

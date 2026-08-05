@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import PageHeader from '../../components/public/PageHeader';
 import api from '../../services/api';
 
 export default function Gallery() {
@@ -12,7 +11,6 @@ export default function Gallery() {
 
   return (
     <div>
-      <PageHeader title="Galeri" subtitle="Dokumentasi kegiatan Satlak Dukteksi." />
       <div className="max-w-7xl mx-auto px-4 py-14">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {photos.length === 0 && <p className="text-sm text-inktext/60 col-span-full">Belum ada foto.</p>}

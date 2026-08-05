@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import PageHeader from '../../components/public/PageHeader';
 import api from '../../services/api';
 
 export default function Products() {
@@ -23,7 +22,6 @@ export default function Products() {
 
   return (
     <div>
-      <PageHeader title="Produk & Inovasi" subtitle="Katalog produk dan inovasi teknologi siber Satlak Dukteksi." />
       <div className="max-w-7xl mx-auto px-4 py-14">
         <div className="flex flex-wrap gap-3 mb-8">
           <select value={category} onChange={(e) => setCategory(e.target.value)} className="border border-panel rounded-md px-3 py-2 text-sm">
