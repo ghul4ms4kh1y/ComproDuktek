@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PageHeader from '../../components/public/PageHeader';
 import api from '../../services/api';
 
 const initial = { sender_name: '', sender_email: '', subject: '', message: '' };
@@ -40,7 +39,6 @@ export default function Contact() {
 
   return (
     <div>
-      <PageHeader title="Kontak" subtitle="Sampaikan pertanyaan atau pesan resmi kepada Satlak Dukteksi." />
       <div className="max-w-5xl mx-auto px-4 py-14 grid md:grid-cols-2 gap-10">
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>

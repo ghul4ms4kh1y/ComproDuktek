@@ -5,7 +5,7 @@ export default function Footer() {
   const gmapsUrl = "https://maps.google.com/maps?q=Jl.%20Veteran%20No.5,%20Gambir,%20Jakarta%20Pusat&t=&z=15&ie=UTF8&iwloc=&output=embed";
 
   return (
-    <footer className="bg-white text-inktext pt-16 pb-10 border-t border-gray-100">
+    <footer className="bg-white/10 text-inktext pt-16 pb-10 border-t border-gray-100">
       {/* Container Utama */}
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
 

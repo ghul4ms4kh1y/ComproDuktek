@@ -514,10 +514,10 @@ export default function Landing() {
           <div className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-6 relative z-10">
             <div>
               <span className="text-xs font-bold tracking-widest text-navy uppercase bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200 inline-block mb-3">
-                TANYA JAWAB
+                Pertanyaan Umum
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-navy leading-tight tracking-tight">
-                Pertanyaan Umum (FAQ)
+                Ada Pertanyaan ?
               </h2>
               <p className="text-inktext/70 text-sm md:text-base mt-2 max-w-xl">
                 Informasi penting mengenai tugas, semboyan, filosofi logo, dan kapabilitas teknis Satlak Dukteksi PUSSIBERAD.
