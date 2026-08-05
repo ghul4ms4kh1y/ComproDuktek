@@ -7,8 +7,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 // Public pages
 import Landing from './pages/public/Landing';
 import About from './pages/public/About';
-import History from './pages/public/History';
-import VisionMission from './pages/public/VisionMission';
 import OrgStructure from './pages/public/OrgStructure';
 import Products from './pages/public/Products';
 import Gallery from './pages/public/Gallery';
@@ -32,8 +30,6 @@ export default function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Landing />} />
         <Route path="/tentang-kami" element={<About />} />
-        <Route path="/sejarah" element={<History />} />
-        <Route path="/visi-misi" element={<VisionMission />} />
         <Route path="/struktur-organisasi" element={<OrgStructure />} />
         <Route path="/produk" element={<Products />} />
         <Route path="/galeri" element={<Gallery />} />
