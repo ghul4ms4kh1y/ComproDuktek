@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 
 const { sequelize } = require('./models');
+const upload = require('./middleware/upload');
 
 const authRoutes = require('./routes/authRoutes');
 const newsRoutes = require('./routes/newsRoutes');
@@ -19,8 +20,32 @@ const app = express();
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+/**
+ * Parsing body request diselesaikan SEKALI di sini, untuk seluruh aplikasi:
+ * - JSON / urlencoded biasa -> ditangani express.json()/urlencoded()
+ * - multipart/form-data (dipakai saat form mengirim FormData, baik ada file
+ *   maupun tidak) -> ditangani multer di sini
+ *
+ * Dengan begini, route CRUD manapun (termasuk yang tidak upload gambar,
+ * seperti FAQ) otomatis bisa membaca req.body dari FormData tanpa perlu
+ * menambahkan middleware multer satu per satu di tiap route, dan tidak
+ * bergantung pada bagaimana frontend memformat requestnya.
+ */
+app.use((req, res, next) => {
+  if (req.is('multipart/form-data')) {
+    upload.any()(req, res, (err) => {
+      if (err) return next(err);
+      next();
+    });
+  } else {
+    express.json()(req, res, (err) => {
+      if (err) return next(err);
+      express.urlencoded({ extended: true })(req, res, next);
+    });
+  }
+});
+
 app.use(cookieParser());
 
 // File upload statis (thumbnail berita, gambar produk, foto galeri)
