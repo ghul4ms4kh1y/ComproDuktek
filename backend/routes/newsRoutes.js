@@ -5,8 +5,11 @@ const { News } = require('../models');
 const { requireAuth } = require('../middleware/auth');
 
 const controller = crudFactory(News, {
-  searchFields: ['title'],
-  defaultOrder: [['news_date', 'DESC']],
+  searchFields: ['title', 'content', 'category'],
+  defaultOrder: [
+    ['news_date', 'DESC'],
+    ['category', 'ASC']
+  ],
   attachAdmin: true,
   fileField: 'thumbnail',
 });
