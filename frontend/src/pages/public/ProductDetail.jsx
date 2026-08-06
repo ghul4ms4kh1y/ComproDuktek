@@ -1,50 +1,17 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../../services/api';
+import RevealSection from '../../components/common/RevealSection';
 import {
     ArrowLeft,
     Cpu,
     ShieldCheck,
-    Calendar,
     Building2,
     Tag,
     CheckCircle2,
     Send,
     Loader2
 } from 'lucide-react';
-
-// Helper Component untuk Animasi Smooth Reveal Scroll
-function RevealSection({ children, className = '' }) {
-    const ref = useRef(null);
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.unobserve(entry.target);
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        if (ref.current) observer.observe(ref.current);
-        return () => observer.disconnect();
-    }, []);
-
-    return (
-        <div
-            ref={ref}
-            className={`transition-all duration-700 ease-out transform ${isVisible
-                ? 'opacity-100 translate-y-0 scale-100'
-                : 'opacity-0 translate-y-10 scale-[0.98]'
-                } ${className}`}
-        >
-            {children}
-        </div>
-    );
-}
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -97,6 +64,7 @@ export default function ProductDetail() {
     return (
         <div className="bg-white text-inktext min-h-screen pb-20">
             <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-10 space-y-12">
+
                 {/* Tombol Kembali */}
                 <RevealSection>
                     <Link
@@ -128,7 +96,6 @@ export default function ProductDetail() {
                                 </div>
                             )}
 
-                            {/* Status Badge */}
                             <div className="absolute top-4 left-4">
                                 <span className="text-xs font-bold bg-white/95 backdrop-blur-md text-navy px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-sm border border-white/20">
                                     {product.status || 'Aktif'}
@@ -136,7 +103,6 @@ export default function ProductDetail() {
                             </div>
                         </div>
 
-                        {/* Quick Specs Cards */}
                         <div className="grid grid-cols-2 gap-4 mt-6">
                             <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-3">
                                 <Tag className="w-5 h-5 text-blue-600 shrink-0" />
@@ -171,7 +137,6 @@ export default function ProductDetail() {
                             </p>
                         </div>
 
-                        {/* Fitur Utama / Kapabilitas Produk (Opsional jika backend mengirim array features) */}
                         {product.features && product.features.length > 0 && (
                             <div className="space-y-3 pt-4 border-t border-gray-100">
                                 <h3 className="text-lg font-bold text-navy">Fitur & Keunggulan Utama:</h3>
@@ -186,7 +151,6 @@ export default function ProductDetail() {
                             </div>
                         )}
 
-                        {/* Action Card / Konsultasi */}
                         <div className="bg-[#f8fafc] border border-gray-100 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
                             <div>
                                 <h4 className="font-bold text-navy text-base">Tertarik dengan Solusi Ini?</h4>
