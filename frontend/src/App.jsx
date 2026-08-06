@@ -21,6 +21,7 @@ import Dashboard from './pages/admin/Dashboard';
 import NewsManage from './pages/admin/NewsManage';
 import ProductManage from './pages/admin/ProductManage';
 import GalleryManage from './pages/admin/GalleryManage';
+import OrgStructureManage from './pages/admin/OrgStructureManage';
 import FaqManage from './pages/admin/FaqManage';
 import Inbox from './pages/admin/Inbox';
 
@@ -54,6 +55,7 @@ export default function App() {
         <Route path="berita" element={<NewsManage />} />
         <Route path="produk" element={<ProductManage />} />
         <Route path="galeri" element={<GalleryManage />} />
+        <Route path="struktur-organisasi" element={<OrgStructureManage />} />
         <Route path="faq" element={<FaqManage />} />
         <Route path="kotak-masuk" element={<Inbox />} />
       </Route>

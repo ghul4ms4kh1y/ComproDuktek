@@ -15,6 +15,7 @@ const galleryRoutes = require('./routes/galleryRoutes');
 const faqRoutes = require('./routes/faqRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const orgStructureRoutes = require('./routes/orgStructureRoutes');
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.use('/api/galleries', galleryRoutes);
 app.use('/api/faqs', faqRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/org-structures', orgStructureRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
