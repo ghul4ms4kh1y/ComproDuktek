@@ -540,7 +540,7 @@ export default function Landing() {
                     onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
                     className="w-full flex items-start justify-between gap-4 text-left group"
                   >
-                    <h3 className={`font-bold text-sm leading-snug transition-colors ${isOpen ? 'text-blue-600' : 'text-navy group-hover:text-blue-600'
+                    <h3 className={`font-bold text-md leading-snug transition-colors ${isOpen ? 'text-blue-600' : 'text-navy group-hover:text-blue-600'
                       }`}>
                       {faq.question}
                     </h3>
