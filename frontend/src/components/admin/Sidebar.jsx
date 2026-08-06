@@ -8,6 +8,7 @@ const menu = [
   { label: 'Berita', to: '/admin-portal/berita', icon: '📰' },
   { label: 'Produk', to: '/admin-portal/produk', icon: '📦' },
   { label: 'Galeri', to: '/admin-portal/galeri', icon: '🖼️' },
+  { label: 'Struktur Organisasi', to: '/admin-portal/struktur-organisasi', icon: '🗂️' },
   { label: 'FAQ', to: '/admin-portal/faq', icon: '❓' },
   { label: 'Kotak Masuk', to: '/admin-portal/kotak-masuk', icon: '✉️' },
 ];

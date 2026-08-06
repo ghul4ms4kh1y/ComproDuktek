@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 
 /**
  * fields: [{ name, label, type: 'text'|'textarea'|'select'|'date'|'file'|'number', options?: [] }]
+ * options untuk type 'select' menerima 2 bentuk:
+ *  - array string, mis. ['Aktif', 'Nonaktif']  -> value dan label sama
+ *  - array objek,  mis. [{ value: 3, label: 'Budi - Kabagops' }] -> value (mis. ID)
+ *    berbeda dari label yang ditampilkan. Dipakai untuk dropdown "Atasan Langsung".
  */
 export default function FormModal({ open, title, fields, initialValues, onCancel, onSubmit, submitting }) {
   const [values, setValues] = useState({});
@@ -51,7 +55,11 @@ export default function FormModal({ open, title, fields, initialValues, onCancel
                   required={f.required}
                 >
                   <option value="">Pilih...</option>
-                  {f.options.map((o) => <option key={o} value={o}>{o}</option>)}
+                  {f.options.map((o) => {
+                    const optValue = typeof o === 'object' ? o.value : o;
+                    const optLabel = typeof o === 'object' ? o.label : o;
+                    return <option key={optValue} value={optValue}>{optLabel}</option>;
+                  })}
                 </select>
               )}
 
