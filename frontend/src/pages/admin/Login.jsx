@@ -60,7 +60,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-dashAccent text-white rounded-md py-2.5 text-sm font-semibold hover:brightness-95 disabled:opacity-60 transition"
+            className="w-full bg-navy text-white rounded-md py-2.5 text-sm font-semibold hover:brightness-95 disabled:opacity-60 transition"
           >
             {loading ? 'Memproses...' : 'Masuk'}
           </button>

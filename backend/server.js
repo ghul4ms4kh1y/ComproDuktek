@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
@@ -19,7 +20,19 @@ const orgStructureRoutes = require('./routes/orgStructureRoutes');
 
 const app = express();
 
-app.use(helmet({ crossOriginResourcePolicy: false }));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "blob:"],
+        scriptSrc: ["'self'"],
+        connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:5173'],
+      },
+    },
+  })
+);
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
 
 /**
@@ -49,25 +62,38 @@ app.use((req, res, next) => {
 
 app.use(cookieParser());
 
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 menit
+  max: 100, // Batasi setiap IP hingga 100 permintaan per jendela waktu
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // File upload statis (thumbnail berita, gambar produk, foto galeri)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // URL admin API di-noindex secara konsep (tidak ditautkan di navigasi publik)
 app.use('/api/auth', authRoutes);
-app.use('/api/news', newsRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/galleries', galleryRoutes);
-app.use('/api/faqs', faqRoutes);
-app.use('/api/messages', messageRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/org-structures', orgStructureRoutes);
+app.use('/api/news', apiLimiter, newsRoutes);
+app.use('/api/products', apiLimiter, productRoutes);
+app.use('/api/galleries', apiLimiter, galleryRoutes);
+app.use('/api/faqs', apiLimiter, faqRoutes);
+app.use('/api/messages', apiLimiter, messageRoutes);
+app.use('/api/dashboard', apiLimiter, dashboardRoutes);
+app.use('/api/org-structures', apiLimiter, orgStructureRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 // Error handler global
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(err.status || 500).json({ message: err.message || 'Terjadi kesalahan pada server.' });
+  const status = err.status || 500;
+  const message = process.env.NODE_ENV === 'production' 
+    ? 'Terjadi kesalahan pada server.' 
+    : err.message;
+  
+  res.status(status).json({ message });
 });
 
 const PORT = process.env.PORT || 5000;

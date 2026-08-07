@@ -108,7 +108,7 @@ export default function ProductDetail() {
                                 <Tag className="w-5 h-5 text-blue-600 shrink-0" />
                                 <div>
                                     <p className="text-[10px] uppercase font-bold text-inktext/50">Kategori</p>
-                                    <p className="text-xs font-bold text-navy">{product.category || 'Teknologi Siber'}</p>
+                                    <p className="text-xs font-bold text-navy">{product.category}</p>
                                 </div>
                             </div>
 
@@ -116,7 +116,7 @@ export default function ProductDetail() {
                                 <Building2 className="w-5 h-5 text-blue-600 shrink-0" />
                                 <div>
                                     <p className="text-[10px] uppercase font-bold text-inktext/50">Unit Pengampu</p>
-                                    <p className="text-xs font-bold text-navy">{product.unit_pengampu || 'Satlak Dukteksi'}</p>
+                                    <p className="text-xs font-bold text-navy">{product.unit_pengampu}</p>
                                 </div>
                             </div>
                         </div>
@@ -132,8 +132,7 @@ export default function ProductDetail() {
                                 {product.name}
                             </h1>
                             <p className="text-inktext/80 text-base leading-relaxed whitespace-pre-line">
-                                {product.description ||
-                                    'Deskripsi detail mengenai sistem dan teknologi produk ini belum ditambahkan oleh administrator.'}
+                                {product.description}
                             </p>
                         </div>
 

@@ -3,6 +3,7 @@ const router = express.Router();
 const crudFactory = require('../controllers/crudFactory');
 const { Gallery } = require('../models');
 const { requireAuth } = require('../middleware/auth');
+const { galleryValidation } = require('../middleware/validation');
 
 const controller = crudFactory(Gallery, {
   searchFields: ['description'],
@@ -14,8 +15,8 @@ const controller = crudFactory(Gallery, {
 router.get('/', controller.index);
 router.get('/:id', controller.show);
 
-router.post('/', requireAuth, controller.create);
-router.put('/:id', requireAuth, controller.update);
+router.post('/', requireAuth, galleryValidation, controller.create);
+router.put('/:id', requireAuth, galleryValidation, controller.update);
 router.delete('/:id', requireAuth, controller.remove);
 
 module.exports = router;

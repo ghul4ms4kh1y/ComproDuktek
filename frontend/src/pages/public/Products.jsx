@@ -143,14 +143,16 @@ export default function Products() {
                       )}
 
                       <div className="absolute top-3 left-3">
-                        <span className="text-[11px] font-bold bg-white/95 backdrop-blur-md text-navy px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm border border-white/20">
-                          {p.status || 'Aktif'}
-                        </span>
+                        {p.status && (
+                          <span className="text-[11px] font-bold bg-white/95 backdrop-blur-md text-navy px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm border border-white/20">
+                            {p.status}
+                          </span>
+                        )}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">
-                      <span>{p.category || 'Teknologi Siber'}</span>
+                      {p.category && <span>{p.category}</span>}
                       {p.unit_pengampu && (
                         <>
                           <span className="text-gray-300">•</span>
@@ -164,8 +166,7 @@ export default function Products() {
                     </h3>
 
                     <p className="text-inktext/70 text-sm leading-relaxed line-clamp-2 mb-6">
-                      {p.description ||
-                        'Solusi teknologi siber terapan yang dikembangkan khusus untuk mendukung keandalan sistem pertahanan.'}
+                      {p.description}
                     </p>
                   </div>
 

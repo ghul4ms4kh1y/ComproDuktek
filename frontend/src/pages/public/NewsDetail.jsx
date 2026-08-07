@@ -50,7 +50,7 @@ export default function NewsDetail() {
 
   // Helper Estimasi Waktu Baca
   const getReadTime = (content) => {
-    if (!content) return '3 min read';
+    if (!content) return null;
     const words = content.trim().split(/\s+/).length;
     const time = Math.ceil(words / 150);
     return `${time || 2} min read`;

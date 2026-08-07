@@ -41,13 +41,13 @@ export default function Sidebar({ collapsed, setCollapsed }) {
 
   return (
     <aside
-      className={`bg-dashNavy text-white flex flex-col fixed inset-y-0 left-0 z-40 transition-all duration-200 font-dash ${
+      className={`bg-navy text-white flex flex-col fixed inset-y-0 left-0 z-40 transition-all duration-200 font-dash ${
         collapsed ? 'w-16' : 'w-64'
       }`}
     >
-      <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-white/20">
         {!collapsed && <span className="font-semibold tracking-wide text-sm">DUKTEKSI ADMIN</span>}
-        <button onClick={() => setCollapsed(!collapsed)} className="text-white/70 hover:text-dashAccent transition-colors">
+        <button onClick={() => setCollapsed(!collapsed)} className="text-white hover:bg-white/10 p-1.5 rounded transition-colors">
           <Menu className="w-5 h-5" />
         </button>
       </div>
@@ -61,7 +61,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               to={m.to}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                  isActive ? 'bg-dashAccent/15 text-white font-semibold border-r-2 border-dashAccent' : 'text-white/75 hover:bg-white/5'
+                  isActive ? 'bg-gray-600 text-white font-semibold border-r-4 border-blue-600' : 'text-white/90 hover:bg-white/10'
                 }`
               }
             >
@@ -70,7 +70,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                 <span className="flex-1">
                   {m.label}
                   {m.to.includes('kotak-masuk') && unread > 0 && (
-                    <span className="ml-2 bg-dashAccent text-white text-xs px-1.5 py-0.5 rounded-full">{unread}</span>
+                    <span className="ml-2 bg-gold text-navy text-xs px-1.5 py-0.5 rounded-full font-semibold">{unread}</span>
                   )}
                 </span>
               )}
@@ -81,7 +81,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
 
       <button
         onClick={handleLogout}
-        className="m-3 flex items-center justify-center gap-2 px-4 py-2.5 text-sm rounded-md bg-white/5 border border-white/10 hover:bg-white/10 hover:border-dashAccent/50 transition-colors"
+        className="m-4 flex items-center justify-center gap-2 px-4 py-2.5 text-sm rounded-md bg-white/10 border border-white/20 hover:bg-white/20 hover:border-blue-600 transition-colors font-medium"
       >
         {collapsed ? <Power className="w-4 h-4" /> : (<><LogOut className="w-4 h-4" /> Logout</>)}
       </button>
