@@ -10,7 +10,7 @@ function PersonBox({ node }) {
         : <span className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center shrink-0"><UserRound className="w-4 h-4" /></span>}
       <div className="text-left">
         <p className="text-xs font-bold leading-tight">{node.position}</p>
-        <p className="text-[11px] leading-tight opacity-80">{node.name}{node.rank ? ` • ${node.rank}` : ''}</p>
+        <p className="text-[11px] leading-tight opacity-80">{node.rank ? `${node.rank}` : ''} {node.name}</p>
       </div>
     </div>
   );

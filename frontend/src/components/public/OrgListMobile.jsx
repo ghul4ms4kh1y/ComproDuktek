@@ -18,7 +18,7 @@ function PersonRow({ node, depth }) {
           : <span className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center shrink-0"><UserRound className="w-4 h-4" /></span>}
         <div className="text-left flex-1 min-w-0">
           <p className="text-xs font-bold truncate">{node.position}</p>
-          <p className="text-[11px] opacity-80 truncate">{node.name}{node.rank ? ` • ${node.rank}` : ''}</p>
+          <p className="text-[11px] opacity-80 truncate">{node.rank ? `${node.rank}` : ''} {node.name}</p>
         </div>
         {hasChildren && (open ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />)}
       </button>
