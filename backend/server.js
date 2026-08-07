@@ -65,7 +65,7 @@ app.use(cookieParser());
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 menit
-  max: 100, // Batasi setiap IP hingga 100 permintaan per jendela waktu
+  max: 1000, // Batasi setiap IP hingga 1000 permintaan per jendela waktu
   standardHeaders: true,
   legacyHeaders: false,
 });

@@ -56,7 +56,7 @@ function validateUploadedFields(req, allowedFieldName) {
 function cleanupUploadedFiles(req) {
   if (!Array.isArray(req.files)) return;
   req.files.forEach((f) => {
-    fs.unlink(f.path, () => {}); // abaikan error penghapusan, bukan hal kritis
+    fs.unlink(f.path, () => { }); // abaikan error penghapusan, bukan hal kritis
   });
 }
 
@@ -118,7 +118,44 @@ function crudFactory(Model, options = {}) {
         const item = await Model.create(payload);
         res.status(201).json({ message: 'Data berhasil ditambahkan.', data: item });
       } catch (err) {
-        res.status(400).json({ message: 'Gagal menambahkan data.' });
+        // PERBAIKAN DI SINI: Tambahkan error: err.message
+        res.status(400).json({ message: 'Gagal menambahkan data.', error: err.message });
+      }
+    },
+
+    async update(req, res) {
+      try {
+        const item = await Model.findByPk(req.params.id);
+        if (!item) return res.status(404).json({ message: 'Data tidak ditemukan.' });
+
+        const fileFieldName = options.fileField || null;
+        const validationError = validateUploadedFields(req, fileFieldName);
+        if (validationError) {
+          cleanupUploadedFiles(req);
+          return res.status(400).json({ message: validationError });
+        }
+
+        const payload = sanitizePayload(req.body);
+        const file = findUploadedFile(req, fileFieldName || 'image');
+        if (file) payload[fileFieldName || 'image'] = `/uploads/${file.filename}`;
+
+        await item.update(payload);
+        res.json({ message: 'Data berhasil diperbarui.', data: item });
+      } catch (err) {
+        // PERBAIKAN DI SINI: Tambahkan error: err.message
+        res.status(400).json({ message: 'Gagal memperbarui data.', error: err.message });
+      }
+    },
+
+    async remove(req, res) {
+      try {
+        const item = await Model.findByPk(req.params.id);
+        if (!item) return res.status(404).json({ message: 'Data tidak ditemukan.' });
+        await item.destroy();
+        res.json({ message: 'Data berhasil dihapus.' });
+      } catch (err) {
+        // PERBAIKAN DI SINI: Tambahkan error: err.message
+        res.status(500).json({ message: 'Gagal menghapus data.', error: err.message });
       }
     },
 

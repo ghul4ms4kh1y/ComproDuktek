@@ -4,7 +4,13 @@ const columns = [
   {
     key: 'image',
     label: 'Foto',
-    render: (item) => <img src={item.image} className="h-10 w-16 object-cover rounded" />,
+    render: (item) => (
+      item.image ? (
+        <img src={item.image} alt="Foto Galeri" className="h-10 w-16 object-cover rounded" />
+      ) : (
+        <span className="text-gray-400 text-xs">—</span>
+      )
+    ),
   },
   { key: 'description', label: 'Deskripsi' },
   { key: 'gallery_date', label: 'Tanggal' },
