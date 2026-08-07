@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { GripVertical } from 'lucide-react';
 import api from '../../services/api';
 import FormModal from '../../components/admin/FormModal';
 import ConfirmModal from '../../components/admin/ConfirmModal';
@@ -114,26 +115,26 @@ export default function FaqManage() {
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h1 className="text-xl font-bold text-navy">FAQ</h1>
-        <button onClick={openCreate} className="btn-primary text-sm">+ Tambah</button>
+        <h1 className="text-[20px] font-semibold text-dashNavy">FAQ</h1>
+        <button onClick={openCreate} className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:brightness-95 transition">+ Tambah</button>
       </div>
 
-      <p className="text-sm text-mgray mb-4">
-        Seret ikon <span className="font-mono">⠿</span> pada tiap baris untuk mengubah urutan tampil FAQ di halaman publik. Urutan tersimpan otomatis.
+      <p className="text-sm text-dashNavy/60 mb-4">
+        Seret ikon <GripVertical className="w-3.5 h-3.5 inline -mt-0.5" /> pada tiap baris untuk mengubah urutan tampil FAQ di halaman publik. Urutan tersimpan otomatis.
       </p>
 
       {/* Header list, konsisten dengan halaman Kelola lainnya */}
-      <div className="hidden md:flex items-center gap-3 px-4 py-3 bg-offwhite text-ink text-sm font-semibold">
+      <div className="hidden md:flex items-center gap-3 px-4 py-3 bg-gray-50 text-dashNavy text-sm font-semibold border border-b-0 border-gray-200 rounded-t-lg">
         <span className="w-5 shrink-0" />
         <span className="w-6 shrink-0">No</span>
         <span className="flex-1">Pertanyaan</span>
         <span className="shrink-0 w-24">Aksi</span>
       </div>
 
-      <div className="bg-white rounded-card border border-offwhite shadow-e1 overflow-hidden">
+      <div className="bg-white rounded-lg rounded-t-none border border-gray-200 shadow-dashCard overflow-hidden">
         <div className="divide-y divide-offwhite">
-          {loading && <div className="px-4 py-6 text-center text-mgray">Memuat...</div>}
-          {!loading && items.length === 0 && <div className="px-4 py-6 text-center text-mgray">Belum ada data.</div>}
+          {loading && <div className="px-4 py-6 text-center text-dashNavy/40">Memuat...</div>}
+          {!loading && items.length === 0 && <div className="px-4 py-6 text-center text-dashNavy/40">Belum ada data.</div>}
 
           {items.map((item, idx) => (
             <div
@@ -147,15 +148,15 @@ export default function FaqManage() {
                 }`}
             >
               <span
-                className="w-5 shrink-0 cursor-grab active:cursor-grabbing select-none text-mgray text-lg leading-none"
+                className="w-5 shrink-0 cursor-grab active:cursor-grabbing text-dashNavy/40 flex items-center justify-center"
                 title="Seret untuk mengubah urutan"
               >
-                ⠿
+                <GripVertical className="w-4 h-4" />
               </span>
-              <span className="w-6 shrink-0 text-sm text-mgray tabular-nums">{idx + 1}</span>
-              <span className="flex-1 text-sm text-ink truncate">{item.question}</span>
+              <span className="w-6 shrink-0 text-sm text-dashNavy/50 tabular-nums">{idx + 1}</span>
+              <span className="flex-1 text-sm text-black truncate">{item.question}</span>
               <span className="shrink-0 w-24 space-x-2 whitespace-nowrap">
-                <button onClick={() => openEdit(item)} className="text-ink hover:text-orange underline text-sm">Edit</button>
+                <button onClick={() => openEdit(item)} className="text-dashNavy hover:text-dashAccent underline text-sm">Edit</button>
                 <button onClick={() => setDeleting(item)} className="text-red-600 hover:text-red-800 underline text-sm">Hapus</button>
               </span>
             </div>
@@ -163,7 +164,7 @@ export default function FaqManage() {
         </div>
       </div>
 
-      {saving && <p className="text-xs text-mgray mt-2">Menyimpan urutan...</p>}
+      {saving && <p className="text-xs text-dashNavy/50 mt-2">Menyimpan urutan...</p>}
 
       <FormModal
         open={formOpen}
