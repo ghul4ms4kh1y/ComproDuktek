@@ -10,11 +10,15 @@ export default {
         panel: '#EEF2F6',       // Latar area konten
         inktext: '#3A3A3A',     // Warna teks isi
         darkbg: '#051221',      // Background yang lebih gelap (Soteria style)
-        // --- Token khusus Dashboard Admin (design.md "Dash") ---
+        // --- Token khusus Dashboard Admin (palette: navy/blue/sky/mint) ---
         // Terpisah dari token di atas supaya reskin dashboard TIDAK
         // memengaruhi tampilan halaman publik yang masih pakai navy/gold.
-        dashNavy: '#00162f',    // Primary - sidebar, heading, teks utama admin
-        dashAccent: '#763ff9',  // Accent - tombol utama, state aktif, fokus
+        // 4 warna ini SATU-SATUNYA warna berwarna yang dipakai di admin;
+        // sisanya (putih, abu-abu) hanya netral latar/border.
+        dashNavy: '#293681',    // Primary - sidebar, heading, teks utama admin
+        dashAccent: '#4274D9',  // Accent - tombol utama, state aktif, fokus
+        dashSky: '#95CCDD',     // Sekunder - badge, ikon, segmen chart ke-2
+        dashMint: '#D0E7E6',    // Tersier - tint kartu, hover, segmen chart ke-3
       },
       fontFamily: {
         sans: ['Manrope', 'sans-serif'],
