@@ -189,9 +189,11 @@ export default function News() {
                       )}
 
                       <div className="absolute top-3 left-3">
-                        <span className="text-[11px] font-bold bg-white/95 text-navy px-3 py-1 rounded-xl uppercase tracking-wider shadow-sm">
-                          {recentMain.category || 'Kegiatan Siber'}
-                        </span>
+                        {recentMain.category && (
+                          <span className="text-[11px] font-bold bg-white/95 text-navy px-3 py-1 rounded-xl uppercase tracking-wider shadow-sm">
+                            {recentMain.category}
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -213,7 +215,7 @@ export default function News() {
                       </div>
 
                       <p className="text-inktext/70 text-xs md:text-sm line-clamp-2 leading-relaxed pt-1">
-                        {recentMain.content?.replace(/<[^>]*>?/gm, '') || 'Ulasan singkat informasi publikasi kegiatan operasional siber.'}
+                        {recentMain.content?.replace(/<[^>]*>?/gm, '')}
                       </p>
                     </div>
                   </Link>
@@ -249,9 +251,11 @@ export default function News() {
                       )}
 
                       <div className="absolute top-1.5 left-1.5">
-                        <span className="text-[9px] font-bold bg-white/90 text-navy px-2 py-0.5 rounded-md uppercase">
-                          {item.category || 'Siber'}
-                        </span>
+                        {item.category && (
+                          <span className="text-[9px] font-bold bg-white/90 text-navy px-2 py-0.5 rounded-md uppercase">
+                            {item.category}
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -333,9 +337,11 @@ export default function News() {
                     )}
 
                     <div className="absolute top-2.5 left-2.5">
-                      <span className="text-[10px] font-bold bg-white/95 text-navy px-2.5 py-1 rounded-md uppercase tracking-wider shadow-sm">
-                        {item.category || 'Siber'}
-                      </span>
+                      {item.category && (
+                        <span className="text-[10px] font-bold bg-white/95 text-navy px-2.5 py-1 rounded-md uppercase tracking-wider shadow-sm">
+                          {item.category}
+                        </span>
+                      )}
                     </div>
                   </div>
 

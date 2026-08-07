@@ -118,7 +118,7 @@ function crudFactory(Model, options = {}) {
         const item = await Model.create(payload);
         res.status(201).json({ message: 'Data berhasil ditambahkan.', data: item });
       } catch (err) {
-        res.status(400).json({ message: 'Gagal menambahkan data.', error: err.message });
+        res.status(400).json({ message: 'Gagal menambahkan data.' });
       }
     },
 
@@ -141,7 +141,7 @@ function crudFactory(Model, options = {}) {
         await item.update(payload);
         res.json({ message: 'Data berhasil diperbarui.', data: item });
       } catch (err) {
-        res.status(400).json({ message: 'Gagal memperbarui data.', error: err.message });
+        res.status(400).json({ message: 'Gagal memperbarui data.' });
       }
     },
 
@@ -152,7 +152,7 @@ function crudFactory(Model, options = {}) {
         await item.destroy();
         res.json({ message: 'Data berhasil dihapus.' });
       } catch (err) {
-        res.status(500).json({ message: 'Gagal menghapus data.', error: err.message });
+        res.status(500).json({ message: 'Gagal menghapus data.' });
       }
     },
   };

@@ -18,27 +18,27 @@ export default function Dashboard() {
 
   return (
     <div className="font-dash">
-      <h1 className="text-[20px] font-semibold text-dashNavy mb-6">Ringkasan Dashboard</h1>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <h1 className="text-2xl font-bold text-navy mb-6">Ringkasan Dashboard</h1>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {widgets.map((w) => {
           const Icon = w.icon;
           const isAlert = w.accent && data?.[w.key] > 0;
           return (
             <div
               key={w.key}
-              className={`bg-white rounded-lg border p-5 shadow-dashCard transition ${
-                isAlert ? 'border-dashAccent' : 'border-gray-200'
+              className={`bg-white rounded-xl border p-6 shadow-md hover:shadow-lg transition-all duration-300 ${
+                isAlert ? 'border-gold' : 'border-gray-200'
               }`}
             >
               <div
-                className={`w-9 h-9 rounded-md flex items-center justify-center mb-3 ${
-                  isAlert ? 'bg-dashAccent/10' : 'bg-dashNavy/5'
+                className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${
+                  isAlert ? 'bg-gold/20' : 'bg-navy/10'
                 }`}
               >
-                <Icon className={`w-[18px] h-[18px] ${isAlert ? 'text-dashAccent' : 'text-dashNavy'}`} />
+                <Icon className={`w-5 h-5 ${isAlert ? 'text-gold' : 'text-navy'}`} />
               </div>
-              <p className="text-3xl font-semibold text-dashNavy">{data ? data[w.key] : '—'}</p>
-              <p className="text-sm text-dashNavy/60 mt-1">{w.label}</p>
+              <p className="text-3xl font-bold text-navy">{data ? data[w.key] : '—'}</p>
+              <p className="text-sm text-navy/70 mt-2">{w.label}</p>
             </div>
           );
         })}

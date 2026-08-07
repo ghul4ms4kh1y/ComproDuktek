@@ -4,6 +4,7 @@ const crudFactory = require('../controllers/crudFactory');
 const orgStructureController = require('../controllers/orgStructureController');
 const { OrgStructure } = require('../models');
 const { requireAuth } = require('../middleware/auth');
+const { orgStructureValidation } = require('../middleware/validation');
 
 const controller = crudFactory(OrgStructure, {
   searchFields: ['name', 'position', 'rank'],
@@ -19,8 +20,8 @@ router.put('/reorder', requireAuth, orgStructureController.reorder);
 
 router.get('/:id', controller.show);
 
-router.post('/', requireAuth, controller.create);
-router.put('/:id', requireAuth, controller.update);
+router.post('/', requireAuth, orgStructureValidation, controller.create);
+router.put('/:id', requireAuth, orgStructureValidation, controller.update);
 router.delete('/:id', requireAuth, orgStructureController.remove);
 
 module.exports = router;
