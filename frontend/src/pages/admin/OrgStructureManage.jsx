@@ -116,10 +116,10 @@ export default function OrgStructureManage() {
   };
 
   return (
-    <div>
+    <div className="font-dash">
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h1 className="text-xl font-bold text-navy">Struktur Organisasi</h1>
-        <button onClick={openCreate} className="btn-primary text-sm">+ Tambah</button>
+        <h1 className="text-[20px] font-semibold text-dashNavy">Struktur Organisasi</h1>
+        <button onClick={openCreate} className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:brightness-95 transition">+ Tambah</button>
       </div>
 
       <input
@@ -127,12 +127,12 @@ export default function OrgStructureManage() {
         placeholder="Cari nama atau jabatan..."
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        className="w-full max-w-xs mb-4 border border-panel rounded-md px-3 py-2.5 text-sm"
+        className="w-full max-w-xs mb-4 border border-gray-200 rounded-md px-3 py-2.5 text-sm text-black focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
       />
 
-      <div className="bg-white rounded-xl border border-panel overflow-x-auto shadow-sm">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto shadow-dashCard">
         <table className="w-full text-sm">
-          <thead className="bg-panel text-navy text-left">
+          <thead className="bg-gray-50 text-dashNavy text-left">
             <tr>
               <th className="px-4 py-3 font-semibold">Foto</th>
               <th className="px-4 py-3 font-semibold">Nama</th>
@@ -142,22 +142,22 @@ export default function OrgStructureManage() {
               <th className="px-4 py-3 font-semibold">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-panel">
-            {loading && <tr><td colSpan={6} className="px-4 py-6 text-center text-inktext/50">Memuat...</td></tr>}
-            {!loading && filtered.length === 0 && <tr><td colSpan={6} className="px-4 py-6 text-center text-inktext/50">Belum ada data.</td></tr>}
+          <tbody className="divide-y divide-gray-100">
+            {loading && <tr><td colSpan={6} className="px-4 py-6 text-center text-dashNavy/40">Memuat...</td></tr>}
+            {!loading && filtered.length === 0 && <tr><td colSpan={6} className="px-4 py-6 text-center text-dashNavy/40">Belum ada data.</td></tr>}
             {filtered.map((item) => (
               <tr key={item.id}>
                 <td className="px-4 py-3">
                   {item.photo
                     ? <img src={item.photo} alt={item.name} className="w-9 h-9 rounded-full object-cover" />
-                    : <span className="w-9 h-9 rounded-full bg-panel flex items-center justify-center text-inktext/40 text-xs">?</span>}
+                    : <span className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-dashNavy/40 text-xs">?</span>}
                 </td>
-                <td className="px-4 py-3 text-navy font-medium">{item.name}</td>
-                <td className="px-4 py-3">{item.position}</td>
-                <td className="px-4 py-3">{item.rank || '—'}</td>
-                <td className="px-4 py-3 text-inktext/70">{parentLabel(item.parent_id)}</td>
+                <td className="px-4 py-3 text-dashNavy font-medium">{item.name}</td>
+                <td className="px-4 py-3 text-black">{item.position}</td>
+                <td className="px-4 py-3 text-black">{item.rank || '—'}</td>
+                <td className="px-4 py-3 text-dashNavy/70">{parentLabel(item.parent_id)}</td>
                 <td className="px-4 py-3 space-x-2 whitespace-nowrap">
-                  <button onClick={() => openEdit(item)} className="text-navy hover:text-gold underline">Edit</button>
+                  <button onClick={() => openEdit(item)} className="text-dashNavy hover:text-dashAccent underline">Edit</button>
                   <button onClick={() => setDeleting(item)} className="text-red-600 hover:text-red-800 underline">Hapus</button>
                 </td>
               </tr>

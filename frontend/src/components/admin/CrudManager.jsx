@@ -83,10 +83,10 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
   };
 
   return (
-    <div>
+    <div className="font-dash">
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h1 className="text-xl font-bold text-navy">{title}</h1>
-        <button onClick={openCreate} className="btn-primary text-sm">+ Tambah</button>
+        <h1 className="text-[20px] font-semibold text-dashNavy">{title}</h1>
+        <button onClick={openCreate} className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:brightness-95 transition">+ Tambah</button>
       </div>
 
       <input
@@ -94,28 +94,28 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
         placeholder="Cari..."
         value={q}
         onChange={(e) => { setPage(1); setQ(e.target.value); }}
-        className="border border-panel rounded-md px-3 py-2 text-sm w-full max-w-xs mb-4"
+        className="border border-gray-200 rounded-md px-3 py-2 text-sm w-full max-w-xs mb-4 text-black focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
       />
 
       {/* Desktop table */}
-      <div className="hidden md:block bg-white rounded-lg border border-panel overflow-x-auto">
+      <div className="hidden md:block bg-white rounded-lg border border-gray-200 shadow-dashCard overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-panel text-navy text-left">
+          <thead className="bg-gray-50 text-dashNavy text-left">
             <tr>
               {columns.map((c) => <th key={c.key} className="px-4 py-3 font-semibold">{c.label}</th>)}
               <th className="px-4 py-3 font-semibold">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-panel">
-            {loading && <tr><td colSpan={columns.length + 1} className="px-4 py-6 text-center text-inktext/50">Memuat...</td></tr>}
-            {!loading && items.length === 0 && <tr><td colSpan={columns.length + 1} className="px-4 py-6 text-center text-inktext/50">Belum ada data.</td></tr>}
+          <tbody className="divide-y divide-gray-100">
+            {loading && <tr><td colSpan={columns.length + 1} className="px-4 py-6 text-center text-dashNavy/40">Memuat...</td></tr>}
+            {!loading && items.length === 0 && <tr><td colSpan={columns.length + 1} className="px-4 py-6 text-center text-dashNavy/40">Belum ada data.</td></tr>}
             {items.map((item) => (
               <tr key={item.id}>
                 {columns.map((c) => (
                   <td key={c.key} className="px-4 py-3">{c.render ? c.render(item) : item[c.key]}</td>
                 ))}
                 <td className="px-4 py-3 space-x-2 whitespace-nowrap">
-                  <button onClick={() => openEdit(item)} className="text-navy hover:text-gold underline">Edit</button>
+                  <button onClick={() => openEdit(item)} className="text-dashNavy hover:text-dashAccent underline">Edit</button>
                   <button onClick={() => setDeleting(item)} className="text-red-600 hover:text-red-800 underline">Hapus</button>
                 </td>
               </tr>
@@ -127,15 +127,15 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
       {/* Mobile card view */}
       <div className="md:hidden space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="card">
+          <div key={item.id} className="bg-white rounded-lg border border-gray-200 shadow-dashCard p-4">
             {columns.map((c) => (
               <p key={c.key} className="text-sm mb-1">
-                <span className="text-inktext/50">{c.label}: </span>
+                <span className="text-dashNavy/50">{c.label}: </span>
                 {c.render ? c.render(item) : item[c.key]}
               </p>
             ))}
             <div className="flex gap-3 mt-2 text-sm">
-              <button onClick={() => openEdit(item)} className="text-navy underline">Edit</button>
+              <button onClick={() => openEdit(item)} className="text-dashNavy underline">Edit</button>
               <button onClick={() => setDeleting(item)} className="text-red-600 underline">Hapus</button>
             </div>
           </div>
@@ -148,7 +148,7 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`w-8 h-8 rounded-md text-sm ${p === page ? 'bg-navy text-white' : 'bg-white border border-panel text-navy'}`}
+              className={`w-8 h-8 rounded-md text-sm transition ${p === page ? 'bg-dashNavy text-white' : 'bg-white border border-gray-200 text-dashNavy hover:border-dashAccent'}`}
             >
               {p}
             </button>

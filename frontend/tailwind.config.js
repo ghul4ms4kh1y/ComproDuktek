@@ -10,9 +10,20 @@ export default {
         panel: '#EEF2F6',       // Latar area konten
         inktext: '#3A3A3A',     // Warna teks isi
         darkbg: '#051221',      // Background yang lebih gelap (Soteria style)
+        // --- Token khusus Dashboard Admin (design.md "Dash") ---
+        // Terpisah dari token di atas supaya reskin dashboard TIDAK
+        // memengaruhi tampilan halaman publik yang masih pakai navy/gold.
+        dashNavy: '#00162f',    // Primary - sidebar, heading, teks utama admin
+        dashAccent: '#763ff9',  // Accent - tombol utama, state aktif, fokus
       },
       fontFamily: {
         sans: ['Manrope', 'sans-serif'],
+        // Font khusus Dashboard Admin (design.md pakai Inter)
+        dash: ['Inter', 'sans-serif'],
+      },
+      boxShadow: {
+        // Shadow khusus Dashboard Admin, nilai persis dari design.md
+        dashCard: '0px 1px 1px 0px rgba(118, 135, 154, 0.24), 0px 3px 8px 0px rgba(118, 135, 154, 0.08)',
       },
       animation: {
         'fade-in': 'fadeIn 0.8s ease-out forwards',
