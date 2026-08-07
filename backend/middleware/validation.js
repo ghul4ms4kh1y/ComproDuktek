@@ -3,9 +3,9 @@ const { body, validationResult } = require('express-validator');
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ 
-      message: 'Validasi gagal.', 
-      errors: errors.array() 
+    return res.status(400).json({
+      message: 'Validasi gagal.',
+      errors: errors.array()
     });
   }
   next();
@@ -27,7 +27,7 @@ const productValidation = [
 ];
 
 const galleryValidation = [
-  body('title').trim().notEmpty().withMessage('Judul wajib diisi.').isLength({ max: 255 }).withMessage('Judul maksimal 255 karakter.'),
+  body('gallery_date').notEmpty().withMessage('Tanggal kegiatan wajib diisi.'),
   body('description').optional().trim(),
   body('category').optional().trim().isLength({ max: 100 }).withMessage('Kategori maksimal 100 karakter.'),
   handleValidationErrors,
