@@ -80,11 +80,13 @@ export default function Sidebar({ collapsed, setCollapsed }) {
       </nav>
 
       <button
-        onClick={handleLogout}
-        className="m-4 flex items-center justify-center gap-2 px-4 py-2.5 text-sm rounded-md bg-white/10 border border-white/20 hover:bg-white/20 hover:border-blue-600 transition-colors font-medium"
-      >
-        {collapsed ? <Power className="w-4 h-4" /> : (<><LogOut className="w-4 h-4" /> Logout</>)}
-      </button>
+  onClick={handleLogout}
+  className={`flex items-center justify-center gap-2 text-sm rounded-md bg-white/10 border border-white/20 hover:bg-white/20 hover:border-blue-600 transition-colors font-medium ${
+    collapsed ? 'mx-auto my-4 p-2.5' : 'm-4 px-4 py-2.5'
+  }`}
+>
+  {collapsed ? <Power className="w-4 h-4 shrink-0" /> : (<><LogOut className="w-4 h-4 shrink-0" /> Logout</>)}
+</button>
     </aside>
   );
 }
