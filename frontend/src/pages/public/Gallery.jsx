@@ -4,13 +4,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Shield, Cpu, Image as ImageIcon, X, Calendar, Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import RevealSection from '../../components/common/RevealSection';
 
-const bentoLayoutClasses = [
-  "col-span-1 row-span-1",
-  "col-span-1 row-span-1 md:col-span-2 md:row-span-2",
-  "col-span-1 row-span-1",
-  "col-span-1 row-span-1",
-  "col-span-1 row-span-1",
-];
+const getResponsiveGridClass = (index, totalItems) => {
+  if (totalItems < 3) return "col-span-1 row-span-1";
+  
+  const patterns = {
+    0: "col-span-1 row-span-1 md:col-span-2 md:row-span-2",
+    1: "col-span-1 row-span-1",
+    2: "col-span-1 row-span-1",
+    3: "col-span-1 row-span-1 md:col-span-1 md:row-span-2",
+    4: "col-span-1 row-span-1",
+  };
+  
+  return patterns[index % 5] || "col-span-1 row-span-1";
+};
 
 export default function Gallery() {
   const [photos, setPhotos] = useState([]);
@@ -123,21 +129,23 @@ export default function Gallery() {
                   className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-5 auto-rows-[220px]"
                 >
                   {currentPhotos.map((item, index) => {
-                    const bentoClass = bentoLayoutClasses[index % bentoLayoutClasses.length];
+                    const bentoClass = getResponsiveGridClass(index, currentPhotos.length);
                     return (
                       <motion.div
                         key={item.id}
                         layoutId={`photo-${item.id}`}
                         onClick={() => setSelectedPhoto(item)}
                         className={`group relative overflow-hidden rounded-3xl cursor-pointer bg-slate-100 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-blue-200 ${bentoClass}`}
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.99 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
                         <img
                           src={item.image}
                           alt={item.description}
-                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                          width="400"
+                          height="350"
                           loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                         />
 
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 text-white">

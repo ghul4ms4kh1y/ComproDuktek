@@ -131,11 +131,11 @@ export default function Contact() {
               <div className="text-xs text-inktext/70 space-y-1.5 font-light">
                 <div className="flex justify-between border-b border-gray-200/60 pb-1.5">
                   <span>Senin – Kamis</span>
-                  <span className="font-semibold text-navy">08.00 – 16.00 WIB</span>
+                  <span className="font-semibold text-navy">09.00 – 15.00 WIB</span>
                 </div>
                 <div className="flex justify-between pt-0.5">
                   <span>Jumat</span>
-                  <span className="font-semibold text-navy">08.00 – 16.30 WIB</span>
+                  <span className="font-semibold text-navy">09.00 – 15.30 WIB</span>
                 </div>
               </div>
             </div>
@@ -154,7 +154,7 @@ export default function Contact() {
                   </label>
                   <input
                     type="text"
-                    placeholder="Masukkan nama Anda..."
+                    placeholder="Contoh: Nama Lengkap Anda"
                     value={form.sender_name}
                     onChange={(e) => setForm({ ...form, sender_name: e.target.value })}
                     className="w-full bg-[#f8fafc] border border-gray-200 rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:border-navy focus:bg-white focus:ring-1 focus:ring-navy transition-all"
@@ -173,7 +173,7 @@ export default function Contact() {
                   </label>
                   <input
                     type="email"
-                    placeholder="example@domain.com"
+                    placeholder="Contoh: nama@domain.com"
                     value={form.sender_email}
                     onChange={(e) => setForm({ ...form, sender_email: e.target.value })}
                     className="w-full bg-[#f8fafc] border border-gray-200 rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:border-navy focus:bg-white focus:ring-1 focus:ring-navy transition-all"

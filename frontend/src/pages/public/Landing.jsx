@@ -171,6 +171,8 @@ export default function Landing() {
                 <img
                   src="/logo.png"
                   alt="Logo Satlak"
+                  width="40"
+                  height="40"
                   className="h-8 md:h-10 w-auto object-contain"
                 />
                 <span className="text-2xl md:text-3xl font-extrabold tracking-[0.2em] uppercase text-navy">
@@ -179,6 +181,8 @@ export default function Landing() {
                 <img
                   src="/pussiberad_logo.png"
                   alt="Logo Pussiberad"
+                  width="40"
+                  height="40"
                   className="h-8 md:h-10 w-auto object-contain"
                 />
               </div>
@@ -235,9 +239,10 @@ export default function Landing() {
 
                   <Link
                     to={h.link}
+                    aria-label={`Selengkapnya tentang ${h.title}`}
                     className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-blue-600 bg-gray-50 hover:bg-blue-50 px-4 py-2.5 rounded-lg w-fit transition-colors"
                   >
-                    Lihat Detail <span className="text-xs">›</span>
+                    Selengkapnya <span className="text-xs">›</span>
                   </Link>
                 </div>
               );
@@ -305,6 +310,9 @@ export default function Landing() {
                         <img
                           src={p.image}
                           alt={p.name}
+                          width="277"
+                          height="208"
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
@@ -398,12 +406,16 @@ export default function Landing() {
                 <div className="lg:col-span-6 flex">
                   <Link
                     to={`/berita/${news[0].id}`}
+                    aria-label={`Baca berita selengkapnya: ${news[0].title}`}
                     className="group relative w-full min-h-[420px] md:min-h-[460px] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200/80 flex flex-col justify-end p-6 md:p-8"
                   >
                     {news[0].thumbnail ? (
                       <img
                         src={news[0].thumbnail}
                         alt={news[0].title}
+                        width="613"
+                        height="460"
+                        loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                     ) : (
@@ -432,7 +444,7 @@ export default function Landing() {
                       </p>
 
                       <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-400 group-hover:text-blue-300">
-                        Baca Selengkapnya <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        Selengkapnya <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </div>
                     </div>
                   </Link>
@@ -445,6 +457,7 @@ export default function Landing() {
                   <Link
                     to={`/berita/${n.id}`}
                     key={n.id}
+                    aria-label={`Baca berita selengkapnya: ${n.title}`}
                     className="group bg-white border border-gray-100 rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col sm:flex-row gap-5 items-center h-full"
                   >
                     <div className="w-full sm:w-48 h-40 sm:h-full shrink-0 overflow-hidden rounded-xl bg-slate-900 relative">
@@ -452,6 +465,9 @@ export default function Landing() {
                         <img
                           src={n.thumbnail}
                           alt={n.title}
+                          width="192"
+                          height="160"
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (

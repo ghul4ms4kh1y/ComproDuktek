@@ -8,7 +8,12 @@ async function seed() {
 
     const existing = await Admin.findOne({ where: { username: process.env.SEED_ADMIN_USERNAME } });
     if (existing) {
-      console.log('Admin sudah ada, seed dilewati.');
+      const hashed = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD, 10);
+      existing.password = hashed;
+      existing.email = process.env.SEED_ADMIN_EMAIL;
+      existing.full_name = process.env.SEED_ADMIN_FULLNAME;
+      await existing.save();
+      console.log('Admin sudah ada, password dan data diperbarui sesuai file .env.');
       process.exit(0);
     }
 
