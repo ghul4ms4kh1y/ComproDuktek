@@ -185,6 +185,9 @@ export default function NewsDetail() {
               <img
                 src={item.thumbnail}
                 alt={item.title}
+                width="896"
+                height="480"
+                loading="lazy"
                 className="w-full max-h-[480px] object-cover"
               />
             ) : (
@@ -238,6 +241,9 @@ export default function NewsDetail() {
                         <img
                           src={news.thumbnail}
                           alt={news.title}
+                          width="384"
+                          height="176"
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (

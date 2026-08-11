@@ -36,7 +36,10 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
         setItems(r.data.data);
         setTotalPages(r.data.pagination.totalPages || 1);
       })
-      .catch(() => showToast('Gagal memuat data.', 'error'))
+      .catch((err) => {
+        console.error('Error loading data:', err);
+        showToast(err.response?.data?.message || 'Gagal memuat data. Periksa koneksi jaringan.', 'error');
+      })
       .finally(() => setLoading(false));
   };
 
@@ -76,7 +79,8 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
       setDeleting(null);
       load();
     } catch (err) {
-      showToast('Gagal menghapus data.', 'error');
+      console.error('Error deleting data:', err);
+      showToast(err.response?.data?.message || 'Gagal menghapus data. Silakan coba lagi.', 'error');
     } finally {
       setDeleteLoading(false);
     }

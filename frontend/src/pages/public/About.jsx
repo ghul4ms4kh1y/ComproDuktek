@@ -71,19 +71,25 @@ export default function About() {
 
             <div className="lg:col-span-5 relative flex items-center justify-center min-h-[380px]">
               <div className="absolute left-0 bottom-4 w-44 md:w-56 h-60 md:h-72 rounded-b-full overflow-hidden border-4 border-white shadow-xl bg-slate-900 group hover:scale-105 transition-transform duration-500 z-10">
-                <img
-                  src="/logo.png"
-                  alt="Logo Satlak Dukteksi"
-                  className="w-full h-full object-contain p-6 bg-gradient-to-br from-slate-900 via-navy to-slate-900 group-hover:scale-110 transition-transform duration-500"
-                />
+                 <img
+                   src="/logo.png"
+                   alt="Logo Satlak Dukteksi"
+                   width="176"
+                   height="288"
+                   loading="lazy"
+                   className="w-full h-full object-contain p-6 bg-gradient-to-br from-slate-900 via-navy to-slate-900 group-hover:scale-110 transition-transform duration-500"
+                 />
               </div>
 
               <div className="absolute right-2 top-0 w-52 md:w-60 h-72 md:h-84 rounded-t-full overflow-hidden border-4 border-white shadow-2xl bg-navy group hover:scale-105 transition-transform duration-500 z-20">
-                <img
-                  src="/pussiberad_logo.png"
-                  alt="Logo PUSSIBERAD"
-                  className="w-full h-full object-contain p-8 bg-gradient-to-tr from-navy via-slate-900 to-navy group-hover:scale-110 transition-transform duration-500"
-                />
+                 <img
+                   src="/pussiberad_logo.png"
+                   alt="Logo PUSSIBERAD"
+                   width="208"
+                   height="336"
+                   loading="lazy"
+                   className="w-full h-full object-contain p-8 bg-gradient-to-tr from-navy via-slate-900 to-navy group-hover:scale-110 transition-transform duration-500"
+                 />
               </div>
             </div>
           </div>
@@ -125,10 +131,13 @@ export default function About() {
 
               <div className="relative w-56 h-56 md:w-80 md:h-80 rounded-full p-6 bg-white border border-gray-100 shadow-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                 <img
-                  src="/logo.png"
-                  alt="Logo Satlak Dukteksi"
-                  className="h-60 object-contain filter drop-shadow-md"
-                />
+                   src="/logo.png"
+                   alt="Logo Satlak Dukteksi"
+                   width="240"
+                   height="240"
+                   loading="lazy"
+                   className="h-60 object-contain filter drop-shadow-md"
+                 />
               </div>
 
               <div className="mt-8 text-center relative z-10 space-y-1">

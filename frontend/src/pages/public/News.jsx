@@ -180,6 +180,9 @@ export default function News() {
                         <img
                           src={recentMain.thumbnail}
                           alt={recentMain.title}
+                          width="613"
+                          height="345"
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                         />
                       ) : (
@@ -242,6 +245,9 @@ export default function News() {
                         <img
                           src={item.thumbnail}
                           alt={item.title}
+                          width="128"
+                          height="96"
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
@@ -325,11 +331,14 @@ export default function News() {
                 <div>
                   <div className="relative overflow-hidden rounded-xl mb-4 h-44 bg-slate-900">
                     {item.thumbnail ? (
-                      <img
-                        src={item.thumbnail}
-                        alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          width="384"
+                          height="176"
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-slate-900 to-navy flex items-center justify-center">
                         <Newspaper className="w-8 h-8 text-white/30" />

@@ -35,14 +35,16 @@ export default function Navbar() {
 
         {/* Logo Satlak */}
         <NavLink to="/" className="flex items-center gap-3 group">
-          <img
-            src="/logo.png"
-            alt="Logo Dukteksi"
-            className="h-10 w-auto object-contain"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
+           <img
+             src="/logo.png"
+             alt="Logo Dukteksi"
+             width="40"
+             height="40"
+             className="h-10 w-auto object-contain"
+             onError={(e) => {
+               e.currentTarget.style.display = 'none';
+             }}
+           />
           <div className="flex flex-col">
             <span className="text-navy group-hover:text-blue-600 transition-colors font-extrabold text-lg md:text-xl tracking-tight uppercase leading-none">
               SATLAK DUKTEKSI

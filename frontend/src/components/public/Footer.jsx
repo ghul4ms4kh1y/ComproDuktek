@@ -17,16 +17,20 @@ export default function Footer() {
             <div>
               {/* Logo & Branding Title */}
               <div className="flex items-center gap-3 mb-4">
-                <img
-                  src="/logo.png"
-                  alt="Logo Satlak Dukteksi"
-                  className="h-12 w-auto object-contain shrink-0"
-                />
-                <img
-                  src="/pussiberad_logo.png"
-                  alt="Logo PUSSIBERAD"
-                  className="h-12 w-auto object-contain shrink-0 border-l border-gray-200 pl-3"
-                />
+                 <img
+                   src="/logo.png"
+                   alt="Logo Satlak Dukteksi"
+                   width="48"
+                   height="48"
+                   className="h-12 w-auto object-contain shrink-0"
+                 />
+                 <img
+                   src="/pussiberad_logo.png"
+                   alt="Logo PUSSIBERAD"
+                   width="48"
+                   height="48"
+                   className="h-12 w-auto object-contain shrink-0 border-l border-gray-200 pl-3"
+                 />
               </div>
 
               <h3 className="text-navy font-extrabold text-lg tracking-tight uppercase leading-snug">

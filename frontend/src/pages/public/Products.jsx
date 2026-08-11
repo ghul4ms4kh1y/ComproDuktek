@@ -129,10 +129,13 @@ export default function Products() {
                     <div className="relative overflow-hidden rounded-xl mb-5 h-52 bg-slate-900">
                       {p.image ? (
                         <img
-                          src={p.image}
-                          alt={p.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
+                           src={p.image}
+                           alt={p.name}
+                           width="277"
+                           height="208"
+                           loading="lazy"
+                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-slate-900 via-navy to-slate-900 flex flex-col items-center justify-center text-white/40 p-4">
                           <Cpu className="w-10 h-10 mb-2 opacity-50" />

@@ -82,11 +82,14 @@ export default function ProductDetail() {
                     <div className="lg:col-span-5 bg-white border border-gray-200 rounded-[2.5rem] p-6 relative overflow-hidden shadow-sm">
                         <div className="relative overflow-hidden rounded-2xl h-80 sm:h-96 bg-slate-900 border border-gray-200/50">
                             {product.image ? (
-                                <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover"
-                                />
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                width="448"
+                                height="576"
+                                loading="lazy"
+                                className="w-full h-full object-cover"
+                              />
                             ) : (
                                 <div className="w-full h-full bg-gradient-to-br from-slate-900 via-navy to-slate-900 flex flex-col items-center justify-center text-white/40 p-6 text-center">
                                     <Cpu className="w-16 h-16 mb-3 opacity-50" />
