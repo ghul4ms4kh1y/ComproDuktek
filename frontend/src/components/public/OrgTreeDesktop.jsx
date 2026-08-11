@@ -4,14 +4,14 @@ import { BOX_COLORS } from './orgTreeUtils';
 function PersonBox({ node }) {
   const c = BOX_COLORS[node.box_color] || BOX_COLORS.teal;
   return (
-    <div className={`inline-flex items-center gap-2 rounded-xl border ${c.bg} ${c.text} ${c.border} px-3 py-2 shadow-sm whitespace-nowrap`}>
-      {node.photo
-        ? <img src={node.photo} alt={node.name} className="w-9 h-9 rounded-full object-cover shrink-0 border border-white shadow" />
-        : <span className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center shrink-0"><UserRound className="w-4 h-4" /></span>}
-      <div className="text-left">
-        <p className="text-xs font-bold leading-tight">{node.position}</p>
-        <p className="text-[11px] leading-tight opacity-80">{node.rank ? `${node.rank}` : ''} {node.name}</p>
+    <div className="flex flex-col items-center w-48 text-center">
+      <div className={`w-40 h-48 rounded-2xl overflow-hidden border-2 ${c.border} shadow-sm bg-gray-100 flex items-center justify-center shrink-0`}>
+        {node.photo
+          ? <img src={node.photo} alt={node.name} className="w-full h-full object-cover" />
+          : <UserRound className="w-16 h-16 text-gray-400" />}
       </div>
+      <p className="text-sm font-bold text-navy leading-tight mt-3">{node.rank ? `${node.rank} ` : ''}{node.name}</p>
+      <p className={`text-xs font-semibold leading-tight mt-2 px-3 py-1 rounded-full ${c.bg} ${c.text}`}>{node.position}</p>
     </div>
   );
 }
