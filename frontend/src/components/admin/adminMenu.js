@@ -17,6 +17,5 @@ export const adminMenu = [
   { label: 'Produk', to: '/admin-portal/produk', icon: Package },
   { label: 'Galeri', to: '/admin-portal/galeri', icon: Images },
   { label: 'Struktur Organisasi', shortLabel: 'Struktur', to: '/admin-portal/struktur-organisasi', icon: Network },
-  { label: 'FAQ', to: '/admin-portal/faq', icon: HelpCircle },
   { label: 'Kotak Masuk', shortLabel: 'Pesan', to: '/admin-portal/kotak-masuk', icon: Mail },
 ];
