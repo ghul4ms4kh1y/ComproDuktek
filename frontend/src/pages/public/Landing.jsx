@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import { Marquee } from '../../components/ui/marquee';
+import HeroSlider from '../../components/public/HeroSlider';
 import {
   Terminal,
   Wrench,
@@ -124,14 +125,8 @@ export default function Landing() {
 
       {/* Hero Section */}
       <section className="max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div
-          className="relative rounded-[2.5rem] overflow-hidden flex items-center min-h-[75vh] shadow-xl shadow-navy/10 border border-gray-100"
-          style={{
-            backgroundImage: "url('/bg_logo.jpg')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
+        <div className="relative rounded-[2.5rem] overflow-hidden flex items-center min-h-[75vh] shadow-xl shadow-navy/10 border border-gray-100">
+          <HeroSlider />
           <div className="absolute inset-0 bg-[#0c1839]/40 bg-gradient-to-r from-[#0c1839]/80 via-[#0c1839]/60 to-transparent" />
 
           <div className="relative z-10 px-8 md:px-16 lg:px-24 py-20 max-w-5xl animate-fade-in-up text-left">

@@ -1,38 +1,14 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import {
-  LayoutDashboard,
-  Newspaper,
-  Package,
-  Images,
-  Network,
-  HelpCircle,
-  Mail,
-  Menu,
-  LogOut,
-  Power,
-} from 'lucide-react';
+import { Menu, LogOut, Power } from 'lucide-react';
+import { adminMenu as menu } from './adminMenu';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
 
-const menu = [
-  { label: 'Dashboard', to: '/admin-portal/dashboard', icon: LayoutDashboard },
-  { label: 'Berita', to: '/admin-portal/berita', icon: Newspaper },
-  { label: 'Produk', to: '/admin-portal/produk', icon: Package },
-  { label: 'Galeri', to: '/admin-portal/galeri', icon: Images },
-  { label: 'Struktur Organisasi', to: '/admin-portal/struktur-organisasi', icon: Network },
-  { label: 'FAQ', to: '/admin-portal/faq', icon: HelpCircle },
-  { label: 'Kotak Masuk', to: '/admin-portal/kotak-masuk', icon: Mail },
-];
-
-export default function Sidebar({ collapsed, setCollapsed }) {
+// Sidebar khusus layar >=lg (desktop/laptop). Di layar lebih kecil,
+// komponen ini disembunyikan total lewat "hidden lg:flex" — navigasi
+// mobile digantikan oleh <BottomNav /> yang menempel di bawah layar.
+export default function Sidebar({ collapsed, setCollapsed, unread }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [unread, setUnread] = useState(0);
-
-  useEffect(() => {
-    api.get('/messages', { params: { limit: 1 } }).then((r) => setUnread(r.data.unreadCount)).catch(() => {});
-  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -41,7 +17,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
 
   return (
     <aside
-      className={`bg-navy text-white flex flex-col fixed inset-y-0 left-0 z-40 transition-all duration-200 font-dash ${
+      className={`hidden lg:flex bg-navy text-white flex-col fixed inset-y-0 left-0 z-40 transition-all duration-200 font-dash ${
         collapsed ? 'w-16' : 'w-64'
       }`}
     >
@@ -80,13 +56,13 @@ export default function Sidebar({ collapsed, setCollapsed }) {
       </nav>
 
       <button
-  onClick={handleLogout}
-  className={`flex items-center justify-center gap-2 text-sm rounded-md bg-white/10 border border-white/20 hover:bg-white/20 hover:border-blue-600 transition-colors font-medium ${
-    collapsed ? 'mx-auto my-4 p-2.5' : 'm-4 px-4 py-2.5'
-  }`}
->
-  {collapsed ? <Power className="w-4 h-4 shrink-0" /> : (<><LogOut className="w-4 h-4 shrink-0" /> Logout</>)}
-</button>
+        onClick={handleLogout}
+        className={`flex items-center justify-center gap-2 text-sm rounded-md bg-white/10 border border-white/20 hover:bg-white/20 hover:border-blue-600 transition-colors font-medium ${
+          collapsed ? 'mx-auto my-4 p-2.5' : 'm-4 px-4 py-2.5'
+        }`}
+      >
+        {collapsed ? <Power className="w-4 h-4 shrink-0" /> : (<><LogOut className="w-4 h-4 shrink-0" /> Logout</>)}
+      </button>
     </aside>
   );
 }
