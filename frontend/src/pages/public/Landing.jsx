@@ -6,7 +6,6 @@ import HeroSlider from '../../components/public/HeroSlider';
 import {
   Terminal,
   Wrench,
-  ShieldCheck,
   Server,
   ArrowUpRight,
   PackageSearch,
@@ -34,12 +33,6 @@ const highlights = [
     title: 'Pemeliharaan & Instalasi',
     desc: 'Layanan terpadu mencakup instalasi jaringan, perawatan infrastruktur siber, dan pengamanan sistem data secara berkelanjutan.',
     icon: Server,
-    link: '/produk'
-  },
-  {
-    title: 'Pengamanan Aset Informasi',
-    desc: 'Penerapan prinsip kehati-hatian untuk menutup setiap titik lemah dan melindungi seluruh aset data penting instansi dari kebocoran.',
-    icon: ShieldCheck,
     link: '/produk'
   },
 ];
@@ -182,7 +175,7 @@ export default function Landing() {
           </div>
 
           {/* Grid Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
             {highlights.map((h) => {
               const IconComponent = h.icon;
               return (
@@ -297,7 +290,7 @@ export default function Landing() {
                     <h3 className="font-bold text-xl text-navy dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
                       {p.name}
                     </h3>
-                    <p className="text-inktext/70 text-sm leading-relaxed line-clamp-2 mb-6">
+                    <p className="text-inktext/70 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-6">
                       {p.description || 'Solusi teknologi siber terapan yang dikembangkan khusus untuk mendukung keandalan sistem pertahanan.'}
                     </p>
                   </div>
@@ -331,7 +324,7 @@ export default function Landing() {
               <h2 className="text-3xl md:text-4xl font-bold text-navy dark:text-white leading-tight tracking-tight">
                 Berita & Kegiatan Terkini
               </h2>
-              <p className="text-inktext/70 text-sm md:text-base mt-2 max-w-xl">
+              <p className="text-inktext/70 dark:text-gray-400 text-sm md:text-base mt-2 max-w-xl">
                 Publikasi resmi mengenai operasional, edukasi siber, dan kabar terbaru dari Satlak Dukteksi PUSSIBERAD.
               </p>
             </div>
@@ -372,7 +365,7 @@ export default function Landing() {
                   <Link
                     to={`/berita/${news[0].id}`}
                     aria-label={`Baca berita selengkapnya: ${news[0].title}`}
-                    className="group relative w-full min-h-[420px] md:min-h-[460px] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200/80 flex flex-col justify-end p-6 md:p-8"
+                    className="group relative w-full min-h-[420px] md:min-h-[460px] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200/80 dark:border-navy flex flex-col justify-end p-6 md:p-8"
                   >
                     {news[0].thumbnail ? (
                       <img
@@ -472,7 +465,7 @@ export default function Landing() {
 
                 {news.length === 1 && (
                   <div className="bg-white dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-8 text-center flex flex-col items-center justify-center h-full">
-                    <p className="text-inktext/60 text-sm">Belum ada berita tambahan lainnya.</p>
+                    <p className="text-inktext/60 dark:text-gray-400 text-sm">Belum ada berita tambahan lainnya.</p>
                   </div>
                 )}
               </div>

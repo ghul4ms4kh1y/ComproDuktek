@@ -208,7 +208,7 @@ export default function Gallery() {
         {/* Footer Info Cards */}
         <RevealSection className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
           <div className="bg-[#f8fafc] dark:bg-darkpanel p-6 rounded-2xl border border-gray-100 dark:border-darkborder shadow-sm flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-navy/10 text-navy flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-navy/10 dark:bg-blue-900 text-navy dark:text-gray-400 flex items-center justify-center shrink-0">
               <Shield className="w-5 h-5" />
             </div>
             <div>
@@ -220,7 +220,7 @@ export default function Gallery() {
           </div>
 
           <div className="bg-[#f8fafc] dark:bg-darkpanel p-6 rounded-2xl border border-gray-100 dark:border-darkborder shadow-sm flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-navy/10 text-navy flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-navy/10 dark:bg-blue-900 dark:text-gray-400 text-navy flex items-center justify-center shrink-0">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
@@ -232,7 +232,7 @@ export default function Gallery() {
           </div>
 
           <div className="bg-[#f8fafc] dark:bg-darkpanel p-6 rounded-2xl border border-gray-100 dark:border-darkborder shadow-sm flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-navy/10 text-navy flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-navy/10 dark:bg-blue-900 dark:text-gray-400 text-navy flex items-center justify-center shrink-0">
               <Camera className="w-5 h-5" />
             </div>
             <div>
