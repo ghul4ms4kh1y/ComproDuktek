@@ -30,7 +30,7 @@ export default function About() {
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-12 space-y-24">
 
         {/* Section 1: Hero Profile */}
-        <RevealSection threshold={0.15} className="bg-white dark:bg-darkpanel rounded-[2.5rem] p-8 md:p-12 -mt-20 relative overflow-hidden border border-gray-100 dark:border-darkborder shadow-sm">
+        <RevealSection threshold={0.15} className="rounded-[2.5rem] p-8 md:p-12 -mt-20 relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-6">
               <h2 className="text-3xl md:text-5xl font-bold text-navy dark:text-white leading-tight tracking-tight">
@@ -127,7 +127,7 @@ export default function About() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Grid Kiri: Emblem Logo */}
             <div className="lg:col-span-5 bg-white dark:bg-[#112236] border border-gray-100 dark:border-darkborder rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden shadow-sm group">
-              <div className="absolute inset-0 bg-gradient-to-br from-navy/30 via-transparent to-navy/5 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-navy/30 via-transparent to-navy/5 pointer-events-none dark:from-white/20 dark:via-transparent dark:to-white/5" />
 
               <div className="relative w-56 h-56 md:w-80 md:h-80 rounded-full p-6 bg-white dark:bg-gray-100 border border-gray-100 shadow-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                 <img
@@ -160,7 +160,7 @@ export default function About() {
                     className="group bg-white dark:bg-[#112236] border border-gray-100 dark:border-darkborder p-6 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
                   >
                     <div>
-                      <div className="w-12 h-12 rounded-xl bg-navy group-hover:bg-blue-600 flex items-center justify-center text-white mb-4 transition-colors duration-300 shadow-md shadow-blue-500/10">
+                      <div className="w-12 h-12 rounded-xl bg-navy dark:bg-blue-900 group-hover:bg-blue-600 flex items-center justify-center text-white mb-4 transition-colors duration-300 shadow-md shadow-blue-500/10">
                         <IconComp className="w-6 h-6" />
                       </div>
                       <h4 className="font-bold text-navy dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 text-base mb-2">
