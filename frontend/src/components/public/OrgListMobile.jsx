@@ -8,7 +8,7 @@ function PersonRow({ node, depth }) {
   const c = BOX_COLORS[node.box_color] || BOX_COLORS.teal;
 
   return (
-    <div style={{ marginLeft: depth > 0 ? 16 : 0 }} className={depth > 0 ? 'border-l border-gray-200 pl-3' : ''}>
+    <div style={{ marginLeft: depth > 0 ? 16 : 0 }} className={depth > 0 ? 'border-l border-gray-200 dark:border-gray-700 pl-3' : ''}>
       <button
         onClick={() => hasChildren && setOpen((v) => !v)}
         className={`w-full flex items-center gap-2 rounded-xl border ${c.bg} ${c.text} ${c.border} px-3 py-2 mb-2`}

@@ -85,21 +85,21 @@ export default function News() {
   };
 
   return (
-    <div className="bg-white text-inktext min-h-screen pb-20">
+    <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen pb-20 transition-colors duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 -mt-2 py-10 space-y-16">
         {/* Section Header Judul */}
         <RevealSection className="text-center space-y-3">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-navy tracking-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-navy dark:text-white tracking-tight">
             Berita & Publikasi Kegiatan
           </h1>
-          <p className="text-inktext/70 text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-inktext/70 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed">
             Kumpulan warta terbaru, edukasi siber, publikasi kegiatan operasional, dan pengumuman resmi Satlak Dukteksi PUSSIBERAD.
           </p>
 
           {/* Search Bar Presisi */}
           <div className="pt-4 max-w-md mx-auto">
-            <div className="relative flex items-center w-full h-11 bg-[#f8fafc] border border-gray-200 rounded-full shadow-sm focus-within:border-navy focus-within:bg-white focus-within:ring-1 focus-within:ring-navy transition-all">
-              <div className="pl-4 pr-2 flex items-center justify-center text-inktext/40 pointer-events-none shrink-0">
+            <div className="relative flex items-center w-full h-11 bg-[#f8fafc] dark:bg-[#112236] border border-gray-200 dark:border-gray-700 rounded-full shadow-sm focus-within:border-navy dark:focus-within:border-blue-500 focus-within:bg-white dark:focus-within:bg-darkbg focus-within:ring-1 focus-within:ring-navy dark:focus-within:ring-blue-500 transition-all">
+              <div className="pl-4 pr-2 flex items-center justify-center text-inktext/40 dark:text-gray-500 pointer-events-none shrink-0">
                 <Search className="w-4 h-4" />
               </div>
               <input
@@ -110,7 +110,7 @@ export default function News() {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full h-full bg-transparent pr-4 text-xs md:text-sm font-medium text-navy placeholder:text-inktext/40 focus:outline-none leading-none"
+                className="w-full h-full bg-transparent pr-4 text-xs md:text-sm font-medium text-navy dark:text-white placeholder:text-inktext/40 dark:placeholder:text-gray-500 focus:outline-none leading-none"
               />
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function News() {
         {/* 1. Kategori Berita */}
         <RevealSection className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl md:text-2xl font-bold text-navy tracking-tight">
+            <h2 className="text-xl md:text-2xl font-bold text-navy dark:text-white tracking-tight">
               Kategori Berita
             </h2>
           </div>
@@ -133,8 +133,8 @@ export default function News() {
                   setCurrentPage(1);
                 }}
                 className={`px-5 py-2 rounded-2xl text-xs md:text-sm font-semibold transition-all duration-300 border cursor-pointer ${selectedCategory === cat
-                    ? 'bg-navy text-white border-navy shadow-md scale-105'
-                    : 'bg-[#f8fafc] text-inktext/70 border-gray-200/80 hover:bg-gray-100 hover:text-navy'
+                    ? 'bg-navy dark:bg-blue-600 text-white border-navy dark:border-blue-600 shadow-md scale-105'
+                    : 'bg-[#f8fafc] dark:bg-[#112236] text-inktext/70 dark:text-gray-400 border-gray-200/80 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-navy dark:hover:text-gray-200'
                   }`}
               >
                 {cat}
@@ -145,8 +145,8 @@ export default function News() {
 
         {/* 2. Recent Blogs (Berita Utama & Terbaru) */}
         <RevealSection className="space-y-6">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-navy tracking-tight">
+          <div className="flex items-center justify-between border-b border-gray-100 dark:border-darkborder pb-4">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-navy dark:text-white tracking-tight">
               Berita Utama & Terbaru
             </h2>
           </div>
@@ -161,10 +161,10 @@ export default function News() {
               </div>
             </div>
           ) : filteredNews.length === 0 ? (
-            <div className="bg-[#f8fafc] border border-dashed border-gray-200 rounded-[2rem] p-12 text-center my-6">
-              <Newspaper className="w-10 h-10 text-inktext/40 mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-navy">Belum Ada Berita</h3>
-              <p className="text-xs text-inktext/60 mt-1">
+            <div className="bg-[#f8fafc] dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem] p-12 text-center my-6">
+              <Newspaper className="w-10 h-10 text-inktext/40 dark:text-gray-500 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-navy dark:text-white">Belum Ada Berita</h3>
+              <p className="text-xs text-inktext/60 dark:text-gray-400 mt-1">
                 Tidak ada publikasi yang cocok dengan kata kunci/kategori ini.
               </p>
             </div>
@@ -173,9 +173,9 @@ export default function News() {
 
               {/* Card Utama Kiri */}
               {recentMain && (
-                <div className="lg:col-span-6 group bg-[#f8fafc] border border-gray-100 rounded-[2rem] p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                <div className="lg:col-span-6 group bg-[#f8fafc] dark:bg-[#112236] border border-gray-100 dark:border-darkborder rounded-[2rem] p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
                   <Link to={`/berita/${recentMain.id}`} className="space-y-4 block">
-                    <div className="relative overflow-hidden rounded-2xl bg-slate-900 aspect-[16/9] max-h-72 border border-gray-100 shadow-sm">
+                    <div className="relative overflow-hidden rounded-2xl bg-slate-900 aspect-[16/9] max-h-72 border border-gray-100 dark:border-gray-700 shadow-sm">
                       {recentMain.thumbnail ? (
                         <img
                           src={recentMain.thumbnail}
@@ -201,31 +201,29 @@ export default function News() {
                     </div>
 
                     <div className="space-y-2">
-                      <h3 className="text-lg md:text-xl font-bold text-navy group-hover:text-blue-600 transition-colors leading-snug line-clamp-2">
+                      <h3 className="text-lg md:text-xl font-bold text-navy dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
                         {recentMain.title}
                       </h3>
-
-                      <div className="flex items-center gap-3 text-xs font-medium text-inktext/60 pt-0.5">
+                      <div className="flex items-center gap-3 text-xs font-medium text-inktext/60 dark:text-gray-400 pt-0.5">
                         <span className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-navy" />
+                          <Calendar className="w-3.5 h-3.5 text-navy dark:text-gray-400" />
                           {recentMain.news_date || 'Terbaru'}
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5 text-navy" />
+                          <Clock className="w-3.5 h-3.5 text-navy dark:text-gray-400" />
                           {getReadTime(recentMain.content)}
                         </span>
                       </div>
-
-                      <p className="text-inktext/70 text-xs md:text-sm line-clamp-2 leading-relaxed pt-1">
+                      <p className="text-inktext/70 dark:text-gray-400 text-xs md:text-sm line-clamp-2 leading-relaxed pt-1">
                         {recentMain.content?.replace(/<[^>]*>?/gm, '')}
                       </p>
                     </div>
                   </Link>
 
-                  <div className="pt-4 mt-2 border-t border-gray-200/60 flex items-center justify-between text-xs font-bold text-navy group-hover:text-blue-600">
+                  <div className="pt-4 mt-2 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-xs font-bold text-navy dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     <span>Baca Berita Utama</span>
-                    <div className="w-7 h-7 rounded-full bg-white group-hover:bg-blue-50 flex items-center justify-center transition-colors shadow-sm">
+                    <div className="w-7 h-7 rounded-full bg-white dark:bg-gray-800 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40 flex items-center justify-center transition-colors shadow-sm">
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                     </div>
                   </div>
@@ -238,7 +236,7 @@ export default function News() {
                   <Link
                     key={item.id}
                     to={`/berita/${item.id}`}
-                    className="group bg-white border border-gray-100 rounded-2xl p-3.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 h-full"
+                    className="group bg-white dark:bg-[#112236] border border-gray-100 dark:border-darkborder rounded-2xl p-3.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4 h-full"
                   >
                     <div className="w-28 sm:w-32 h-24 shrink-0 overflow-hidden rounded-xl bg-slate-900 relative">
                       {item.thumbnail ? (
@@ -267,24 +265,24 @@ export default function News() {
 
                     <div className="flex flex-col justify-between h-full py-0.5 flex-1 min-w-0">
                       <div>
-                        <h4 className="font-bold text-sm text-navy group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                        <h4 className="font-bold text-sm text-navy dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
                           {item.title}
                         </h4>
 
-                        <div className="flex items-center gap-2.5 text-[11px] font-medium text-inktext/50 mt-1.5">
+                        <div className="flex items-center gap-2.5 text-[11px] font-medium text-inktext/50 dark:text-gray-400 mt-1.5">
                           <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-navy" />
+                            <Calendar className="w-3 h-3 text-navy dark:text-gray-400" />
                             {item.news_date}
                           </span>
                           <span>•</span>
                           <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-navy" />
+                            <Clock className="w-3 h-3 text-navy dark:text-gray-400" />
                             {getReadTime(item.content)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-navy group-hover:text-blue-600">
+                      <div className="mt-2 pt-2 border-t border-gray-100 dark:border-darkborder flex items-center justify-between text-xs font-semibold text-navy dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                         <span>Selengkapnya</span>
                         <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                       </div>
@@ -293,8 +291,8 @@ export default function News() {
                 ))}
 
                 {recentSub.length === 0 && (
-                  <div className="bg-[#f8fafc] border border-dashed border-gray-200 rounded-2xl p-6 text-center flex items-center justify-center h-full">
-                    <p className="text-xs text-inktext/60">Tidak ada berita tambahan di bagian ini.</p>
+                  <div className="bg-[#f8fafc] dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-6 text-center flex items-center justify-center h-full">
+                    <p className="text-xs text-inktext/60 dark:text-gray-400">Tidak ada berita tambahan di bagian ini.</p>
                   </div>
                 )}
               </div>
@@ -304,18 +302,18 @@ export default function News() {
         </RevealSection>
 
         {/* 3. Arsip Berita (Grid 4 Kolom dengan Pagination Maksimal 8 Item) */}
-        <RevealSection className="space-y-8 pt-6 border-t border-gray-100">
+        <RevealSection className="space-y-8 pt-6 border-t border-gray-100 dark:border-darkborder">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-navy tracking-tight">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-navy dark:text-white tracking-tight">
                 Arsip Berita & Artikel
               </h2>
-              <p className="text-inktext/60 text-xs md:text-sm mt-0.5">
+              <p className="text-inktext/60 dark:text-gray-400 text-xs md:text-sm mt-0.5">
                 Menampilkan seluruh dokumentasi artikel dan kegiatan publikasi satuan.
               </p>
             </div>
 
-            <div className="text-xs font-semibold text-navy bg-gray-50 border border-gray-200 px-3.5 py-2 rounded-xl w-fit shrink-0">
+            <div className="text-xs font-semibold text-navy dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3.5 py-2 rounded-xl w-fit shrink-0">
               {archiveNewsPool.length} Total Berita
             </div>
           </div>
@@ -326,7 +324,7 @@ export default function News() {
               <Link
                 key={item.id}
                 to={`/berita/${item.id}`}
-                className="group bg-[#f8fafc] border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+                className="group bg-[#f8fafc] dark:bg-[#112236] border border-gray-100 dark:border-darkborder rounded-2xl p-4 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="relative overflow-hidden rounded-xl mb-4 h-44 bg-slate-900">
@@ -354,26 +352,26 @@ export default function News() {
                     </div>
                   </div>
 
-                  <h3 className="font-bold text-sm md:text-base text-navy group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug mb-2">
+                  <h3 className="font-bold text-sm md:text-base text-navy dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug mb-2">
                     {item.title}
                   </h3>
 
-                  <div className="flex items-center gap-2.5 text-[11px] font-medium text-inktext/50 mb-3">
+                  <div className="flex items-center gap-2.5 text-[11px] font-medium text-inktext/50 dark:text-gray-400 mb-3">
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-navy" />
+                      <Calendar className="w-3 h-3 text-navy dark:text-gray-400" />
                       {item.news_date || 'Terbaru'}
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-navy" />
+                      <Clock className="w-3 h-3 text-navy dark:text-gray-400" />
                       {getReadTime(item.content)}
                     </span>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-gray-200/60 flex items-center justify-between text-xs font-semibold text-navy group-hover:text-blue-600">
+                <div className="pt-3 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-xs font-semibold text-navy dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                   <span>Baca Selengkapnya</span>
-                  <div className="w-6 h-6 rounded-full bg-white group-hover:bg-blue-50 flex items-center justify-center transition-colors shadow-sm">
+                  <div className="w-6 h-6 rounded-full bg-white dark:bg-gray-800 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40 flex items-center justify-center transition-colors shadow-sm">
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                   </div>
                 </div>
@@ -387,7 +385,7 @@ export default function News() {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2.5 rounded-xl border border-gray-200 bg-white text-navy hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm cursor-pointer"
+                className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#112236] text-navy dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm cursor-pointer"
                 aria-label="Halaman Sebelumnya"
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -399,8 +397,8 @@ export default function News() {
                     key={page}
                     onClick={() => handlePageChange(page)}
                     className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${currentPage === page
-                        ? 'bg-navy text-white shadow-md scale-105'
-                        : 'bg-gray-100 text-inktext/70 hover:bg-gray-200'
+                        ? 'bg-navy dark:bg-blue-600 text-white shadow-md scale-105'
+                        : 'bg-gray-100 dark:bg-gray-800 text-inktext/70 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                       }`}
                   >
                     {page}
@@ -411,7 +409,7 @@ export default function News() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="p-2.5 rounded-xl border border-gray-200 bg-white text-navy hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm cursor-pointer"
+                className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#112236] text-navy dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm cursor-pointer"
                 aria-label="Halaman Selanjutnya"
               >
                 <ChevronRight className="w-5 h-5" />

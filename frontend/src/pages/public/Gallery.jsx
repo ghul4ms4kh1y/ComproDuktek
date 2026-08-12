@@ -58,37 +58,37 @@ export default function Gallery() {
   };
 
   return (
-    <div className="bg-white text-inktext min-h-screen pb-20">
+    <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen pb-20 transition-colors duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-10 space-y-10">
 
         {/* Section Header Judul */}
         <RevealSection className="text-center space-y-2">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-navy tracking-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-navy dark:text-white tracking-tight">
             Dokumentasi Kegiatan
           </h1>
-          <p className="text-inktext/70 text-sm md:text-base max-w-2xl mx-auto font-light">
+          <p className="text-inktext/70 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto font-light">
             Kumpulan dokumentasi foto dan arsip visual kegiatan operasional serta latihan Satlak Dukteksi PUSSIBERAD.
           </p>
         </RevealSection>
 
         {/* Banner Informatif */}
-        <RevealSection className="bg-[#f8fafc] border border-gray-100 p-6 md:p-8 rounded-[2rem] shadow-sm">
+        <RevealSection className="bg-[#f8fafc] dark:bg-darkpanel border border-gray-100 dark:border-darkborder p-6 md:p-8 rounded-[2rem] shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-navy text-white flex items-center justify-center shrink-0 shadow-md">
                 <Camera className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-extrabold text-navy text-lg tracking-tight">
+                <h3 className="font-extrabold text-navy dark:text-gray-100 text-lg tracking-tight">
                   Eksplorasi Galeri
                 </h3>
-                <p className="text-inktext/70 text-xs md:text-sm mt-0.5">
+                <p className="text-inktext/70 dark:text-gray-400 text-xs md:text-sm mt-0.5">
                   Klik pada foto untuk membuka tampilan gambar penuh beserta detail penjelasannya.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-navy shrink-0 shadow-sm">
+            <div className="flex items-center gap-2 bg-white dark:bg-[#112236] px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs font-semibold text-navy dark:text-gray-300 shrink-0 shadow-sm">
               <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
               <span>{photos.length} Total Foto</span>
             </div>
@@ -102,18 +102,18 @@ export default function Gallery() {
               {[1, 2, 3, 4, 5].map((n) => (
                 <div
                   key={n}
-                  className={`bg-gray-100 animate-pulse rounded-3xl w-full h-full ${n === 2 ? 'md:col-span-2 md:row-span-2' : ''
+                  className={`bg-gray-100 dark:bg-gray-800 animate-pulse rounded-3xl w-full h-full ${n === 2 ? 'md:col-span-2 md:row-span-2' : ''
                     }`}
                 />
               ))}
             </div>
           ) : photos.length === 0 ? (
-            <div className="bg-[#f8fafc] border border-dashed border-gray-200 rounded-[2rem] p-16 text-center flex flex-col items-center justify-center my-8">
+            <div className="bg-[#f8fafc] dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem] p-16 text-center flex flex-col items-center justify-center my-8">
               <div className="w-16 h-16 rounded-2xl bg-navy flex items-center justify-center text-white mb-4 shadow-inner">
                 <Camera className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-navy mb-2">Belum Ada Foto</h3>
-              <p className="text-inktext/60 text-sm max-w-md leading-relaxed">
+              <h3 className="text-xl font-bold text-navy dark:text-white mb-2">Belum Ada Foto</h3>
+              <p className="text-inktext/60 dark:text-gray-400 text-sm max-w-md leading-relaxed">
                 Dokumentasi foto kegiatan belum diunggah atau belum tersedia saat ini.
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function Gallery() {
                         key={item.id}
                         layoutId={`photo-${item.id}`}
                         onClick={() => setSelectedPhoto(item)}
-                        className={`group relative overflow-hidden rounded-3xl cursor-pointer bg-slate-100 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-blue-200 ${bentoClass}`}
+                        className={`group relative overflow-hidden rounded-3xl cursor-pointer bg-slate-100 dark:bg-slate-800 border border-gray-100 dark:border-darkborder shadow-sm transition-all duration-300 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-500/50 ${bentoClass}`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -170,7 +170,7 @@ export default function Gallery() {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="p-2.5 rounded-xl border border-gray-200 bg-white text-navy hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm"
+                    className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#112236] text-navy dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm"
                     aria-label="Halaman Sebelumnya"
                   >
                     <ChevronLeft className="w-5 h-5" />
@@ -182,8 +182,8 @@ export default function Gallery() {
                         key={page}
                         onClick={() => handlePageChange(page)}
                         className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === page
-                            ? 'bg-navy text-white shadow-md scale-105'
-                            : 'bg-gray-100 text-inktext/70 hover:bg-gray-200'
+                            ? 'bg-navy dark:bg-blue-600 text-white shadow-md scale-105'
+                            : 'bg-gray-100 dark:bg-gray-800 text-inktext/70 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                           }`}
                       >
                         {page}
@@ -194,7 +194,7 @@ export default function Gallery() {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="p-2.5 rounded-xl border border-gray-200 bg-white text-navy hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm"
+                    className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#112236] text-navy dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm"
                     aria-label="Halaman Selanjutnya"
                   >
                     <ChevronRight className="w-5 h-5" />
@@ -207,37 +207,37 @@ export default function Gallery() {
 
         {/* Footer Info Cards */}
         <RevealSection className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-          <div className="bg-[#f8fafc] p-6 rounded-2xl border border-gray-100 shadow-sm flex items-start gap-4">
+          <div className="bg-[#f8fafc] dark:bg-darkpanel p-6 rounded-2xl border border-gray-100 dark:border-darkborder shadow-sm flex items-start gap-4">
             <div className="w-10 h-10 rounded-xl bg-navy/10 text-navy flex items-center justify-center shrink-0">
               <Shield className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-navy text-sm">Dokumentasi Resmi</h4>
-              <p className="text-inktext/70 text-xs mt-1 leading-relaxed">
+              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">Dokumentasi Resmi</h4>
+              <p className="text-inktext/70 dark:text-gray-400 text-xs mt-1 leading-relaxed">
                 Seluruh dokumentasi visual dikelola langsung oleh tim publikasi Satlak Dukteksi PUSSIBERAD.
               </p>
             </div>
           </div>
 
-          <div className="bg-[#f8fafc] p-6 rounded-2xl border border-gray-100 shadow-sm flex items-start gap-4">
+          <div className="bg-[#f8fafc] dark:bg-darkpanel p-6 rounded-2xl border border-gray-100 dark:border-darkborder shadow-sm flex items-start gap-4">
             <div className="w-10 h-10 rounded-xl bg-navy/10 text-navy flex items-center justify-center shrink-0">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-navy text-sm">Kegiatan Pertahanan</h4>
-              <p className="text-inktext/70 text-xs mt-1 leading-relaxed">
+              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">Kegiatan Pertahanan</h4>
+              <p className="text-inktext/70 dark:text-gray-400 text-xs mt-1 leading-relaxed">
                 Menampilkan sekilas aktivitas riset, latihan siber, serta pemeliharaan infrastruktur data.
               </p>
             </div>
           </div>
 
-          <div className="bg-[#f8fafc] p-6 rounded-2xl border border-gray-100 shadow-sm flex items-start gap-4">
+          <div className="bg-[#f8fafc] dark:bg-darkpanel p-6 rounded-2xl border border-gray-100 dark:border-darkborder shadow-sm flex items-start gap-4">
             <div className="w-10 h-10 rounded-xl bg-navy/10 text-navy flex items-center justify-center shrink-0">
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-navy text-sm">Arsip Berkala</h4>
-              <p className="text-inktext/70 text-xs mt-1 leading-relaxed">
+              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">Arsip Berkala</h4>
+              <p className="text-inktext/70 dark:text-gray-400 text-xs mt-1 leading-relaxed">
                 Galeri ini diperbarui secara berkala mengikuti agenda operasional satuan.
               </p>
             </div>
@@ -263,7 +263,7 @@ export default function Gallery() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-              className="relative z-[10000] w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-100 flex flex-col"
+              className="relative z-[10000] w-full max-w-4xl bg-white dark:bg-darkpanel rounded-3xl overflow-hidden shadow-2xl border border-gray-100 dark:border-darkborder flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               <motion.button
@@ -283,21 +283,21 @@ export default function Gallery() {
                 />
               </div>
 
-              <div className="p-6 bg-white border-t border-gray-100 flex flex-col justify-between gap-3">
+              <div className="p-6 bg-white dark:bg-darkpanel border-t border-gray-100 dark:border-darkborder flex flex-col justify-between gap-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1">
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-100">
                       <Info className="w-3.5 h-3.5" />
                       <span>Detail Dokumentasi</span>
                     </span>
-                    <h3 className="text-lg md:text-xl font-bold text-navy leading-snug pt-1">
+                    <h3 className="text-lg md:text-xl font-bold text-navy dark:text-white leading-snug pt-1">
                       {selectedPhoto.description}
                     </h3>
                   </div>
 
                   {selectedPhoto.gallery_date && (
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-inktext/60 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100 shrink-0">
-                      <Calendar className="w-3.5 h-3.5 text-navy" />
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-inktext/60 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-700 shrink-0">
+                      <Calendar className="w-3.5 h-3.5 text-navy dark:text-gray-400" />
                       <span>{selectedPhoto.gallery_date}</span>
                     </div>
                   )}

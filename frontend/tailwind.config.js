@@ -1,5 +1,6 @@
     /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
@@ -9,7 +10,12 @@ export default {
         gold: '#C9A227',        // Aksen - highlight, garis pembatas, badge
         panel: '#EEF2F6',       // Latar area konten
         inktext: '#3A3A3A',     // Warna teks isi
-        darkbg: '#051221',      // Background yang lebih gelap (Soteria style)
+        
+        // --- Token khusus Dark Mode Publik ---
+        darkbg: '#050B14',      // Background utama dark mode
+        darkpanel: '#0B1829',   // Background panel/card dark mode
+        darkborder: '#1E293B',  // Border dark mode
+        
         // --- Token khusus Dashboard Admin (palette: navy/blue/sky/mint) ---
         // Terpisah dari token di atas supaya reskin dashboard TIDAK
         // memengaruhi tampilan halaman publik yang masih pakai navy/gold.

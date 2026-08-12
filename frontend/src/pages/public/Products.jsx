@@ -41,11 +41,11 @@ export default function Products() {
   });
 
   return (
-    <div className="bg-white text-inktext min-h-screen pb-20">
+    <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen pb-20 transition-colors duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-10 space-y-10">
 
         {/* Searchbar */}
-        <RevealSection className="bg-[#f8fafc] border border-gray-100 p-6 md:p-8 rounded-[2rem] shadow-sm">
+        <RevealSection className="bg-[#f8fafc] dark:bg-darkpanel border border-gray-100 dark:border-darkborder p-6 md:p-8 rounded-[2rem] shadow-sm">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
 
             <div className="relative flex-1">
@@ -55,20 +55,20 @@ export default function Products() {
                 placeholder="Cari produk atau solusi siber..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy transition-all shadow-sm"
+                className="w-full bg-white dark:bg-darkbg border border-gray-200 dark:border-gray-700 pl-11 pr-4 py-3 rounded-xl text-sm font-medium text-navy dark:text-white placeholder:text-gray-400 focus:outline-none focus:border-navy dark:focus:border-blue-500 focus:ring-1 focus:ring-navy dark:focus:ring-blue-500 transition-all shadow-sm"
               />
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 bg-white border border-gray-200 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-navy shadow-sm shrink-0">
-                <SlidersHorizontal className="w-4 h-4 text-navy" />
+              <div className="flex items-center gap-2 bg-white dark:bg-darkbg border border-gray-200 dark:border-gray-700 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-navy dark:text-gray-300 shadow-sm shrink-0">
+                <SlidersHorizontal className="w-4 h-4 text-navy dark:text-gray-400" />
                 <span>Filter:</span>
               </div>
 
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="bg-white border border-gray-200 hover:border-navy rounded-xl px-4 py-3 text-xs font-semibold text-navy focus:outline-none transition-all cursor-pointer shadow-sm"
+                className="bg-white dark:bg-darkbg border border-gray-200 dark:border-gray-700 hover:border-navy dark:hover:border-blue-500 rounded-xl px-4 py-3 text-xs font-semibold text-navy dark:text-gray-300 focus:outline-none transition-all cursor-pointer shadow-sm"
               >
                 {categories.map((c) => (
                   <option key={c} value={c}>
@@ -80,7 +80,7 @@ export default function Products() {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="bg-white border border-gray-200 hover:border-navy rounded-xl px-4 py-3 text-xs font-semibold text-navy focus:outline-none transition-all cursor-pointer shadow-sm"
+                className="bg-white dark:bg-darkbg border border-gray-200 dark:border-gray-700 hover:border-navy dark:hover:border-blue-500 rounded-xl px-4 py-3 text-xs font-semibold text-navy dark:text-gray-300 focus:outline-none transition-all cursor-pointer shadow-sm"
               >
                 {statuses.map((s) => (
                   <option key={s} value={s}>
@@ -96,14 +96,14 @@ export default function Products() {
         {/* Produk Section*/}
         <RevealSection>
           {filtered.length === 0 ? (
-            <div className="bg-[#f8fafc] border border-dashed border-gray-200 rounded-[2rem] p-16 text-center flex flex-col items-center justify-center my-8">
+            <div className="bg-[#f8fafc] dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem] p-16 text-center flex flex-col items-center justify-center my-8">
               <div className="w-16 h-16 rounded-2xl bg-navy flex items-center justify-center text-white mb-4 shadow-inner">
                 <PackageSearch className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-navy mb-2">
+              <h3 className="text-xl font-bold text-navy dark:text-white mb-2">
                 Tidak Ada Produk Ditemukan
               </h3>
-              <p className="text-inktext/60 text-sm max-w-md leading-relaxed">
+              <p className="text-inktext/60 dark:text-gray-400 text-sm max-w-md leading-relaxed">
                 Tidak ada produk yang cocok dengan kriteria pencarian atau filter yang Anda pilih. Coba sesuaikan kata kunci atau reset filter.
               </p>
               <button
@@ -112,7 +112,7 @@ export default function Products() {
                   setCategory('Semua');
                   setStatus('Semua');
                 }}
-                className="mt-6 text-xs font-semibold text-navy hover:text-white bg-white hover:bg-blue-600 border border-gray-200 px-5 py-2.5 rounded-xl transition-all shadow-sm"
+                className="mt-6 text-xs font-semibold text-navy dark:text-gray-300 hover:text-white bg-white dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-blue-500 border border-gray-200 dark:border-gray-700 px-5 py-2.5 rounded-xl transition-all shadow-sm"
               >
                 Reset Filter & Pencarian
               </button>
@@ -123,7 +123,7 @@ export default function Products() {
                 <Link
                   to={`/produk/${p.id}`}
                   key={p.id}
-                  className="group bg-[#f8fafc] border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+                  className="group bg-[#f8fafc] dark:bg-[#112236] border border-gray-100 dark:border-darkborder rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
                 >
                   <div>
                     <div className="relative overflow-hidden rounded-xl mb-5 h-52 bg-slate-900">
@@ -158,24 +158,24 @@ export default function Products() {
                       {p.category && <span>{p.category}</span>}
                       {p.unit_pengampu && (
                         <>
-                          <span className="text-gray-300">•</span>
-                          <span className="text-inktext/60 font-semibold">{p.unit_pengampu}</span>
+                          <span className="text-gray-300 dark:text-gray-600">•</span>
+                          <span className="text-inktext/60 dark:text-gray-400 font-semibold">{p.unit_pengampu}</span>
                         </>
                       )}
                     </div>
 
-                    <h3 className="font-bold text-xl text-navy mb-2 transition-colors line-clamp-1">
+                    <h3 className="font-bold text-xl text-navy dark:text-gray-100 mb-2 transition-colors line-clamp-1">
                       {p.name}
                     </h3>
 
-                    <p className="text-inktext/70 text-sm leading-relaxed line-clamp-2 mb-6">
+                    <p className="text-inktext/70 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-6">
                       {p.description}
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-gray-200/60 flex items-center justify-between text-xs font-semibold text-navy group-hover:text-blue-600">
+                  <div className="pt-4 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-xs font-semibold text-navy dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     <span>Lihat Detail Produk</span>
-                    <div className="w-7 h-7 rounded-full bg-white group-hover:bg-blue-50 flex items-center justify-center transition-colors shadow-sm">
+                    <div className="w-7 h-7 rounded-full bg-white dark:bg-gray-800 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40 flex items-center justify-center transition-colors shadow-sm">
                       <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
                   </div>

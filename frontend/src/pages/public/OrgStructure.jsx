@@ -17,14 +17,14 @@ export default function OrgStructure() {
   }, []);
 
   return (
-    <div className="bg-white text-inktext min-h-screen">
+    <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen transition-colors duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-16">
         <RevealSection className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-bold tracking-widest text-navy uppercase bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200 inline-block mb-3">
+          <span className="text-xs font-bold tracking-widest text-navy dark:text-gray-200 uppercase bg-gray-50 dark:bg-[#16273D] px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 inline-block mb-3">
             KEPEMIMPINAN & UNIT
           </span>
-          <h1 className="text-3xl md:text-4xl font-bold text-navy">Struktur Organisasi</h1>
-          <p className="text-inktext/70 text-sm md:text-base mt-3">
+          <h1 className="text-3xl md:text-4xl font-bold text-navy dark:text-white">Struktur Organisasi</h1>
+          <p className="text-inktext/70 dark:text-gray-400 text-sm md:text-base mt-3">
             Bagan hierarki kepemimpinan dan unit di lingkungan Satlak Dukteksi.
           </p>
         </RevealSection>
@@ -44,12 +44,12 @@ export default function OrgStructure() {
         {roots?.length > 0 && (
           <RevealSection>
             {/* Desktop: bagan pohon dengan garis penghubung otomatis (geser jika lebar) */}
-            <div className="hidden md:block bg-white border border-gray-100 rounded-3xl shadow-sm p-6">
+            <div className="hidden md:block bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-3xl shadow-sm p-6">
               <OrgTreeDesktop roots={roots} />
             </div>
 
             {/* Mobile: list bertingkat, bisa dilipat/dibuka per cabang */}
-            <div className="md:hidden max-w-lg mx-auto bg-white border border-gray-100 rounded-3xl shadow-sm p-4">
+            <div className="md:hidden max-w-lg mx-auto bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-3xl shadow-sm p-4">
               <OrgListMobile roots={roots} />
             </div>
           </RevealSection>

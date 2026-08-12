@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import ThemeToggle from "../ui/ThemeToggle";
 
 const MENU_ITEMS = [
   { label: 'Beranda', to: '/' },
@@ -28,7 +29,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-white transition-all duration-300 ${scrolled ? 'shadow-md py-2.5' : 'py-4'
+      className={`sticky top-0 z-50 bg-white dark:bg-darkbg transition-all duration-300 border-b border-transparent dark:border-darkborder ${scrolled ? 'shadow-md py-2.5' : 'py-4'
         }`}
     >
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 flex items-center justify-between">
@@ -46,7 +47,7 @@ export default function Navbar() {
              }}
            />
           <div className="flex flex-col">
-            <span className="text-navy group-hover:text-blue-600 transition-colors font-extrabold text-lg md:text-xl tracking-tight uppercase leading-none">
+            <span className="text-navy dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors font-extrabold text-lg md:text-xl tracking-tight uppercase leading-none">
               SATLAK DUKTEKSI
             </span>
           </div>
@@ -62,8 +63,8 @@ export default function Navbar() {
                 end={item.to === '/'}
                 className={({ isActive }) =>
                   `text-sm font-semibold transition-colors duration-200 py-1 ${isActive
-                    ? 'text-navy font-bold border-b-2 border-navy'
-                    : 'text-inktext/70 hover:text-blue-600'
+                    ? 'text-navy dark:text-white font-bold border-b-2 border-navy dark:border-white'
+                    : 'text-inktext/70 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'
                   }`
                 }
               >
@@ -73,31 +74,35 @@ export default function Navbar() {
           </nav>
 
           {/* Action Button */}
+          <ThemeToggle />
           <NavLink
             to="/kontak"
-            className="bg-navy hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md shrink-0"
+            className="bg-navy dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md shrink-0"
           >
             Hubungi Kami
           </NavLink>
         </div>
 
         {/* Mobile Toggle Button */}
-        <button
-          className="lg:hidden text-navy hover:text-blue-600 p-2 rounded-lg transition-colors focus:outline-none"
-          onClick={() => setOpen(!open)}
-          aria-label="Buka menu navigasi"
-        >
+        <div className="lg:hidden flex items-center gap-4">
+          <ThemeToggle />
+          <button
+            className="text-navy dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 p-2 rounded-lg transition-colors focus:outline-none"
+            onClick={() => setOpen(!open)}
+            aria-label="Buka menu navigasi"
+          >
           {open ? (
             <X className="w-6 h-6" />
           ) : (
             <Menu className="w-6 h-6" />
           )}
-        </button>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Navigation Menu Dropdown */}
       {open && (
-        <nav className="lg:hidden bg-white border-t border-gray-100 px-6 py-5 flex flex-col gap-2 shadow-xl absolute w-full left-0 animate-fade-in">
+        <nav className="lg:hidden bg-white dark:bg-darkbg border-t border-gray-100 dark:border-darkborder px-6 py-5 flex flex-col gap-2 shadow-xl absolute w-full left-0 animate-fade-in">
           {MENU_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -106,8 +111,8 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 `px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors ${isActive
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-inktext/80 hover:bg-gray-50 hover:text-blue-600'
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                  : 'text-inktext/80 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
                 }`
               }
             >
@@ -118,7 +123,7 @@ export default function Navbar() {
           <NavLink
             to="/kontak"
             onClick={() => setOpen(false)}
-            className="bg-navy hover:bg-blue-600 text-white px-4 py-3 mt-2 rounded-xl text-sm font-semibold text-center transition-colors shadow-sm"
+            className="bg-navy dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white px-4 py-3 mt-2 rounded-xl text-sm font-semibold text-center transition-colors shadow-sm"
           >
             Hubungi Kami
           </NavLink>

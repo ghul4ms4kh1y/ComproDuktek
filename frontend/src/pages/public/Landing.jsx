@@ -43,32 +43,6 @@ const highlights = [
   },
 ];
 
-const default_faqs = [
-  {
-    question: 'Apa arti dari semboyan "Krtrima Raksa Mandalam"?',
-    answer: 'Semboyan ini berasal dari tiga kata: Krtrima (Tidak Tampak - merujuk pada ruang digital/siber yang tak kasat mata), Raksa (Mengamankan - tindakan mempertahankan kedaulatan), dan Mandalam (Ruang Sistem - ruang sistem yang menyeluruh dan menyelimuti).'
-  },
-  {
-    question: 'Apa saja bidang dan pilar kemampuan utama Satlak Dukteksi?',
-    answer: 'Satlak Dukungan Teknologi Siber berfokus pada 3 pilar utama: Pengembangan Teknologi, Rekayasa Terbalik (Reverse Engineering), serta Pemeliharaan, Perawatan, & Instalasi infrastruktur siber.'
-  },
-  {
-    question: 'Apa makna simbol Perisai, Pedang & Sayap pada lambang Satlak?',
-    answer: 'Melambangkan ksatria di medan perang siber. Pedang yang disarungkan menandakan serangan adalah upaya terakhir, sedangkan perlindungan adalah prioritas utama (Sapta Marga, Sumpah Prajurit, 8 Wajib TNI).'
-  },
-  {
-    question: 'Apa filosofi simbol Otak Bercahaya pada lambang?',
-    answer: 'Otak Bercahaya melambangkan logika, kreativitas, dan kecerdasan dalam "Perang Asimetris". Menunjukkan kesadaran situasional tinggi untuk pengambilan keputusan cepat.'
-  },
-  {
-    question: 'Bagaimana prinsip pengamanan data menurut lambang Gembok & Roda Gigi?',
-    answer: 'Gembok & Lingkaran Cahaya melambangkan prinsip kehati-hatian untuk menutup setiap titik lemah aset data. Sedangkan Roda Gigi melambangkan harmonisasi sistem dan efisiensi operasional melalui kolaborasi tim.'
-  },
-  {
-    question: 'Siapa saja pihak yang didukung oleh Satlak Dukteksi Siber?',
-    answer: 'Satlak Dukteksi Siber bertugas mendukung keandalan sistem pertahanan TNI AD, instansi pemerintah, serta perlindungan infrastruktur informasi vital nasional.'
-  }
-];
 
 // Helper Component untuk Animasi Scroll Smooth Reveal
 function RevealSection({ children, className = '' }) {
@@ -106,26 +80,22 @@ function RevealSection({ children, className = '' }) {
 export default function Landing() {
   const [news, setNews] = useState([]);
   const [products, setProducts] = useState([]);
-  const [faqs, setFaqs] = useState([]);
-  const [openFaqIndex, setOpenFaqIndex] = useState(0);
+
 
   useEffect(() => {
     api.get('/news', { params: { limit: 3 } }).then((r) => setNews(r.data.data)).catch(() => { });
     api.get('/products', { params: { limit: 4 } }).then((r) => setProducts(r.data.data)).catch(() => { });
-    api.get('/faqs', { params: { limit: 10 } }).then((r) => setFaqs(r.data.data)).catch(() => { });
+
   }, []);
 
-  const displayFaqs = faqs && faqs.length > 0
-    ? faqs.map(f => ({ question: f.question, answer: f.answer }))
-    : default_faqs;
 
   return (
-    <div className="bg-white text-inktext min-h-screen space-y-16 py-4">
+    <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen space-y-16 py-4 transition-colors duration-300">
 
       {/* Hero Section */}
       <section className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div
-          className="relative rounded-[2.5rem] overflow-hidden flex items-center min-h-[75vh] shadow-xl shadow-navy/10 border border-gray-100"
+          className="relative rounded-[2.5rem] overflow-hidden flex items-center min-h-[75vh] shadow-xl shadow-navy/10 dark:shadow-black/40 border border-gray-100 dark:border-darkborder"
           style={{
             backgroundImage: "url('/bg_logo.jpg')",
             backgroundSize: 'cover',
@@ -175,7 +145,7 @@ export default function Landing() {
                   height="40"
                   className="h-8 md:h-10 w-auto object-contain"
                 />
-                <span className="text-2xl md:text-3xl font-extrabold tracking-[0.2em] uppercase text-navy">
+                <span className="text-2xl md:text-3xl font-extrabold tracking-[0.2em] uppercase text-navy dark:text-gray-300">
                   KRTRIMA RAKSA MANDALAM
                 </span>
                 <img
@@ -193,20 +163,20 @@ export default function Landing() {
 
       {/* Pilar Kemampuan */}
       <RevealSection className="max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div className="bg-[#f8fafc] py-16 px-8 md:px-12 rounded-[2.5rem] relative overflow-hidden border border-gray-100 shadow-sm">
+        <div className="bg-[#f8fafc] dark:bg-darkpanel py-16 px-8 md:px-12 rounded-[2.5rem] relative overflow-hidden border border-gray-100 dark:border-darkborder shadow-sm">
           <div className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 w-96 h-96 bg-navy/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-start relative z-10">
             <div className="lg:col-span-6">
-              <span className="text-xs font-bold tracking-widest text-navy uppercase bg-white px-3 py-1.5 rounded-md border border-navy/20 inline-block mb-4 shadow-sm">
+              <span className="text-xs font-bold tracking-widest text-navy dark:text-gray-200 uppercase bg-white dark:bg-[#16273D] px-3 py-1.5 rounded-md border border-navy/20 dark:border-gray-700 inline-block mb-4 shadow-sm">
                 PILAR KEMAMPUAN
               </span>
-              <h2 className="text-3xl md:text-5xl font-bold text-navy leading-tight tracking-tight">
+              <h2 className="text-3xl md:text-5xl font-bold text-navy dark:text-white leading-tight tracking-tight">
                 Dukungan Teknologi & Pengamanan Ruang Siber
               </h2>
             </div>
 
-            <div className="lg:col-span-6 text-inktext/70 text-base md:text-lg leading-relaxed space-y-4 pt-2">
+            <div className="lg:col-span-6 text-inktext/70 dark:text-gray-400 text-base md:text-lg leading-relaxed space-y-4 pt-2">
               <p>
                 Ancaman siber yang kian kompleks membutuhkan sistem pertahanan yang tangguh. Satlak Dukungan Teknologi Siber mengintegrasikan riset terapan, analisis mendalam, dan pemeliharaan sistem dalam satu kesatuan tim.
               </p>
@@ -223,16 +193,16 @@ export default function Landing() {
               return (
                 <div
                   key={h.title}
-                  className="group/card bg-white border border-gray-100 p-8 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+                  className="group/card bg-white dark:bg-[#112236] border border-gray-100 dark:border-darkborder p-8 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
                 >
                   <div>
                     <div className="w-12 h-12 rounded-xl bg-navy group-hover/card:bg-blue-600 flex items-center justify-center text-white mb-6 shadow-md shadow-blue-500/20 transition-colors duration-300">
                       <IconComponent className="w-6 h-6" />
                     </div>
-                    <h3 className="font-bold text-navy group-hover/card:text-blue-600 transition-colors duration-300 text-xl mb-3 leading-snug">
+                    <h3 className="font-bold text-navy dark:text-gray-100 group-hover/card:text-blue-600 transition-colors duration-300 text-xl mb-3 leading-snug">
                       {h.title}
                     </h3>
-                    <p className="text-inktext/70 text-sm leading-relaxed mb-8">
+                    <p className="text-inktext/70 dark:text-gray-400 text-sm leading-relaxed mb-8">
                       {h.desc}
                     </p>
                   </div>
@@ -240,7 +210,7 @@ export default function Landing() {
                   <Link
                     to={h.link}
                     aria-label={`Selengkapnya tentang ${h.title}`}
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-blue-600 bg-gray-50 hover:bg-blue-50 px-4 py-2.5 rounded-lg w-fit transition-colors"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 bg-gray-50 dark:bg-[#1A2C42] hover:bg-blue-50 dark:hover:bg-blue-900/30 px-4 py-2.5 rounded-lg w-fit transition-colors"
                   >
                     Selengkapnya <span className="text-xs">›</span>
                   </Link>
@@ -253,25 +223,25 @@ export default function Landing() {
 
       {/* Produk & Layanan */}
       <RevealSection className="max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div className="bg-white border border-gray-100 rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden shadow-sm">
 
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-6 relative z-10">
             <div>
-              <span className="text-xs font-bold tracking-widest text-navy uppercase bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200 inline-block mb-3">
+              <span className="text-xs font-bold tracking-widest text-navy dark:text-gray-200 uppercase bg-gray-50 dark:bg-[#16273D] px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 inline-block mb-3">
                 INOVASI & RISET
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-navy leading-tight tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-navy dark:text-white leading-tight tracking-tight">
                 Produk & Solusi Unggulan
               </h2>
-              <p className="text-inktext/70 text-sm md:text-base mt-2 max-w-xl">
+              <p className="text-inktext/70 dark:text-gray-400 text-sm md:text-base mt-2 max-w-xl">
                 Hasil pengembangan teknologi siber terapan dan sistem perangkat keras/lunak mandiri Satlak Dukteksi PUSSIBERAD.
               </p>
             </div>
 
             <Link
               to="/produk"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:text-blue-600 bg-gray-50 hover:bg-blue-50 border border-gray-200 px-5 py-3 rounded-xl transition-all shrink-0 w-fit"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-navy dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 bg-gray-50 dark:bg-[#1A2C42] hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-gray-200 dark:border-gray-700 px-5 py-3 rounded-xl transition-all shrink-0 w-fit"
             >
               Lihat Semua Produk <ArrowUpRight className="w-4 h-4" />
             </Link>
@@ -279,7 +249,7 @@ export default function Landing() {
 
           {/* Body Content */}
           {products.length === 0 ? (
-            <div className="bg-[#f8fafc] border border-dashed border-gray-200 rounded-2xl p-12 text-center flex flex-col items-center justify-center relative z-10">
+            <div className="bg-[#f8fafc] dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-12 text-center flex flex-col items-center justify-center relative z-10">
               <div className="w-16 h-16 rounded-2xl bg-navy flex items-center justify-center text-white mb-4 shadow-inner">
                 <PackageSearch className="w-8 h-8 text-white" />
               </div>
@@ -291,7 +261,7 @@ export default function Landing() {
               </p>
               <Link
                 to="/kontak"
-                className="text-xs font-semibold text-navy hover:text-white bg-white hover:bg-blue-600 border border-gray-200 px-4 py-2.5 rounded-lg transition-colors shadow-sm"
+                className="text-xs font-semibold text-navy dark:text-gray-300 hover:text-white bg-white dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-blue-500 border border-gray-200 dark:border-gray-700 px-4 py-2.5 rounded-lg transition-colors shadow-sm"
               >
                 Ajukan Informasi / Konsultasi
               </Link>
@@ -302,7 +272,7 @@ export default function Landing() {
                 <Link
                   to={`/produk/${p.id || '#'}`}
                   key={p.id}
-                  className="group bg-[#f8fafc] border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+                  className="group bg-[#f8fafc] dark:bg-[#112236] border border-gray-100 dark:border-darkborder rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
                 >
                   <div>
                     <div className="relative overflow-hidden rounded-xl mb-5 h-52 bg-slate-900">
@@ -329,7 +299,7 @@ export default function Landing() {
                       </div>
                     </div>
 
-                    <h3 className="font-bold text-xl text-navy mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
+                    <h3 className="font-bold text-xl text-navy dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
                       {p.name}
                     </h3>
                     <p className="text-inktext/70 text-sm leading-relaxed line-clamp-2 mb-6">
@@ -337,9 +307,9 @@ export default function Landing() {
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-gray-200/60 flex items-center justify-between text-xs font-semibold text-navy group-hover:text-blue-600">
+                  <div className="pt-4 border-t border-gray-200/60 dark:border-gray-700 flex items-center justify-between text-xs font-semibold text-navy dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     <span>Detail Produk</span>
-                    <div className="w-7 h-7 rounded-full bg-white group-hover:bg-blue-50 flex items-center justify-center transition-colors shadow-sm">
+                    <div className="w-7 h-7 rounded-full bg-white dark:bg-gray-800 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40 flex items-center justify-center transition-colors shadow-sm">
                       <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
                   </div>
@@ -353,17 +323,17 @@ export default function Landing() {
 
       {/* Berita & Kegiatan */}
       <RevealSection className="max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div className="bg-[#f8fafc] rounded-[2.5rem] p-8 md:p-14 border border-gray-100 relative overflow-hidden shadow-sm">
+        <div className="bg-[#f8fafc] dark:bg-darkpanel rounded-[2.5rem] p-8 md:p-14 border border-gray-100 dark:border-darkborder relative overflow-hidden shadow-sm">
 
           <div className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-6 relative z-10">
             <div>
-              <span className="text-xs font-bold tracking-widest text-navy uppercase bg-white px-3 py-1.5 rounded-md border border-navy/20 inline-block mb-3 shadow-sm">
+              <span className="text-xs font-bold tracking-widest text-navy dark:text-gray-200 uppercase bg-white dark:bg-[#16273D] px-3 py-1.5 rounded-md border border-navy/20 dark:border-gray-700 inline-block mb-3 shadow-sm">
                 PUSAT INFORMASI
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-navy leading-tight tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-navy dark:text-white leading-tight tracking-tight">
                 Berita & Kegiatan Terkini
               </h2>
               <p className="text-inktext/70 text-sm md:text-base mt-2 max-w-xl">
@@ -373,7 +343,7 @@ export default function Landing() {
 
             <Link
               to="/berita"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:text-blue-600 bg-white hover:bg-blue-50 border border-gray-200 px-5 py-3 rounded-xl transition-all shadow-sm shrink-0 w-fit"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-navy dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 bg-white dark:bg-[#1A2C42] hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-gray-200 dark:border-gray-700 px-5 py-3 rounded-xl transition-all shadow-sm shrink-0 w-fit"
             >
               Lihat Semua Berita <ArrowUpRight className="w-4 h-4" />
             </Link>
@@ -435,7 +405,7 @@ export default function Landing() {
                         </span>
                       </div>
 
-                      <h3 className="text-2xl md:text-3xl font-bold mb-3 leading-snug group-hover:text-blue-300 transition-colors line-clamp-2">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-3 leading-snug text-white group-hover:text-blue-300 transition-colors line-clamp-2">
                         {news[0].title}
                       </h3>
 
@@ -458,7 +428,7 @@ export default function Landing() {
                     to={`/berita/${n.id}`}
                     key={n.id}
                     aria-label={`Baca berita selengkapnya: ${n.title}`}
-                    className="group bg-white border border-gray-100 rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col sm:flex-row gap-5 items-center h-full"
+                    className="group bg-white dark:bg-[#112236] border border-gray-100 dark:border-darkborder rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col sm:flex-row gap-5 items-center h-full"
                   >
                     <div className="w-full sm:w-48 h-40 sm:h-full shrink-0 overflow-hidden rounded-xl bg-slate-900 relative">
                       {n.thumbnail ? (
@@ -488,7 +458,7 @@ export default function Landing() {
                           </span>
                         </div>
 
-                        <h4 className="font-bold text-lg text-navy group-hover:text-blue-600 transition-colors mb-2 line-clamp-2 leading-snug">
+                        <h4 className="font-bold text-lg text-navy dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2 line-clamp-2 leading-snug">
                           {n.title}
                         </h4>
 
@@ -497,7 +467,7 @@ export default function Landing() {
                         </p>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-navy group-hover:text-blue-600">
+                      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs font-semibold text-navy dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                         <span>Selengkapnya</span>
                         <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </div>
@@ -506,7 +476,7 @@ export default function Landing() {
                 ))}
 
                 {news.length === 1 && (
-                  <div className="bg-white border border-dashed border-gray-200 rounded-2xl p-8 text-center flex flex-col items-center justify-center h-full">
+                  <div className="bg-white dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-8 text-center flex flex-col items-center justify-center h-full">
                     <p className="text-inktext/60 text-sm">Belum ada berita tambahan lainnya.</p>
                   </div>
                 )}
@@ -518,77 +488,7 @@ export default function Landing() {
         </div>
       </RevealSection>
 
-      {/* FAQ Section */}
-      <RevealSection className="max-w-screen-2xl mx-auto px-6 md:px-12 pb-12">
-        <div className="bg-white border border-gray-100 rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden shadow-sm">
 
-          {/* Watermark Glow Effect */}
-          <div className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-          {/* Section Header */}
-          <div className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-6 relative z-10">
-            <div>
-              <span className="text-xs font-bold tracking-widest text-navy uppercase bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200 inline-block mb-3">
-                Pertanyaan Umum
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-navy leading-tight tracking-tight">
-                Ada Pertanyaan ?
-              </h2>
-              <p className="text-inktext/70 text-sm md:text-base mt-2 max-w-xl">
-                Informasi penting mengenai tugas, semboyan, filosofi logo, dan kapabilitas teknis Satlak Dukteksi PUSSIBERAD.
-              </p>
-            </div>
-          </div>
-
-          {/* Grid FAQ 2 Kolom */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start relative z-10">
-            {displayFaqs.map((faq, idx) => {
-              const isOpen = openFaqIndex === idx;
-              return (
-                <div
-                  key={idx}
-                  className={`transition-all duration-300 rounded-2xl p-6 border ${isOpen
-                    ? 'bg-white border-blue-200 shadow-md ring-1 ring-blue-500/10'
-                    : 'bg-[#f8fafc] border-gray-100 hover:border-gray-200 hover:bg-gray-50/80'
-                    }`}
-                >
-                  <button
-                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full flex items-start justify-between gap-4 text-left group"
-                  >
-                    <h3 className={`font-bold text-md leading-snug transition-colors ${isOpen ? 'text-blue-600' : 'text-navy group-hover:text-blue-600'
-                      }`}>
-                      {faq.question}
-                    </h3>
-
-                    {/* Icon Toggle Box (+ / -) */}
-                    <div className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all ${isOpen
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                      : 'bg-gray-200/70 text-navy group-hover:bg-blue-600 group-hover:text-white'
-                      }`}>
-                      {isOpen ? (
-                        <Minus className="w-5 h-5 stroke-[2.5]" />
-                      ) : (
-                        <Plus className="w-5 h-5 stroke-[2.5]" />
-                      )}
-                    </div>
-                  </button>
-
-                  {/* Answer Content */}
-                  {isOpen && (
-                    <div className="mt-4 pt-4 border-t border-gray-100 animate-fade-in">
-                      <p className="text-inktext/90 text-sm leading-relaxed">
-                        {faq.answer}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-        </div>
-      </RevealSection>
 
     </div>
   );
