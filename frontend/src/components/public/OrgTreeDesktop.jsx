@@ -5,12 +5,12 @@ function PersonBox({ node }) {
   const c = BOX_COLORS[node.box_color] || BOX_COLORS.teal;
   return (
     <div className="flex flex-col items-center w-48 text-center">
-      <div className={`w-40 h-48 rounded-2xl overflow-hidden border-2 ${c.border} shadow-sm bg-gray-100 flex items-center justify-center shrink-0`}>
+      <div className={`w-40 h-48 rounded-2xl overflow-hidden border-2 ${c.border} shadow-sm bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0`}>
         {node.photo
           ? <img src={node.photo} alt={node.name} className="w-full h-full object-cover" />
           : <UserRound className="w-16 h-16 text-gray-400" />}
       </div>
-      <p className="text-sm font-bold text-navy leading-tight mt-3">{node.rank ? `${node.rank} ` : ''}{node.name}</p>
+      <p className="text-sm font-bold text-navy dark:text-gray-100 leading-tight mt-3">{node.rank ? `${node.rank} ` : ''}{node.name}</p>
       <p className={`text-xs font-semibold leading-tight mt-2 px-3 py-1 rounded-full ${c.bg} ${c.text}`}>{node.position}</p>
     </div>
   );
@@ -27,20 +27,20 @@ function TreeNode({ node }) {
       <PersonBox node={node} />
       {hasChildren && (
         <>
-          <div className="w-px h-5 bg-gray-300" />
+          <div className="w-px h-5 bg-gray-300 dark:bg-gray-600" />
           <div className="flex items-start">
             {node.children.map((child, idx) => (
               <div key={child.id} className="flex flex-col items-center px-4 relative">
                 {node.children.length > 1 && (
                   <div
-                    className="absolute top-0 h-px bg-gray-300"
+                    className="absolute top-0 h-px bg-gray-300 dark:bg-gray-600"
                     style={{
                       left: idx === 0 ? '50%' : 0,
                       right: idx === node.children.length - 1 ? '50%' : 0,
                     }}
                   />
                 )}
-                <div className="w-px h-5 bg-gray-300" />
+                <div className="w-px h-5 bg-gray-300 dark:bg-gray-600" />
                 <TreeNode node={child} />
               </div>
             ))}

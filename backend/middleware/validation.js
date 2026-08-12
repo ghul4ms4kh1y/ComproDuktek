@@ -33,12 +33,7 @@ const galleryValidation = [
   handleValidationErrors,
 ];
 
-const faqValidation = [
-  body('question').trim().notEmpty().withMessage('Pertanyaan wajib diisi.'),
-  body('answer').trim().notEmpty().withMessage('Jawaban wajib diisi.'),
-  body('category').optional().trim().isLength({ max: 100 }).withMessage('Kategori maksimal 100 karakter.'),
-  handleValidationErrors,
-];
+
 
 const orgStructureValidation = [
   body('name').trim().notEmpty().withMessage('Nama wajib diisi.').isLength({ max: 255 }).withMessage('Nama maksimal 255 karakter.'),
@@ -52,6 +47,5 @@ module.exports = {
   newsValidation,
   productValidation,
   galleryValidation,
-  faqValidation,
   orgStructureValidation,
 };

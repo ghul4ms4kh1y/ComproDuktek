@@ -1,6 +1,6 @@
 /**
  * Factory untuk membuat controller CRUD standar (index, show, create, update, remove)
- * dipakai oleh News, Product, Gallery, Faq. Mengurangi duplikasi kode antar modul.
+ * dipakai oleh News, Product, Gallery. Mengurangi duplikasi kode antar modul.
  */
 const fs = require('fs');
 

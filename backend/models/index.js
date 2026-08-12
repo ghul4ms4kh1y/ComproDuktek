@@ -3,7 +3,6 @@ const Admin = require('./Admin');
 const News = require('./News');
 const Product = require('./Product');
 const Gallery = require('./Gallery');
-const Faq = require('./Faq');
 const Message = require('./Message');
 const OrgStructure = require('./OrgStructure');
 
@@ -17,8 +16,6 @@ Product.belongsTo(Admin, { foreignKey: 'admin_id' });
 Admin.hasMany(Gallery, { foreignKey: 'admin_id' });
 Gallery.belongsTo(Admin, { foreignKey: 'admin_id' });
 
-Admin.hasMany(Faq, { foreignKey: 'admin_id' });
-Faq.belongsTo(Admin, { foreignKey: 'admin_id' });
 
 Admin.hasMany(OrgStructure, { foreignKey: 'admin_id' });
 OrgStructure.belongsTo(Admin, { foreignKey: 'admin_id' });
@@ -28,4 +25,4 @@ OrgStructure.belongsTo(Admin, { foreignKey: 'admin_id' });
 OrgStructure.hasMany(OrgStructure, { as: 'children', foreignKey: 'parent_id' });
 OrgStructure.belongsTo(OrgStructure, { as: 'parent', foreignKey: 'parent_id' });
 
-module.exports = { sequelize, Admin, News, Product, Gallery, Faq, Message, OrgStructure };
+module.exports = { sequelize, Admin, News, Product, Gallery, Message, OrgStructure };
