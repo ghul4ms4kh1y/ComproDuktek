@@ -35,3 +35,12 @@ body {
 .glass-nav {
   @apply bg-navy/90 backdrop-blur-md shadow-lg border-b border-white/10;
 }
+
+/* Sembunyikan scrollbar tapi tetap bisa discroll (dipakai BottomNav admin di HP kecil) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
