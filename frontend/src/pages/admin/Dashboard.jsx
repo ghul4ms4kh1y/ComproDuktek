@@ -1,31 +1,52 @@
-import { useEffect, useState } from 'react';
-import { Newspaper, Package, Images, Mail, CalendarDays, Users } from 'lucide-react';
-import api from '../../services/api';
-import MiniCalendar from '../../components/admin/MiniCalendar';
-import DonutChart from '../../components/admin/DonutChart';
+import { useEffect, useState } from "react";
+import {
+  Newspaper,
+  Package,
+  Images,
+  Mail,
+  CalendarDays,
+  Users,
+} from "lucide-react";
+import api from "../../services/api";
+import MiniCalendar from "../../components/admin/MiniCalendar";
+import DonutChart from "../../components/admin/DonutChart";
 
 const widgets = [
-  { key: 'totalNews', label: 'Total Berita', icon: Newspaper, tint: 'navy' },
-  { key: 'totalProducts', label: 'Total Produk', icon: Package, tint: 'accent' },
-  { key: 'totalGalleries', label: 'Total Foto Galeri', icon: Images, tint: 'sky' },
-  { key: 'unreadMessages', label: 'Pesan Belum Dibaca', icon: Mail, tint: 'mint', accent: true },
+  { key: "totalNews", label: "Total Berita", icon: Newspaper, tint: "navy" },
+  {
+    key: "totalProducts",
+    label: "Total Produk",
+    icon: Package,
+    tint: "accent",
+  },
+  {
+    key: "totalGalleries",
+    label: "Total Foto Galeri",
+    icon: Images,
+    tint: "sky",
+  },
+  {
+    key: "unreadMessages",
+    label: "Pesan Belum Dibaca",
+    icon: Mail,
+    tint: "mint",
+    accent: true,
+  },
 ];
 
 // Kelas warna per tint — hanya memakai 4 warna palette dashboard.
 const TINT_CLASSES = {
-  navy: { chip: 'bg-dashNavy/5', icon: 'text-dashNavy' },
-  accent: { chip: 'bg-dashAccent/10', icon: 'text-dashAccent' },
-  sky: { chip: 'bg-dashSky/25', icon: 'text-dashNavy' },
-  mint: { chip: 'bg-dashMint/60', icon: 'text-dashNavy' },
+  navy: { chip: "bg-dashNavy/5", icon: "text-dashNavy" },
+  accent: { chip: "bg-dashAccent/10", icon: "text-dashAccent" },
+  sky: { chip: "bg-dashSky/25", icon: "text-dashNavy" },
+  mint: { chip: "bg-dashMint/60", icon: "text-dashNavy" },
 };
 
 // merah = pucuk pimpinan, oranye = pemimpin unit, teal = staf
-// (sesuai src/components/public/orgTreeUtils.js) — warna dipetakan ulang
-// ke palette dashboard (navy/accent/sky), bukan warna literalnya.
 const MEMBER_CATEGORIES = [
-  { key: 'merah', label: 'Pucuk Pimpinan', color: '#293681' },
-  { key: 'oranye', label: 'Pemimpin Unit', color: '#4274D9' },
-  { key: 'teal', label: 'Staf', color: '#95CCDD' },
+  { key: "merah", label: "Pucuk Pimpinan", color: "#293681" },
+  { key: "oranye", label: "Pemimpin Unit", color: "#4274D9" },
+  { key: "teal", label: "Staf", color: "#95CCDD" },
 ];
 
 export default function Dashboard() {
@@ -33,12 +54,28 @@ export default function Dashboard() {
   const [members, setMembers] = useState(null);
 
   useEffect(() => {
-    api.get('/dashboard/summary').then((r) => setData(r.data.data)).catch(() => {});
-    // Endpoint publik yang sudah ada — dipakai ulang untuk menghitung
-    // jumlah anggota per kategori, tanpa perlu endpoint baru di backend.
     api
-      .get('/org-structures', { params: { limit: 1000 } })
-      .then((r) => setMembers(r.data.data))
+      .get("/dashboard/summary")
+      .then((r) => setData(r.data.data))
+      .catch(() => {});
+
+    // Endpoint publik dipakai ulang untuk menghitung
+    api
+      .get("/org-structures", { params: { limit: 1000 } })
+      .then((r) => {
+        // FILTERING: Buang semua node bayangan/spacer agar tidak dihitung
+        const hiddenNodes = [
+          "_TRUNK_",
+          "_EMPTY_",
+          "_SPACER_BATIMIN_",
+          "_SPACER_PENATA_",
+        ];
+        const actualMembers = r.data.data.filter(
+          (m) => !hiddenNodes.includes(m.position),
+        );
+
+        setMembers(actualMembers);
+      })
       .catch(() => setMembers([]));
   }, []);
 
@@ -49,11 +86,14 @@ export default function Dashboard() {
         value: members.filter((m) => m.box_color === c.key).length,
       })).filter((s) => s.value > 0)
     : [];
+
   const totalMembers = members ? members.length : 0;
 
   return (
     <div className="font-dash">
-      <h1 className="text-[20px] font-semibold text-dashNavy mb-6">Ringkasan Dashboard</h1>
+      <h1 className="text-[20px] font-semibold text-dashNavy mb-6">
+        Ringkasan Dashboard
+      </h1>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {widgets.map((w) => {
@@ -64,13 +104,17 @@ export default function Dashboard() {
             <div
               key={w.key}
               className={`bg-white rounded-lg border p-5 shadow-dashCard transition ${
-                isAlert ? 'border-dashAccent' : 'border-gray-200'
+                isAlert ? "border-dashAccent" : "border-gray-200"
               }`}
             >
-              <div className={`w-9 h-9 rounded-md flex items-center justify-center mb-3 ${t.chip}`}>
+              <div
+                className={`w-9 h-9 rounded-md flex items-center justify-center mb-3 ${t.chip}`}
+              >
                 <Icon className={`w-[18px] h-[18px] ${t.icon}`} />
               </div>
-              <p className="text-3xl font-semibold text-dashNavy">{data ? data[w.key] : '—'}</p>
+              <p className="text-3xl font-semibold text-dashNavy">
+                {data ? data[w.key] : "—"}
+              </p>
               <p className="text-sm text-dashNavy/60 mt-1">{w.label}</p>
             </div>
           );
@@ -93,7 +137,9 @@ export default function Dashboard() {
             <div className="w-8 h-8 rounded-md bg-dashAccent/10 flex items-center justify-center">
               <Users className="w-4 h-4 text-dashAccent" />
             </div>
-            <h2 className="text-sm font-semibold text-dashNavy">Distribusi Anggota</h2>
+            <h2 className="text-sm font-semibold text-dashNavy">
+              Distribusi Anggota
+            </h2>
           </div>
           <DonutChart segments={segments} total={totalMembers} />
         </div>

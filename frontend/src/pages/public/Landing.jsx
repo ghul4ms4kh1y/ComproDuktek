@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import api from '../../services/api';
-import { Marquee } from '../../components/ui/marquee';
-import HeroSlider from '../../components/public/HeroSlider';
+import { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
+import api from "../../services/api";
+import { Marquee } from "../../components/ui/marquee";
+import HeroSlider from "../../components/public/HeroSlider";
 import {
   Terminal,
   Wrench,
@@ -14,32 +14,31 @@ import {
   Calendar,
   Plus,
   Minus,
-} from 'lucide-react';
+} from "lucide-react";
 
 const highlights = [
   {
-    title: 'Pengembangan Teknologi',
-    desc: 'Riset dan pembuatan solusi teknologi siber terapan untuk mendukung keandalan sistem informasi serta pertahanan digital TNI AD.',
+    title: "Pengembangan Teknologi",
+    desc: "Riset dan pembuatan solusi teknologi siber terapan untuk mendukung keandalan sistem informasi serta pertahanan digital TNI AD.",
     icon: Terminal,
-    link: '/produk'
+    link: "/produk",
   },
   {
-    title: 'Rekayasa Terbalik',
-    desc: 'Analisis mendalam terhadap perangkat lunak dan sistem (Reverse Engineering) untuk mendeteksi celah keamanan serta ancaman siber.',
+    title: "Rekayasa Terbalik",
+    desc: "Analisis mendalam terhadap perangkat lunak dan sistem (Reverse Engineering) untuk mendeteksi celah keamanan serta ancaman siber.",
     icon: Wrench,
-    link: '/produk'
+    link: "/produk",
   },
   {
-    title: 'Pemeliharaan & Instalasi',
-    desc: 'Layanan terpadu mencakup instalasi jaringan, perawatan infrastruktur siber, dan pengamanan sistem data secara berkelanjutan.',
+    title: "Pemeliharaan & Instalasi",
+    desc: "Layanan terpadu mencakup instalasi jaringan, perawatan infrastruktur siber, dan pengamanan sistem data secara berkelanjutan.",
     icon: Server,
-    link: '/produk'
+    link: "/produk",
   },
 ];
 
-
 // Helper Component untuk Animasi Scroll Smooth Reveal
-function RevealSection({ children, className = '' }) {
+function RevealSection({ children, className = "" }) {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -51,7 +50,7 @@ function RevealSection({ children, className = '' }) {
           observer.unobserve(entry.target); // Hanya animasi 1x saat muncul
         }
       },
-      { threshold: 0.15 } // Muncul saat 15% bagian section masuk viewport
+      { threshold: 0.15 }, // Muncul saat 15% bagian section masuk viewport
     );
 
     if (ref.current) observer.observe(ref.current);
@@ -61,10 +60,11 @@ function RevealSection({ children, className = '' }) {
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out transform ${isVisible
-        ? 'opacity-100 translate-y-0 scale-100'
-        : 'opacity-0 translate-y-10 scale-[0.98]'
-        } ${className}`}
+      className={`transition-all duration-700 ease-out transform ${
+        isVisible
+          ? "opacity-100 translate-y-0 scale-100"
+          : "opacity-0 translate-y-10 scale-[0.98]"
+      } ${className}`}
     >
       {children}
     </div>
@@ -75,17 +75,19 @@ export default function Landing() {
   const [news, setNews] = useState([]);
   const [products, setProducts] = useState([]);
 
-
   useEffect(() => {
-    api.get('/news', { params: { limit: 3 } }).then((r) => setNews(r.data.data)).catch(() => { });
-    api.get('/products', { params: { limit: 4 } }).then((r) => setProducts(r.data.data)).catch(() => { });
-
+    api
+      .get("/news", { params: { limit: 3 } })
+      .then((r) => setNews(r.data.data))
+      .catch(() => {});
+    api
+      .get("/products", { params: { limit: 4 } })
+      .then((r) => setProducts(r.data.data))
+      .catch(() => {});
   }, []);
-
 
   return (
     <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen space-y-16 py-4 transition-colors duration-300">
-
       {/* Hero Section */}
       <section className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="relative rounded-[2.5rem] overflow-hidden flex items-center min-h-[75vh] shadow-xl shadow-navy/10 dark:shadow-black/40 border border-gray-100 dark:border-darkborder">
@@ -100,14 +102,20 @@ export default function Landing() {
               Satuan Pelaksana Dukungan Teknologi Siber TNI AD
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-light mb-10 leading-relaxed max-w-2xl">
-              Dengan semangat Krtrima Raksa Mandalam (mengamankan ruang digital), Satlak Dukungan Teknologi Siber bekerja di balik layar untuk menjaga aset informasi dan infrastruktur sistem agar tetap aman.
+              Dengan semangat Krtrima Raksa Mandalam (mengamankan ruang
+              digital), Satlak Dukungan Teknologi Siber bekerja di balik layar
+              untuk menjaga aset informasi dan infrastruktur sistem agar tetap
+              aman.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/kontak"
                 className="bg-[#4361EE]/80 hover:bg-blue-600 text-white px-7 py-3 rounded-xl font-medium transition-all duration-300 text-center shadow-lg hover:shadow-blue-500/25 inline-flex items-center justify-center gap-2 group shrink-0"
               >
-                Hubungi Kami <span className="text-sm transition-transform group-hover:translate-x-1">›</span>
+                Hubungi Kami{" "}
+                <span className="text-sm transition-transform group-hover:translate-x-1">
+                  ›
+                </span>
               </Link>
               <Link
                 to="/produk"
@@ -123,9 +131,15 @@ export default function Landing() {
       {/* Marquee Section */}
       <RevealSection className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="w-full overflow-hidden rounded-2xl py-4">
-          <Marquee pauseOnHover className="bg-transparent text-navy flex items-center">
+          <Marquee
+            pauseOnHover
+            className="bg-transparent text-navy flex items-center"
+          >
             {[...Array(10)].map((_, i) => (
-              <div key={i} className="flex items-center gap-6 mx-6 whitespace-nowrap">
+              <div
+                key={i}
+                className="flex items-center gap-6 mx-6 whitespace-nowrap"
+              >
                 <img
                   src="/logo.png"
                   alt="Logo Satlak"
@@ -166,10 +180,15 @@ export default function Landing() {
 
             <div className="lg:col-span-6 text-inktext/70 dark:text-gray-400 text-base md:text-lg leading-relaxed space-y-4 pt-2">
               <p>
-                Ancaman siber yang kian kompleks membutuhkan sistem pertahanan yang tangguh. Satlak Dukungan Teknologi Siber mengintegrasikan riset terapan, analisis mendalam, dan pemeliharaan sistem dalam satu kesatuan tim.
+                Ancaman siber yang kian kompleks membutuhkan sistem pertahanan
+                yang tangguh. Satlak Dukungan Teknologi Siber mengintegrasikan
+                riset terapan, analisis mendalam, dan pemeliharaan sistem dalam
+                satu kesatuan tim.
               </p>
               <p>
-                Setiap elemen teknologi dikembangkan dan dijaga dengan tingkat ketelitian tinggi demi memastikan kedaulatan informasi serta ruang digital tetap terlindungi.
+                Setiap elemen teknologi dikembangkan dan dijaga dengan tingkat
+                ketelitian tinggi demi memastikan kedaulatan informasi serta
+                ruang digital tetap terlindungi.
               </p>
             </div>
           </div>
@@ -212,7 +231,6 @@ export default function Landing() {
       {/* Produk & Layanan */}
       <RevealSection className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden shadow-sm">
-
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-6 relative z-10">
             <div>
@@ -223,7 +241,8 @@ export default function Landing() {
                 Produk & Solusi Unggulan
               </h2>
               <p className="text-inktext/70 dark:text-gray-400 text-sm md:text-base mt-2 max-w-xl">
-                Hasil pengembangan teknologi siber terapan dan sistem perangkat keras/lunak mandiri Satlak Dukteksi PUSSIBERAD.
+                Hasil pengembangan teknologi siber terapan dan sistem perangkat
+                keras/lunak mandiri Satlak Dukteksi PUSSIBERAD.
               </p>
             </div>
 
@@ -237,19 +256,20 @@ export default function Landing() {
 
           {/* Body Content */}
           {products.length === 0 ? (
-            <div className="bg-[#f8fafc] dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-12 text-center flex flex-col items-center justify-center relative z-10">
+            <div className="bg-white dark:bg-darkpanel border border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-12 text-center flex flex-col items-center justify-center relative z-10">
               <div className="w-16 h-16 rounded-2xl bg-navy flex items-center justify-center text-white mb-4 shadow-inner">
                 <PackageSearch className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-lg font-bold text-navy mb-1">
                 Belum Ada Produk Dipublikasikan
               </h3>
-              <p className="text-inktext/60 text-sm max-w-md mb-6 leading-relaxed">
-                Katalog produk siber terapan dan sistem inovasi saat ini sedang dalam tahap dokumentasi atau riset internal.
+              <p className="text-inktext/60 dark:text-gray-400 text-sm max-w-md mb-6 leading-relaxed">
+                Katalog produk siber terapan dan sistem inovasi saat ini sedang
+                dalam tahap dokumentasi atau riset internal.
               </p>
               <Link
                 to="/kontak"
-                className="text-xs font-semibold text-navy dark:text-gray-300 hover:text-white bg-white dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-blue-500 border border-gray-200 dark:border-gray-700 px-4 py-2.5 rounded-lg transition-colors shadow-sm"
+                className="text-xs font-semibold text-navy dark:text-white hover:text-white bg-white dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-blue-600 border border-gray-200 dark:border-gray-700 px-4 py-2.5 rounded-lg transition-colors shadow-sm"
               >
                 Ajukan Informasi / Konsultasi
               </Link>
@@ -258,7 +278,7 @@ export default function Landing() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
               {products.map((p) => (
                 <Link
-                  to={`/produk/${p.id || '#'}`}
+                  to={`/produk/${p.id || "#"}`}
                   key={p.id}
                   className="group bg-[#f8fafc] dark:bg-[#112236] border border-gray-100 dark:border-darkborder rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
                 >
@@ -276,13 +296,15 @@ export default function Landing() {
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-slate-900 to-navy flex flex-col items-center justify-center text-white/40 p-4">
                           <Cpu className="w-10 h-10 mb-2 opacity-50" />
-                          <span className="text-xs font-medium tracking-wider uppercase">Sistem Siber</span>
+                          <span className="text-xs font-medium tracking-wider uppercase">
+                            Sistem Siber
+                          </span>
                         </div>
                       )}
 
                       <div className="absolute top-3 left-3">
                         <span className="text-[11px] font-bold bg-white/90 backdrop-blur-md text-navy px-3 py-1 rounded-full uppercase tracking-wider shadow-sm border border-white/20">
-                          {p.status || 'Aktif'}
+                          {p.status || "Aktif"}
                         </span>
                       </div>
                     </div>
@@ -291,7 +313,8 @@ export default function Landing() {
                       {p.name}
                     </h3>
                     <p className="text-inktext/70 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-6">
-                      {p.description || 'Solusi teknologi siber terapan yang dikembangkan khusus untuk mendukung keandalan sistem pertahanan.'}
+                      {p.description ||
+                        "Solusi teknologi siber terapan yang dikembangkan khusus untuk mendukung keandalan sistem pertahanan."}
                     </p>
                   </div>
 
@@ -305,14 +328,12 @@ export default function Landing() {
               ))}
             </div>
           )}
-
         </div>
       </RevealSection>
 
       {/* Berita & Kegiatan */}
       <RevealSection className="max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div className="bg-[#f8fafc] dark:bg-darkpanel rounded-[2.5rem] p-8 md:p-14 border border-gray-100 dark:border-darkborder relative overflow-hidden shadow-sm">
-
+        <div className="bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden shadow-sm">
           <div className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Header */}
@@ -325,7 +346,8 @@ export default function Landing() {
                 Berita & Kegiatan Terkini
               </h2>
               <p className="text-inktext/70 dark:text-gray-400 text-sm md:text-base mt-2 max-w-xl">
-                Publikasi resmi mengenai operasional, edukasi siber, dan kabar terbaru dari Satlak Dukteksi PUSSIBERAD.
+                Publikasi resmi mengenai operasional, edukasi siber, dan kabar
+                terbaru dari Satlak Dukteksi PUSSIBERAD.
               </p>
             </div>
 
@@ -339,26 +361,26 @@ export default function Landing() {
 
           {/* Content */}
           {news.length === 0 ? (
-            <div className="bg-white border border-dashed border-gray-200 rounded-2xl p-12 text-center flex flex-col items-center justify-center relative z-10 shadow-sm">
+            <div className="bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-2xl p-12 text-center flex flex-col items-center justify-center relative z-10 shadow-sm">
               <div className="w-16 h-16 rounded-2xl bg-navy flex items-center justify-center text-white mb-4 shadow-inner">
                 <Newspaper className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-lg font-bold text-navy mb-1">
+              <h3 className="text-lg font-bold text-navy dark:text-white mb-1">
                 Belum Ada Berita Terbaru
               </h3>
-              <p className="text-inktext/60 text-sm max-w-md mb-6 leading-relaxed">
-                Kabar kegiatan dan pembaruan informasi siber saat ini belum dipublikasikan.
+              <p className="text-inktext/60 dark:text-gray-400 text-sm max-w-md mb-6 leading-relaxed">
+                Kabar kegiatan dan pembaruan informasi siber saat ini belum
+                dipublikasikan.
               </p>
               <Link
                 to="/kontak"
-                className="text-xs font-semibold text-navy hover:text-white bg-gray-100 hover:bg-blue-600 px-4 py-2.5 rounded-lg transition-colors"
+                className="text-xs font-semibold text-navy dark:text-white hover:text-white bg-white dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-blue-600 border border-gray-200 dark:border-gray-700 px-4 py-2.5 rounded-lg transition-colors shadow-sm"
               >
                 Hubungi Pusat Informasi
               </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
-
               {/* Card Kiri (Big Featured Card) */}
               {news[0] && (
                 <div className="lg:col-span-6 flex">
@@ -389,7 +411,7 @@ export default function Landing() {
                         </span>
                         <span className="text-white/70 flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5" />
-                          {news[0].news_date || 'Terbaru'}
+                          {news[0].news_date || "Terbaru"}
                         </span>
                       </div>
 
@@ -398,11 +420,14 @@ export default function Landing() {
                       </h3>
 
                       <p className="text-white/80 text-sm line-clamp-2 leading-relaxed mb-4">
-                        {news[0].content || news[0].excerpt || 'Informasi dan dokumentasi kegiatan resmi Satlak Dukungan Teknologi Siber PUSSIBERAD.'}
+                        {news[0].content ||
+                          news[0].excerpt ||
+                          "Informasi dan dokumentasi kegiatan resmi Satlak Dukungan Teknologi Siber PUSSIBERAD."}
                       </p>
 
                       <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-400 group-hover:text-blue-300">
-                        Selengkapnya <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        Selengkapnya{" "}
+                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </div>
                     </div>
                   </Link>
@@ -442,7 +467,7 @@ export default function Landing() {
                             Berita
                           </span>
                           <span className="text-inktext/50 text-[11px]">
-                            {n.news_date || 'Terbaru'}
+                            {n.news_date || "Terbaru"}
                           </span>
                         </div>
 
@@ -451,7 +476,9 @@ export default function Landing() {
                         </h4>
 
                         <p className="text-inktext/70 text-xs line-clamp-2 leading-relaxed">
-                          {n.content || n.excerpt || 'Ulasan singkat berita dan publikasi kegiatan operasional siber.'}
+                          {n.content ||
+                            n.excerpt ||
+                            "Ulasan singkat berita dan publikasi kegiatan operasional siber."}
                         </p>
                       </div>
 
@@ -465,19 +492,16 @@ export default function Landing() {
 
                 {news.length === 1 && (
                   <div className="bg-white dark:bg-[#112236] border border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-8 text-center flex flex-col items-center justify-center h-full">
-                    <p className="text-inktext/60 dark:text-gray-400 text-sm">Belum ada berita tambahan lainnya.</p>
+                    <p className="text-inktext/60 dark:text-gray-400 text-sm">
+                      Belum ada berita tambahan lainnya.
+                    </p>
                   </div>
                 )}
               </div>
-
             </div>
           )}
-
         </div>
       </RevealSection>
-
-
-
     </div>
   );
 }
