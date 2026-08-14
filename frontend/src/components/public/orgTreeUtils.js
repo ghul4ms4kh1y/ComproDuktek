@@ -2,9 +2,13 @@
 // (navy/gold/blue-600) - bukan warna Verixa, supaya konsisten dengan
 // halaman lain (Navbar, tombol, dst yang sudah pakai navy & blue-600).
 export const BOX_COLORS = {
-  merah: { bg: 'bg-red-50', text: 'text-red-800', border: 'border-red-300' }, // pucuk pimpinan
-  oranye: { bg: 'bg-gold/20', text: 'text-navy', border: 'border-gold' },      // pemimpin unit
-  teal: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' }, // staf
+  merah: { bg: "bg-red-50", text: "text-red-800", border: "border-red-300" },
+  oranye: {
+    bg: "bg-blue-50",
+    text: "text-blue-700",
+    border: "border-blue-200",
+  }, // Fallback
+  teal: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" }, // Semua staf jadi biru
 };
 
 // Mengubah daftar datar (flat, dengan parent_id) menjadi struktur pohon (tree)
