@@ -47,6 +47,7 @@ function PersonRow({ node, depth }) {
           <img
             src={node.photo}
             alt={node.name}
+            loading="lazy"
             className="w-9 h-9 rounded-full object-cover shrink-0 border border-white shadow"
           />
         ) : (

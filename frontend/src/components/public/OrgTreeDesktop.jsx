@@ -16,14 +16,14 @@ function PersonBox({ node, hasChildren }) {
     node.position === "_SPACER_PENATA_"
   ) {
     return (
-      <div className="flex flex-col items-center w-36 h-[220px] justify-center relative">
+      <div className="flex flex-col items-center w-36 h-[235px] justify-center relative">
         <div className="w-px h-full bg-gray-300 dark:bg-gray-600 absolute top-0 bottom-0" />
       </div>
     );
   }
 
   if (node.position === "_EMPTY_") {
-    return <div className="w-36 h-[220px]"></div>;
+    return <div className="w-36 h-[235px]"></div>;
   }
 
   // --- LOGIKA "EFEK PUDAR" & ANTI-TABRAKAN WARNA ---
@@ -38,7 +38,7 @@ function PersonBox({ node, hasChildren }) {
   }
 
   return (
-    <div className="flex flex-col items-center w-36 text-center relative z-10 h-[220px]">
+    <div className="flex flex-col items-center w-36 text-center relative z-10 h-[235px]">
       <div
         className={`w-28 h-36 mt-1 rounded-[14px] overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800/50 ring-[2px] ring-offset-[3px] ring-offset-white dark:ring-offset-slate-900 shadow-xl transition-all ${haloEffect}`}
       >
@@ -46,6 +46,7 @@ function PersonBox({ node, hasChildren }) {
           <img
             src={node.photo}
             alt={node.name}
+            loading="lazy"
             className="w-full h-full object-cover"
           />
         ) : (
