@@ -16,14 +16,25 @@ function PersonBox({ node, hasChildren, onSelect }) {
     node.position === "_SPACER_PENATA_"
   ) {
     return (
-      <div className="flex flex-col items-center w-36 h-[220px] justify-center relative">
+      <div className="flex flex-col items-center w-36 h-[235px] justify-center relative">
         <div className="w-px h-full bg-gray-300 dark:bg-gray-600 absolute top-0 bottom-0" />
       </div>
     );
   }
 
   if (node.position === "_EMPTY_") {
-    return <div className="w-36 h-[220px]"></div>;
+    return <div className="w-36 h-[235px]"></div>;
+  }
+
+  // --- LOGIKA "EFEK PUDAR" & ANTI-TABRAKAN WARNA ---
+  const pos = (node.position || "").toUpperCase();
+
+  let haloEffect = "ring-blue-600";
+
+  if (pos.includes("DANSATLAK")) {
+    haloEffect = "ring-red-600";
+  } else if (pos.includes("DANTIM") || pos.includes("DANUNIT")) {
+    haloEffect = "ring-amber-400";
   }
 
   // --- LOGIKA "EFEK PUDAR" & ANTI-TABRAKAN WARNA ---

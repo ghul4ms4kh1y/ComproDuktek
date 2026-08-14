@@ -40,6 +40,7 @@ const AdminOrgNode = ({ node, onEdit }) => {
             <img
               src={node.photo}
               alt={node.name}
+              loading="lazy"
               className="w-12 h-12 rounded-full object-cover border border-gray-100"
             />
           ) : (
@@ -92,6 +93,7 @@ const FlatAdminCard = ({ node, onEdit }) => (
         <img
           src={node.photo}
           alt={node.name}
+          loading="lazy"
           className="w-12 h-12 rounded-full object-cover border border-gray-100"
         />
       ) : (
