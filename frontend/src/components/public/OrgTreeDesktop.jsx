@@ -1,49 +1,121 @@
-import { UserRound } from 'lucide-react';
-import { BOX_COLORS } from './orgTreeUtils';
+import { BOX_COLORS } from "./orgTreeUtils";
+import { UserRound } from "lucide-react";
 
 function PersonBox({ node }) {
-  const c = BOX_COLORS[node.box_color] || BOX_COLORS.teal;
-  return (
-    <div className="flex flex-col items-center w-48 text-center">
-      <div className={`w-40 h-48 rounded-2xl overflow-hidden border-2 ${c.border} shadow-sm bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0`}>
-        {node.photo
-          ? <img src={node.photo} alt={node.name} className="w-full h-full object-cover" />
-          : <UserRound className="w-16 h-16 text-gray-400" />}
+  // TRUNK TENGAH (Batang Dantim tetap pendek)
+  if (node.position === "_TRUNK_") {
+    return (
+      <div className="flex flex-col items-center w-36 h-[70px] justify-center relative">
+        <div className="w-px h-full bg-gray-300 dark:bg-gray-600 absolute top-0 bottom-0" />
       </div>
-      <p className="text-sm font-bold text-navy dark:text-gray-100 leading-tight mt-3">{node.rank ? `${node.rank} ` : ''}{node.name}</p>
-      <p className={`text-xs font-semibold leading-tight mt-2 px-3 py-1 rounded-full ${c.bg} ${c.text}`}>{node.position}</p>
+    );
+  }
+
+  // TRUNK KHUSUS BATIMIN DAN PENATA (Tingginya disamakan persis dgn kotak normal = 220px)
+  if (
+    node.position === "_SPACER_BATIMIN_" ||
+    node.position === "_SPACER_PENATA_"
+  ) {
+    return (
+      <div className="flex flex-col items-center w-36 h-[220px] justify-center relative">
+        <div className="w-px h-full bg-gray-300 dark:bg-gray-600 absolute top-0 bottom-0" />
+      </div>
+    );
+  }
+
+  // PENYEIMBANG KIRI (Tingginya juga 220px)
+  if (node.position === "_EMPTY_") {
+    return <div className="w-36 h-[220px]"></div>;
+  }
+
+  // KOTAK KARTU NORMAL
+  return (
+    // Wadah dipertinggi menjadi h-[220px] agar teks yang panjang tidak meluber ke garis
+    <div className="flex flex-col items-center w-36 text-center relative z-10 h-[220px]">
+      <div className="w-28 h-36 rounded-[14px] overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800/50">
+        {node.photo ? (
+          <img
+            src={node.photo}
+            alt={node.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <UserRound className="w-12 h-12 text-gray-300" />
+        )}
+      </div>
+
+      <p className="text-[13px] font-bold text-gray-700 dark:text-gray-200 leading-snug mt-3 px-1">
+        {node.rank ? `${node.rank} ` : ""}
+        {node.name || "-"}
+      </p>
+
+      <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mt-1 px-1">
+        {node.position}
+      </p>
     </div>
   );
 }
 
-// Node pohon rekursif: kotak orang + (jika ada anak) garis vertikal turun,
-// garis horizontal selebar anak-anaknya, lalu tiap anak digambar ulang secara
-// rekursif dengan pola yang sama. Ini membuat bagan tersusun otomatis dari
-// data manapun, tanpa perlu koordinat manual.
 function TreeNode({ node }) {
   const hasChildren = node.children?.length > 0;
+
+  // Logika Pintar: Cari indeks anak pertama dan terakhir yang TERLIHAT (Bukan _EMPTY_)
+  let firstVisibleIndex = 0;
+  let lastVisibleIndex = hasChildren ? node.children.length - 1 : 0;
+
+  if (hasChildren) {
+    firstVisibleIndex = node.children.findIndex(
+      (c) => c.position !== "_EMPTY_",
+    );
+    for (let i = node.children.length - 1; i >= 0; i--) {
+      if (node.children[i].position !== "_EMPTY_") {
+        lastVisibleIndex = i;
+        break;
+      }
+    }
+  }
+
   return (
     <div className="flex flex-col items-center">
       <PersonBox node={node} />
       {hasChildren && (
         <>
-          <div className="w-px h-5 bg-gray-300 dark:bg-gray-600" />
+          <div className="w-px h-4 bg-gray-300 dark:bg-gray-600" />
           <div className="flex items-start">
-            {node.children.map((child, idx) => (
-              <div key={child.id} className="flex flex-col items-center px-4 relative">
-                {node.children.length > 1 && (
+            {node.children.map((child, idx) => {
+              const isEmpty = child.position === "_EMPTY_";
+
+              // Cek apakah node ini adalah ujung garis berdasarkan node yang terlihat
+              const isFirstVisible = idx === firstVisibleIndex;
+              const isLastVisible = idx === lastVisibleIndex;
+              const needsHorizontalLine =
+                firstVisibleIndex !== lastVisibleIndex;
+
+              return (
+                <div
+                  key={child.id}
+                  className="flex flex-col items-center px-3 relative"
+                >
+                  {/* Gambar Garis Horizontal hanya pada node yang bukan _EMPTY_ */}
+                  {needsHorizontalLine && !isEmpty && (
+                    <div
+                      className="absolute top-0 h-px bg-gray-300 dark:bg-gray-600"
+                      style={{
+                        left: isFirstVisible ? "50%" : 0,
+                        right: isLastVisible ? "50%" : 0,
+                      }}
+                    />
+                  )}
+
+                  {/* Sembunyikan garis vertikal (turun) jika node-nya adalah _EMPTY_ */}
                   <div
-                    className="absolute top-0 h-px bg-gray-300 dark:bg-gray-600"
-                    style={{
-                      left: idx === 0 ? '50%' : 0,
-                      right: idx === node.children.length - 1 ? '50%' : 0,
-                    }}
+                    className={`w-px h-4 ${isEmpty ? "bg-transparent" : "bg-gray-300 dark:bg-gray-600"}`}
                   />
-                )}
-                <div className="w-px h-5 bg-gray-300 dark:bg-gray-600" />
-                <TreeNode node={child} />
-              </div>
-            ))}
+
+                  <TreeNode node={child} />
+                </div>
+              );
+            })}
           </div>
         </>
       )}
@@ -54,7 +126,7 @@ function TreeNode({ node }) {
 export default function OrgTreeDesktop({ roots }) {
   return (
     <div className="overflow-x-auto pb-4">
-      <div className="flex justify-center gap-16 min-w-max px-8">
+      <div className="flex justify-center gap-8 min-w-max px-6">
         {roots.map((root) => (
           <TreeNode key={root.id} node={root} />
         ))}
