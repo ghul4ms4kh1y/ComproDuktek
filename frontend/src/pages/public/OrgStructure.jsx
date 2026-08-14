@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import RevealSection from '../../components/common/RevealSection';
 import OrgTreeDesktop from '../../components/public/OrgTreeDesktop';
 import OrgListMobile from '../../components/public/OrgListMobile';
+import MemberDetailModal from '../../components/public/MemberDetailModal';
 import { buildTree } from '../../components/public/orgTreeUtils';
 import api from '../../services/api';
 
 export default function OrgStructure() {
   const [roots, setRoots] = useState(null); // null = masih memuat
   const [error, setError] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
 
   useEffect(() => {
     api
@@ -45,16 +47,18 @@ export default function OrgStructure() {
           <RevealSection>
             {/* Desktop: bagan pohon dengan garis penghubung otomatis (geser jika lebar) */}
             <div className="hidden md:block bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-3xl shadow-sm p-8">
-              <OrgTreeDesktop roots={roots} />
+              <OrgTreeDesktop roots={roots} onSelect={setSelectedMember} />
             </div>
 
             {/* Mobile: list bertingkat, bisa dilipat/dibuka per cabang */}
             <div className="md:hidden max-w-lg mx-auto bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-3xl shadow-sm p-4">
-              <OrgListMobile roots={roots} />
+              <OrgListMobile roots={roots} onSelect={setSelectedMember} />
             </div>
           </RevealSection>
         )}
       </div>
+
+      <MemberDetailModal member={selectedMember} onClose={() => setSelectedMember(null)} />
     </div>
   );
 }

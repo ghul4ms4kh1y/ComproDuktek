@@ -18,6 +18,17 @@ const OrgStructure = sequelize.define('OrgStructure', {
     defaultValue: 'teal',
   },
   admin_id: { type: DataTypes.INTEGER, allowNull: true },
+
+  // --- Detail personel yang ditampilkan di jendela pop-up saat kotak diklik ---
+  // Kode karakter DISC, mis. "DC" (huruf 1 & 2 dipetakan ke warna standar DISC
+  // di frontend: D=merah, I=kuning, S=hijau, C=biru). Opsional.
+  disc_kode: { type: DataTypes.STRING(4), allowNull: true },
+  // Label per huruf pada disc_kode, dipisah koma sesuai urutan huruf,
+  // mis. "Dominasi,Ketelitian" untuk kode "DC". Opsional.
+  disc_label: { type: DataTypes.STRING(255), allowNull: true },
+  kekuatan_utama: { type: DataTypes.TEXT, allowNull: true },
+  rekomendasi_pengembangan: { type: DataTypes.TEXT, allowNull: true },
+  cara_komunikasi: { type: DataTypes.TEXT, allowNull: true },
 }, {
   tableName: 'org_structures',
 });

@@ -1,8 +1,8 @@
-import { BOX_COLORS } from "./orgTreeUtils";
+import { BOX_COLORS, getHaloRing } from "./orgTreeUtils";
 import { UserRound } from "lucide-react";
 
 // Tambahkan parameter hasChildren di sini ⬇️
-function PersonBox({ node, hasChildren }) {
+function PersonBox({ node, hasChildren, onSelect }) {
   if (node.position === "_TRUNK_") {
     return (
       <div className="flex flex-col items-center w-36 h-[70px] justify-center relative">
@@ -37,31 +37,39 @@ function PersonBox({ node, hasChildren }) {
     haloEffect = "ring-amber-400";
   }
 
+  // --- LOGIKA "EFEK PUDAR" & ANTI-TABRAKAN WARNA ---
+  const haloEffect = getHaloRing(node.position);
+
   return (
-    <div className="flex flex-col items-center w-36 text-center relative z-10 h-[235px]">
-      <div
-        className={`w-28 h-36 mt-1 rounded-[14px] overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800/50 ring-[2px] ring-offset-[3px] ring-offset-white dark:ring-offset-slate-900 shadow-xl transition-all ${haloEffect}`}
+    <div className="flex flex-col items-center w-36 text-center relative z-10 h-[220px]">
+      <button
+        type="button"
+        onClick={() => onSelect?.(node)}
+        className="flex flex-col items-center text-center w-full cursor-pointer group"
       >
-        {node.photo ? (
-          <img
-            src={node.photo}
-            alt={node.name}
-            loading="lazy"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <UserRound className="w-12 h-12 text-gray-300" />
-        )}
-      </div>
+        <div
+          className={`w-28 h-36 mt-1 rounded-[14px] overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800/50 ring-[2px] ring-offset-[3px] ring-offset-white dark:ring-offset-slate-900 shadow-xl transition-all group-hover:brightness-95 ${haloEffect}`}
+        >
+          {node.photo ? (
+            <img
+              src={node.photo}
+              alt={node.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <UserRound className="w-12 h-12 text-gray-300" />
+          )}
+        </div>
 
-      <p className="text-[13px] font-bold text-gray-700 dark:text-gray-200 leading-snug mt-4 px-1">
-        {node.rank ? `${node.rank} ` : ""}
-        {node.name || "-"}
-      </p>
+        <p className="text-[13px] font-bold text-gray-700 dark:text-gray-200 leading-snug mt-4 px-1">
+          {node.rank ? `${node.rank} ` : ""}
+          {node.name || "-"}
+        </p>
 
-      <p className="text-[12px] font-medium text-gray-500 dark:text-gray-400 mt-1 px-1">
-        {node.position}
-      </p>
+        <p className="text-[12px] font-medium text-gray-500 dark:text-gray-400 mt-1 px-1">
+          {node.position}
+        </p>
+      </button>
 
       {/* ⬇️ TAMBAHAN BARU: Garis elastis untuk menutupi celah kosong */}
       {hasChildren && (
@@ -71,7 +79,7 @@ function PersonBox({ node, hasChildren }) {
   );
 }
 
-function TreeNode({ node }) {
+function TreeNode({ node, onSelect }) {
   const hasChildren = node.children?.length > 0;
 
   let firstVisibleIndex = 0;
@@ -91,7 +99,7 @@ function TreeNode({ node }) {
 
   return (
     <div className="flex flex-col items-center">
-      <PersonBox node={node} hasChildren={hasChildren} />
+      <PersonBox node={node} hasChildren={hasChildren} onSelect={onSelect} />
 
       {hasChildren && (
         <>
@@ -127,7 +135,7 @@ function TreeNode({ node }) {
                     className={`w-px h-4 ${isEmpty ? "bg-transparent" : "bg-gray-300 dark:bg-gray-600"}`}
                   />
 
-                  <TreeNode node={child} />
+                  <TreeNode node={child} onSelect={onSelect} />
                 </div>
               );
             })}
@@ -138,12 +146,12 @@ function TreeNode({ node }) {
   );
 }
 
-export default function OrgTreeDesktop({ roots }) {
+export default function OrgTreeDesktop({ roots, onSelect }) {
   return (
     <div className="overflow-x-auto pb-4 pt-4">
       <div className="flex justify-center gap-8 min-w-max px-6">
         {roots.map((root) => (
-          <TreeNode key={root.id} node={root} />
+          <TreeNode key={root.id} node={root} onSelect={onSelect} />
         ))}
       </div>
     </div>

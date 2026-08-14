@@ -165,6 +165,19 @@ export default function OrgStructureManage() {
     { name: "photo", label: "Foto Profil", type: "file" },
     { name: "name", label: "Nama Lengkap", type: "text", required: true },
     { name: "rank", label: "Pangkat", type: "text" },
+    { name: "disc_kode", label: "Kode Karakter DISC (mis. DC)", type: "text" },
+    {
+      name: "disc_label",
+      label: "Label Karakter (pisahkan koma sesuai urutan huruf, mis. Dominasi, Ketelitian)",
+      type: "text",
+    },
+    { name: "kekuatan_utama", label: "Kekuatan Utama", type: "textarea" },
+    {
+      name: "rekomendasi_pengembangan",
+      label: "Rekomendasi Pengembangan Diri",
+      type: "textarea",
+    },
+    { name: "cara_komunikasi", label: "Cara Berkomunikasi", type: "textarea" },
   ];
 
   const openEdit = (item) => {
@@ -182,6 +195,11 @@ export default function OrgStructureManage() {
         "position",
         "box_color",
         "display_order",
+        "disc_kode",
+        "disc_label",
+        "kekuatan_utama",
+        "rekomendasi_pengembangan",
+        "cara_komunikasi",
       ];
 
       allowedKeys.forEach((key) => {
