@@ -38,7 +38,7 @@ const galleryValidation = [
 const orgStructureValidation = [
   body('name').trim().notEmpty().withMessage('Nama wajib diisi.').isLength({ max: 255 }).withMessage('Nama maksimal 255 karakter.'),
   body('position').trim().notEmpty().withMessage('Jabatan wajib diisi.').isLength({ max: 255 }).withMessage('Jabatan maksimal 255 karakter.'),
-  body('level').optional().isInt({ min: 0 }).withMessage('Level harus berupa angka positif.'),
+  body('level').isInt({ min: 1 }).withMessage('Level wajib diisi, berupa angka minimal 1.'),
   body('parent_id').optional().isInt().withMessage('Parent ID harus berupa angka.'),
   handleValidationErrors,
 ];

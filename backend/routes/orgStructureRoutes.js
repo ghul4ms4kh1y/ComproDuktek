@@ -8,7 +8,7 @@ const { orgStructureValidation } = require('../middleware/validation');
 
 const controller = crudFactory(OrgStructure, {
   searchFields: ['name', 'position', 'rank'],
-  defaultOrder: [['display_order', 'ASC']],
+  defaultOrder: [['level', 'ASC'], ['display_order', 'ASC']],
   attachAdmin: true,
   fileField: 'photo',
 });
