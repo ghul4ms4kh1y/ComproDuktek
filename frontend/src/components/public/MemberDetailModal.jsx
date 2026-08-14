@@ -5,8 +5,12 @@ function DetailSection({ title, body }) {
   if (!body) return null;
   return (
     <div className="text-center sm:text-left">
-      <p className="text-xs font-bold tracking-wide text-gold uppercase mb-1">{title}</p>
-      <p className="text-sm text-inktext/80 dark:text-gray-300 leading-relaxed whitespace-pre-line">{body}</p>
+      <p className="text-xs font-bold tracking-wide text-gold uppercase mb-1">
+        {title}
+      </p>
+      <p className="text-sm text-inktext/80 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+        {body}
+      </p>
     </div>
   );
 }
@@ -40,7 +44,11 @@ export default function MemberDetailModal({ member, onClose }) {
             className={`w-28 h-28 rounded-full overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800/50 ring-[3px] ring-offset-4 ring-offset-white dark:ring-offset-darkpanel shadow-lg ${halo}`}
           >
             {member.photo ? (
-              <img src={member.photo} alt={member.name} className="w-full h-full object-cover" />
+              <img
+                src={member.photo}
+                alt={member.name}
+                className="w-full h-full object-cover object-[center_12%]"
+              />
             ) : (
               <UserRound className="w-14 h-14 text-gray-300" />
             )}
@@ -50,7 +58,9 @@ export default function MemberDetailModal({ member, onClose }) {
             {member.rank ? `${member.rank} ` : ""}
             {member.name || "-"}
           </p>
-          <p className="text-sm font-medium text-gold mt-1 px-2">{member.position}</p>
+          <p className="text-sm font-medium text-gold mt-1 px-2">
+            {member.position}
+          </p>
         </div>
 
         {/* Karakter DISC, hanya tampil jika sudah diisi admin */}
@@ -68,7 +78,9 @@ export default function MemberDetailModal({ member, onClose }) {
                     {d.letter}
                   </span>
                   {d.label && (
-                    <span className={`text-xs font-semibold ${d.text}`}>{d.label}</span>
+                    <span className={`text-xs font-semibold ${d.text}`}>
+                      {d.label}
+                    </span>
                   )}
                 </div>
               ))}
@@ -79,8 +91,14 @@ export default function MemberDetailModal({ member, onClose }) {
         {/* Detail teks, masing-masing hanya tampil jika sudah diisi admin */}
         <div className="mt-5 space-y-4">
           <DetailSection title="Kekuatan Utama" body={member.kekuatan_utama} />
-          <DetailSection title="Rekomendasi Pengembangan Diri" body={member.rekomendasi_pengembangan} />
-          <DetailSection title="Cara Berkomunikasi" body={member.cara_komunikasi} />
+          <DetailSection
+            title="Rekomendasi Pengembangan Diri"
+            body={member.rekomendasi_pengembangan}
+          />
+          <DetailSection
+            title="Cara Berkomunikasi"
+            body={member.cara_komunikasi}
+          />
         </div>
 
         {discPairs.length === 0 &&

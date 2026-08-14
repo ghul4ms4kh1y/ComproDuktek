@@ -1,7 +1,6 @@
 import { BOX_COLORS, getHaloRing } from "./orgTreeUtils";
 import { UserRound } from "lucide-react";
 
-// Tambahkan parameter hasChildren di sini ⬇️
 function PersonBox({ node, hasChildren, onSelect }) {
   if (node.position === "_TRUNK_") {
     return (
@@ -11,6 +10,7 @@ function PersonBox({ node, hasChildren, onSelect }) {
     );
   }
 
+  // Spacer Batimin & Penata disamakan tingginya dengan total tinggi card normal (235px)
   if (
     node.position === "_SPACER_BATIMIN_" ||
     node.position === "_SPACER_PENATA_"
@@ -26,22 +26,11 @@ function PersonBox({ node, hasChildren, onSelect }) {
     return <div className="w-36 h-[235px]"></div>;
   }
 
-  // --- LOGIKA "EFEK PUDAR" & ANTI-TABRAKAN WARNA ---
-  const pos = (node.position || "").toUpperCase();
-
-  let haloEffect = "ring-blue-600";
-
-  if (pos.includes("DANSATLAK")) {
-    haloEffect = "ring-red-600";
-  } else if (pos.includes("DANTIM") || pos.includes("DANUNIT")) {
-    haloEffect = "ring-amber-400";
-  }
-
-  // --- LOGIKA "EFEK PUDAR" & ANTI-TABRAKAN WARNA ---
-  const haloEffect = getHaloRing(node.position);
+  const haloEffect = getHaloRing ? getHaloRing(node.position) : "ring-blue-600";
 
   return (
-    <div className="flex flex-col items-center w-36 text-center relative z-10 h-[220px]">
+    // Gunakan h-[235px] agar konsisten dengan spacer
+    <div className="flex flex-col items-center w-36 text-center relative z-10 h-[235px]">
       <button
         type="button"
         onClick={() => onSelect?.(node)}
@@ -71,7 +60,7 @@ function PersonBox({ node, hasChildren, onSelect }) {
         </p>
       </button>
 
-      {/* ⬇️ TAMBAHAN BARU: Garis elastis untuk menutupi celah kosong */}
+      {/* Garis elastis untuk menutupi celah kosong jika punya anak */}
       {hasChildren && (
         <div className="w-px flex-grow bg-gray-300 dark:bg-gray-600 mt-2" />
       )}
@@ -108,7 +97,6 @@ function TreeNode({ node, onSelect }) {
             {node.children.map((child, idx) => {
               const isEmpty = child.position === "_EMPTY_";
 
-              // Cek apakah node ini adalah ujung garis berdasarkan node yang terlihat
               const isFirstVisible = idx === firstVisibleIndex;
               const isLastVisible = idx === lastVisibleIndex;
               const needsHorizontalLine =
@@ -119,7 +107,6 @@ function TreeNode({ node, onSelect }) {
                   key={child.id}
                   className="flex flex-col items-center px-3 relative"
                 >
-                  {/* Gambar Garis Horizontal hanya pada node yang bukan _EMPTY_ */}
                   {needsHorizontalLine && !isEmpty && (
                     <div
                       className="absolute top-0 h-px bg-gray-300 dark:bg-gray-600"
@@ -130,7 +117,6 @@ function TreeNode({ node, onSelect }) {
                     />
                   )}
 
-                  {/* Sembunyikan garis vertikal (turun) jika node-nya adalah _EMPTY_ */}
                   <div
                     className={`w-px h-4 ${isEmpty ? "bg-transparent" : "bg-gray-300 dark:bg-gray-600"}`}
                   />
