@@ -40,6 +40,8 @@ const orgStructureValidation = [
   body('position').trim().notEmpty().withMessage('Jabatan wajib diisi.').isLength({ max: 255 }).withMessage('Jabatan maksimal 255 karakter.'),
   body('level').optional().isInt({ min: 0 }).withMessage('Level harus berupa angka positif.'),
   body('parent_id').optional().isInt().withMessage('Parent ID harus berupa angka.'),
+  body('disc_kode').optional({ checkFalsy: true }).trim().isLength({ max: 4 }).withMessage('Kode karakter DISC maksimal 4 huruf.'),
+  body('disc_label').optional({ checkFalsy: true }).trim().isLength({ max: 255 }).withMessage('Label karakter maksimal 255 karakter.'),
   handleValidationErrors,
 ];
 

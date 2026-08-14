@@ -157,7 +157,7 @@ module.exports = {
 
       {
         ref: "SPACER_PENATA_SERVER",
-        position: "_SPACER_PENATA_",
+        position: "_SPACER_PENATA_",  
         parentRef: "DANTIM_HARWAT",
         color: "teal",
       },
