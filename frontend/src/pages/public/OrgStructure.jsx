@@ -44,7 +44,7 @@ export default function OrgStructure() {
         {roots?.length > 0 && (
           <RevealSection>
             {/* Desktop: bagan pohon dengan garis penghubung otomatis (geser jika lebar) */}
-            <div className="hidden md:block bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-3xl shadow-sm p-6">
+            <div className="hidden md:block bg-white dark:bg-darkpanel border border-gray-100 dark:border-darkborder rounded-3xl shadow-sm p-8">
               <OrgTreeDesktop roots={roots} />
             </div>
 
