@@ -1,8 +1,8 @@
 import { BOX_COLORS } from "./orgTreeUtils";
 import { UserRound } from "lucide-react";
 
-function PersonBox({ node }) {
-  // TRUNK TENGAH (Batang Dantim tetap pendek)
+// Tambahkan parameter hasChildren di sini ⬇️
+function PersonBox({ node, hasChildren }) {
   if (node.position === "_TRUNK_") {
     return (
       <div className="flex flex-col items-center w-36 h-[70px] justify-center relative">
@@ -11,7 +11,6 @@ function PersonBox({ node }) {
     );
   }
 
-  // TRUNK KHUSUS BATIMIN DAN PENATA (Tingginya disamakan persis dgn kotak normal = 220px)
   if (
     node.position === "_SPACER_BATIMIN_" ||
     node.position === "_SPACER_PENATA_"
@@ -23,16 +22,26 @@ function PersonBox({ node }) {
     );
   }
 
-  // PENYEIMBANG KIRI (Tingginya juga 220px)
   if (node.position === "_EMPTY_") {
     return <div className="w-36 h-[220px]"></div>;
   }
 
-  // KOTAK KARTU NORMAL
+  // --- LOGIKA "EFEK PUDAR" & ANTI-TABRAKAN WARNA ---
+  const pos = (node.position || "").toUpperCase();
+
+  let haloEffect = "ring-blue-600";
+
+  if (pos.includes("DANSATLAK")) {
+    haloEffect = "ring-red-600";
+  } else if (pos.includes("DANTIM") || pos.includes("DANUNIT")) {
+    haloEffect = "ring-amber-400";
+  }
+
   return (
-    // Wadah dipertinggi menjadi h-[220px] agar teks yang panjang tidak meluber ke garis
     <div className="flex flex-col items-center w-36 text-center relative z-10 h-[220px]">
-      <div className="w-28 h-36 rounded-[14px] overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800/50">
+      <div
+        className={`w-28 h-36 mt-1 rounded-[14px] overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800/50 ring-[2px] ring-offset-[3px] ring-offset-white dark:ring-offset-slate-900 shadow-xl transition-all ${haloEffect}`}
+      >
         {node.photo ? (
           <img
             src={node.photo}
@@ -44,14 +53,19 @@ function PersonBox({ node }) {
         )}
       </div>
 
-      <p className="text-[13px] font-bold text-gray-700 dark:text-gray-200 leading-snug mt-3 px-1">
+      <p className="text-[13px] font-bold text-gray-700 dark:text-gray-200 leading-snug mt-4 px-1">
         {node.rank ? `${node.rank} ` : ""}
         {node.name || "-"}
       </p>
 
-      <p className="text-[12px] font-semibold text-gray-500 dark:text-gray-400 mt-1 px-1">
+      <p className="text-[12px] font-medium text-gray-500 dark:text-gray-400 mt-1 px-1">
         {node.position}
       </p>
+
+      {/* ⬇️ TAMBAHAN BARU: Garis elastis untuk menutupi celah kosong */}
+      {hasChildren && (
+        <div className="w-px flex-grow bg-gray-300 dark:bg-gray-600 mt-2" />
+      )}
     </div>
   );
 }
@@ -59,7 +73,6 @@ function PersonBox({ node }) {
 function TreeNode({ node }) {
   const hasChildren = node.children?.length > 0;
 
-  // Logika Pintar: Cari indeks anak pertama dan terakhir yang TERLIHAT (Bukan _EMPTY_)
   let firstVisibleIndex = 0;
   let lastVisibleIndex = hasChildren ? node.children.length - 1 : 0;
 
@@ -77,7 +90,8 @@ function TreeNode({ node }) {
 
   return (
     <div className="flex flex-col items-center">
-      <PersonBox node={node} />
+      <PersonBox node={node} hasChildren={hasChildren} />
+
       {hasChildren && (
         <>
           <div className="w-px h-4 bg-gray-300 dark:bg-gray-600" />
@@ -125,7 +139,7 @@ function TreeNode({ node }) {
 
 export default function OrgTreeDesktop({ roots }) {
   return (
-    <div className="overflow-x-auto pb-4">
+    <div className="overflow-x-auto pb-4 pt-4">
       <div className="flex justify-center gap-8 min-w-max px-6">
         {roots.map((root) => (
           <TreeNode key={root.id} node={root} />
