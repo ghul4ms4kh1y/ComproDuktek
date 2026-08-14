@@ -160,13 +160,6 @@ export default function OrgStructureManage() {
   useEffect(load, []);
 
   const fields = [
-    { name: 'photo', label: 'Foto', type: 'file' },
-    { name: 'name', label: 'Nama', type: 'text', required: true },
-    { name: 'position', label: 'Jabatan', type: 'text', required: true },
-    { name: 'rank', label: 'Pangkat', type: 'text' },
-    { name: 'level', label: 'Level / Baris (1 = paling atas)', type: 'number', required: true },
-    { name: 'box_color', label: 'Warna kotak di bagan', type: 'select', options: COLOR_OPTIONS },
-    { name: 'parent_id', label: 'Terhubung garis dari (atasan, opsional)', type: 'select', options: parentOptions },
     { name: "photo", label: "Foto Profil", type: "file" },
     { name: "name", label: "Nama Lengkap", type: "text", required: true },
     { name: "rank", label: "Pangkat", type: "text" },
@@ -267,45 +260,6 @@ export default function OrgStructureManage() {
     return result;
   }, [rawItems, q, sortBy, isSearchingOrSorting]);
   // -----------------------------------------
-
-  // --- Drag and drop reorder, dibatasi HANYA sesama anggota dalam 1 level yang sama ---
-  const handleDragOver = (e, level, overId) => {
-    e.preventDefault();
-    if (level !== dragLevel || overId === dragId || dragId === null) return;
-
-    setItems((prev) => {
-      const levelItems = prev.filter((i) => (i.level ?? 1) === level);
-      const others = prev.filter((i) => (i.level ?? 1) !== level);
-      const dragIndex = levelItems.findIndex((i) => i.id === dragId);
-      const overIndex = levelItems.findIndex((i) => i.id === overId);
-      if (dragIndex === -1 || overIndex === -1) return prev;
-      const next = [...levelItems];
-      const [moved] = next.splice(dragIndex, 1);
-      next.splice(overIndex, 0, moved);
-      return [...others, ...next];
-    });
-  };
-
-  const persistOrder = async (level) => {
-    setSaving(true);
-    try {
-      const order = items.filter((i) => (i.level ?? 1) === level).map((i) => i.id);
-      const res = await api.put('/org-structures/reorder', { level, order });
-      setItems(res.data.data);
-      showToast('Urutan berhasil disimpan.');
-    } catch (err) {
-      showToast(err.response?.data?.message || 'Gagal menyimpan urutan.', 'error');
-      load();
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDrop = (level) => {
-    if (dragId !== null) persistOrder(level);
-    setDragId(null);
-    setDragLevel(null);
-  };
 
   return (
     <div className="font-dash pb-12">

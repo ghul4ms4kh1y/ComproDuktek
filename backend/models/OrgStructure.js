@@ -7,16 +7,10 @@ const OrgStructure = sequelize.define('OrgStructure', {
   position: { type: DataTypes.STRING(150), allowNull: false }, // jabatan
   rank: { type: DataTypes.STRING(100), allowNull: true }, // pangkat
   photo: { type: DataTypes.STRING(255), allowNull: true },
-  // Level/baris tampilan di bagan (1 = paling atas). Diisi MANUAL oleh admin,
-  // tidak lagi dihitung otomatis dari kedalaman parent_id. Admin bebas
-  // menentukan siapa ada di baris berapa, termasuk "melompat" beberapa baris
-  // dari atasannya.
-  level: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
-  // Menunjuk ke id atasan langsung. Sekarang HANYA dipakai untuk menggambar
-  // garis penghubung di bagan (dari kotak parent ke kotak ini), TIDAK lagi
-  // menentukan posisi/baris (itu tugas field `level`).
+  // Menunjuk ke id atasan langsung. NULL = posisi paling atas (mis. Dansatlak).
+  // Inilah yang membuat bagan bisa tersusun otomatis tanpa admin mengatur posisi manual.
   parent_id: { type: DataTypes.INTEGER, allowNull: true },
-  display_order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 }, // urutan horizontal dalam 1 level/baris yang sama
+  display_order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
   // Warna kotak di bagan (merah = pucuk pimpinan, oranye = pemimpin unit, teal = staf).
   box_color: {
     type: DataTypes.ENUM('merah', 'oranye', 'teal'),

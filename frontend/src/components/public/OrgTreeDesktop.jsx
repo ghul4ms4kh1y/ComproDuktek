@@ -30,6 +30,7 @@ function PersonBox({ node }) {
 
   // KOTAK KARTU NORMAL
   return (
+    // Wadah dipertinggi menjadi h-[220px] agar teks yang panjang tidak meluber ke garis
     <div className="flex flex-col items-center w-36 text-center relative z-10 h-[220px]">
       <div className="w-28 h-36 rounded-[14px] overflow-hidden flex items-center justify-center shrink-0 bg-gray-50 dark:bg-gray-800/50">
         {node.photo ? (
@@ -58,6 +59,7 @@ function PersonBox({ node }) {
 function TreeNode({ node }) {
   const hasChildren = node.children?.length > 0;
 
+  // Logika Pintar: Cari indeks anak pertama dan terakhir yang TERLIHAT (Bukan _EMPTY_)
   let firstVisibleIndex = 0;
   let lastVisibleIndex = hasChildren ? node.children.length - 1 : 0;
 
@@ -82,6 +84,8 @@ function TreeNode({ node }) {
           <div className="flex items-start">
             {node.children.map((child, idx) => {
               const isEmpty = child.position === "_EMPTY_";
+
+              // Cek apakah node ini adalah ujung garis berdasarkan node yang terlihat
               const isFirstVisible = idx === firstVisibleIndex;
               const isLastVisible = idx === lastVisibleIndex;
               const needsHorizontalLine =
@@ -92,6 +96,7 @@ function TreeNode({ node }) {
                   key={child.id}
                   className="flex flex-col items-center px-3 relative"
                 >
+                  {/* Gambar Garis Horizontal hanya pada node yang bukan _EMPTY_ */}
                   {needsHorizontalLine && !isEmpty && (
                     <div
                       className="absolute top-0 h-px bg-gray-300 dark:bg-gray-600"
@@ -101,9 +106,12 @@ function TreeNode({ node }) {
                       }}
                     />
                   )}
+
+                  {/* Sembunyikan garis vertikal (turun) jika node-nya adalah _EMPTY_ */}
                   <div
                     className={`w-px h-4 ${isEmpty ? "bg-transparent" : "bg-gray-300 dark:bg-gray-600"}`}
                   />
+
                   <TreeNode node={child} />
                 </div>
               );

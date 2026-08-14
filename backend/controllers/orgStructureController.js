@@ -29,14 +29,13 @@ exports.remove = async (req, res) => {
 };
 
 /**
- * Menyimpan ulang urutan (display_order) sesama anggota dalam 1 LEVEL/baris
- * yang sama (bukan lagi berdasarkan parent_id — urutan horizontal kini bebas
- * per level, tidak harus dekat dengan atasannya). Dibungkus transaction
- * supaya urutan tidak setengah jadi kalau ada yang gagal di tengah proses.
- * Body: { level: number, order: [id2, id1, id3, ...] }
+ * Menyimpan ulang urutan (display_order) sesama saudara (anak dari parent_id
+ * yang sama). Dibungkus transaction supaya urutan tidak setengah jadi kalau
+ * ada yang gagal di tengah proses.
+ * Body: { parent_id: number|null, order: [id2, id1, id3, ...] }
  */
 exports.reorder = async (req, res) => {
-  const { level, order } = req.body;
+  const { parent_id, order } = req.body;
 
   if (!Array.isArray(order) || order.length === 0) {
     return res.status(400).json({ message: 'Data urutan tidak valid.' });
@@ -47,18 +46,15 @@ exports.reorder = async (req, res) => {
     return res.status(400).json({ message: 'Data urutan berisi ID yang tidak valid.' });
   }
 
-  const lvl = Number(level);
-  if (!Number.isInteger(lvl)) {
-    return res.status(400).json({ message: 'Level tidak valid.' });
-  }
+  const parentId = parent_id === undefined || parent_id === null || parent_id === '' ? null : Number(parent_id);
 
   const t = await sequelize.transaction();
   try {
-    const count = await OrgStructure.count({ where: { id: ids, level: lvl }, transaction: t });
+    const count = await OrgStructure.count({ where: { id: ids, parent_id: parentId }, transaction: t });
     if (count !== ids.length) {
       await t.rollback();
       return res.status(400).json({
-        message: 'Data pada urutan ini tidak konsisten dengan levelnya. Silakan muat ulang halaman.',
+        message: 'Data pada urutan ini tidak konsisten dengan atasannya. Silakan muat ulang halaman.',
       });
     }
 
@@ -68,7 +64,7 @@ exports.reorder = async (req, res) => {
 
     await t.commit();
 
-    const updated = await OrgStructure.findAll({ order: [['level', 'ASC'], ['display_order', 'ASC']] });
+    const updated = await OrgStructure.findAll({ order: [['display_order', 'ASC']] });
     res.json({ message: 'Urutan berhasil diperbarui.', data: updated });
   } catch (err) {
     await t.rollback();
