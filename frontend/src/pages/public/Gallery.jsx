@@ -1,20 +1,31 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Shield, Cpu, Image as ImageIcon, X, Calendar, Info, ChevronLeft, ChevronRight } from 'lucide-react';
-import RevealSection from '../../components/common/RevealSection';
+import { useEffect, useState } from "react";
+import api from "../../services/api";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Camera,
+  Shield,
+  Cpu,
+  Image as ImageIcon,
+  X,
+  Calendar,
+  Info,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import RevealSection from "../../components/common/RevealSection";
 
 const getResponsiveGridClass = (index, totalItems) => {
   if (totalItems < 3) return "col-span-1 row-span-1";
-  
+
+  // Pola diubah untuk menyesuaikan UI Bento Grid (Besar di tengah)
   const patterns = {
-    0: "col-span-1 row-span-1 md:col-span-2 md:row-span-2",
-    1: "col-span-1 row-span-1",
+    0: "col-span-1 row-span-1",
+    1: "col-span-1 row-span-1 md:col-span-2 md:row-span-2", // Item besar ditempatkan di indeks ke-1 (tengah)
     2: "col-span-1 row-span-1",
-    3: "col-span-1 row-span-1 md:col-span-1 md:row-span-2",
+    3: "col-span-1 row-span-1",
     4: "col-span-1 row-span-1",
   };
-  
+
   return patterns[index % 5] || "col-span-1 row-span-1";
 };
 
@@ -28,14 +39,14 @@ export default function Gallery() {
   useEffect(() => {
     setLoading(true);
     api
-      .get('/galleries', { params: { limit: 100 } })
+      .get("/galleries", { params: { limit: 100 } })
       .then((r) => {
         const rawData = r.data.data || [];
         const mappedData = rawData.map((item, index) => ({
           id: item.id || index + 1,
           image: item.image,
-          description: item.description || 'Dokumentasi Kegiatan Satuan',
-          gallery_date: item.gallery_date || '',
+          description: item.description || "Dokumentasi Kegiatan Satuan",
+          gallery_date: item.gallery_date || "",
         }));
 
         setPhotos(mappedData);
@@ -60,14 +71,14 @@ export default function Gallery() {
   return (
     <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen pb-20 transition-colors duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-10 space-y-10">
-
         {/* Section Header Judul */}
         <RevealSection className="text-center space-y-2">
           <h1 className="text-3xl md:text-5xl font-extrabold text-navy dark:text-white tracking-tight">
             Dokumentasi Kegiatan
           </h1>
           <p className="text-inktext/70 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto font-light">
-            Kumpulan dokumentasi foto dan arsip visual kegiatan operasional serta latihan Satlak Dukteksi PUSSIBERAD.
+            Kumpulan dokumentasi foto dan arsip visual kegiatan operasional
+            serta latihan Satlak Dukteksi PUSSIBERAD.
           </p>
         </RevealSection>
 
@@ -83,7 +94,8 @@ export default function Gallery() {
                   Eksplorasi Galeri
                 </h3>
                 <p className="text-inktext/70 dark:text-gray-400 text-xs md:text-sm mt-0.5">
-                  Klik pada foto untuk membuka tampilan gambar penuh beserta detail penjelasannya.
+                  Klik pada foto untuk membuka tampilan gambar penuh beserta
+                  detail penjelasannya.
                 </p>
               </div>
             </div>
@@ -102,8 +114,9 @@ export default function Gallery() {
               {[1, 2, 3, 4, 5].map((n) => (
                 <div
                   key={n}
-                  className={`bg-gray-100 dark:bg-gray-800 animate-pulse rounded-3xl w-full h-full ${n === 2 ? 'md:col-span-2 md:row-span-2' : ''
-                    }`}
+                  className={`bg-gray-100 dark:bg-gray-800 animate-pulse rounded-3xl w-full h-full ${
+                    n === 2 ? "md:col-span-2 md:row-span-2" : ""
+                  }`}
                 />
               ))}
             </div>
@@ -112,9 +125,12 @@ export default function Gallery() {
               <div className="w-16 h-16 rounded-2xl bg-navy flex items-center justify-center text-white mb-4 shadow-inner">
                 <Camera className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-navy dark:text-white mb-2">Belum Ada Foto</h3>
+              <h3 className="text-xl font-bold text-navy dark:text-white mb-2">
+                Belum Ada Foto
+              </h3>
               <p className="text-inktext/60 dark:text-gray-400 text-sm max-w-md leading-relaxed">
-                Dokumentasi foto kegiatan belum diunggah atau belum tersedia saat ini.
+                Dokumentasi foto kegiatan belum diunggah atau belum tersedia
+                saat ini.
               </p>
             </div>
           ) : (
@@ -129,7 +145,10 @@ export default function Gallery() {
                   className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-5 auto-rows-[220px]"
                 >
                   {currentPhotos.map((item, index) => {
-                    const bentoClass = getResponsiveGridClass(index, currentPhotos.length);
+                    const bentoClass = getResponsiveGridClass(
+                      index,
+                      currentPhotos.length,
+                    );
                     return (
                       <motion.div
                         key={item.id}
@@ -177,18 +196,21 @@ export default function Gallery() {
                   </button>
 
                   <div className="flex items-center gap-1.5 px-3">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === page
-                            ? 'bg-navy dark:bg-blue-600 text-white shadow-md scale-105'
-                            : 'bg-gray-100 dark:bg-gray-800 text-inktext/70 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                            currentPage === page
+                              ? "bg-navy dark:bg-blue-600 text-white shadow-md scale-105"
+                              : "bg-gray-100 dark:bg-gray-800 text-inktext/70 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
                           }`}
-                      >
-                        {page}
-                      </button>
-                    ))}
+                        >
+                          {page}
+                        </button>
+                      ),
+                    )}
                   </div>
 
                   <button
@@ -212,9 +234,12 @@ export default function Gallery() {
               <Shield className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">Dokumentasi Resmi</h4>
+              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">
+                Dokumentasi Resmi
+              </h4>
               <p className="text-inktext/70 dark:text-gray-400 text-xs mt-1 leading-relaxed">
-                Seluruh dokumentasi visual dikelola langsung oleh tim publikasi Satlak Dukteksi PUSSIBERAD.
+                Seluruh dokumentasi visual dikelola langsung oleh tim publikasi
+                Satlak Dukteksi PUSSIBERAD.
               </p>
             </div>
           </div>
@@ -224,9 +249,12 @@ export default function Gallery() {
               <Cpu className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">Kegiatan Pertahanan</h4>
+              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">
+                Kegiatan Pertahanan
+              </h4>
               <p className="text-inktext/70 dark:text-gray-400 text-xs mt-1 leading-relaxed">
-                Menampilkan sekilas aktivitas riset, latihan siber, serta pemeliharaan infrastruktur data.
+                Menampilkan sekilas aktivitas riset, latihan siber, serta
+                pemeliharaan infrastruktur data.
               </p>
             </div>
           </div>
@@ -236,14 +264,16 @@ export default function Gallery() {
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">Arsip Berkala</h4>
+              <h4 className="font-bold text-navy dark:text-gray-200 text-sm">
+                Arsip Berkala
+              </h4>
               <p className="text-inktext/70 dark:text-gray-400 text-xs mt-1 leading-relaxed">
-                Galeri ini diperbarui secara berkala mengikuti agenda operasional satuan.
+                Galeri ini diperbarui secara berkala mengikuti agenda
+                operasional satuan.
               </p>
             </div>
           </div>
         </RevealSection>
-
       </div>
 
       {/* Pop-Up Lightbox Modal Detail Foto */}
@@ -262,7 +292,7 @@ export default function Gallery() {
               initial={{ scale: 0.95, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+              transition={{ type: "spring", stiffness: 350, damping: 25 }}
               className="relative z-[10000] w-full max-w-4xl bg-white dark:bg-darkpanel rounded-3xl overflow-hidden shadow-2xl border border-gray-100 dark:border-darkborder flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
