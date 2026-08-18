@@ -1,15 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-// Daftar gambar untuk hero slide. Tinggal tambah/kurangi/ganti path di sini —
-// taruh file gambarnya di folder frontend/public/ (contoh: '/bg_logo2.jpg').
-// Kalau cuma 1 gambar, slider otomatis tidak berjalan (berperilaku seperti background statis biasa).
-const heroImages = [
-  '/bg1.jpg',
-  '/bg2.jpg',
-  '/bg3.jpg',
-];
+const heroImages = ["/bg1.jpg", "/bg2.jpg", "/bg3.jpg"];
 
-const SLIDE_DURATION = 5000; // 5 detik per slide
+const SLIDE_DURATION = 5000;
 
 export default function HeroSlider() {
   const [current, setCurrent] = useState(0);
@@ -25,12 +18,14 @@ export default function HeroSlider() {
   return (
     <div className="absolute inset-0">
       {heroImages.map((src, i) => (
-        <div
+        <img
           key={src}
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
-            i === current ? 'opacity-100' : 'opacity-0'
+          src={src}
+          alt={`Ilustrasi Dukungan Teknologi Siber ${i + 1}`} // Alt text dinamis
+          loading="lazy" // Lazy loading native
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+            i === current ? "opacity-100" : "opacity-0"
           }`}
-          style={{ backgroundImage: `url('${src}')` }}
         />
       ))}
     </div>
