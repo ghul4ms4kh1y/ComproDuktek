@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const heroImages = ["/bg1.jpg", "/bg2.jpg", "/bg3.jpg"];
+const heroImages = ["/bg-3.png", "/bg-2.png", "/bg-1.png"];
 
 const SLIDE_DURATION = 5000;
 
