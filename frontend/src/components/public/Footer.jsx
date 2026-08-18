@@ -1,36 +1,35 @@
-import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 
 export default function Footer() {
-  const gmapsUrl = "https://maps.google.com/maps?q=Jl.%20Veteran%20No.5,%20Gambir,%20Jakarta%20Pusat&t=&z=15&ie=UTF8&iwloc=&output=embed";
+  const gmapsUrl =
+    "https://maps.google.com/maps?q=Jl.%20Veteran%20No.5,%20Gambir,%20Jakarta%20Pusat&t=&z=15&ie=UTF8&iwloc=&output=embed";
 
   return (
     <footer className="bg-white/10 dark:bg-darkbg text-inktext dark:text-gray-300 pt-16 pb-10 border-t border-gray-100 dark:border-darkborder">
       {/* Container Utama */}
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-
         {/* Top Grid Area: 5 Kolom Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-gray-100 dark:border-darkborder">
-
           {/* Kolom 1 (lg:col-span-4): Logo & Deskripsi Satuan */}
           <div className="lg:col-span-4 flex flex-col justify-between">
             <div>
               {/* Logo & Branding Title */}
               <div className="flex items-center gap-3 mb-4">
-                 <img
-                   src="/logo.png"
-                   alt="Logo Satlak Dukteksi"
-                   width="48"
-                   height="48"
-                   className="h-12 w-auto object-contain shrink-0"
-                 />
-                 <img
-                   src="/pussiberad_logo.png"
-                   alt="Logo PUSSIBERAD"
-                   width="48"
-                   height="48"
-                   className="h-12 w-auto object-contain shrink-0 border-l border-gray-200 dark:border-gray-700 pl-3"
-                 />
+                <img
+                  src="/logo.png"
+                  alt="Logo Satlak Dukteksi"
+                  width="48"
+                  height="48"
+                  className="h-12 w-auto object-contain shrink-0"
+                />
+                <img
+                  src="/pussiberad_logo.png"
+                  alt="Logo PUSSIBERAD"
+                  width="48"
+                  height="48"
+                  className="h-12 w-auto object-contain shrink-0 border-l border-gray-200 dark:border-gray-700 pl-3"
+                />
               </div>
 
               <h3 className="text-navy dark:text-gray-100 font-extrabold text-lg tracking-tight uppercase leading-snug">
@@ -41,7 +40,10 @@ export default function Footer() {
               </p>
 
               <p className="text-inktext/70 dark:text-gray-400 text-sm leading-relaxed max-w-sm">
-                Satuan Pelaksana Dukungan Teknologi Siber Pusat Siber Angkatan Darat (TNI AD). Bertugas menyelenggarakan riset terapan, rekayasa terbalik, serta pemeliharaan infrastruktur siber pertahanan.
+                Satuan Pelaksana Dukungan Teknologi Siber Pusat Siber Angkatan
+                Darat (TNI AD). Bertugas menyelenggarakan riset terapan,
+                rekayasa terbalik, serta pemeliharaan infrastruktur siber
+                pertahanan.
               </p>
             </div>
           </div>
@@ -57,22 +59,34 @@ export default function Footer() {
               {/* Kolom Kiri (4 Navigasi) */}
               <ul className="space-y-2.5">
                 <li>
-                  <Link to="/" className="hover:text-blue-600 transition-colors inline-block py-0.5">
+                  <Link
+                    to="/"
+                    className="hover:text-blue-600 transition-colors inline-block py-0.5"
+                  >
                     Beranda
                   </Link>
                 </li>
                 <li>
-                  <Link to="/tentang-kami" className="hover:text-blue-600 transition-colors inline-block py-0.5">
+                  <Link
+                    to="/tentang-kami"
+                    className="hover:text-blue-600 transition-colors inline-block py-0.5"
+                  >
                     Tentang Kami
                   </Link>
                 </li>
                 <li>
-                  <Link to="/struktur-organisasi" className="hover:text-blue-600 transition-colors inline-block py-0.5">
+                  <Link
+                    to="/struktur-organisasi"
+                    className="hover:text-blue-600 transition-colors inline-block py-0.5"
+                  >
                     Struktur
                   </Link>
                 </li>
                 <li>
-                  <Link to="/produk" className="hover:text-blue-600 transition-colors inline-block py-0.5">
+                  <Link
+                    to="/produk"
+                    className="hover:text-blue-600 transition-colors inline-block py-0.5"
+                  >
                     Produk
                   </Link>
                 </li>
@@ -81,17 +95,26 @@ export default function Footer() {
               {/* Kolom Kanan (3 Navigasi) */}
               <ul className="space-y-2.5">
                 <li>
-                  <Link to="/galeri" className="hover:text-blue-600 transition-colors inline-block py-0.5">
+                  <Link
+                    to="/galeri"
+                    className="hover:text-blue-600 transition-colors inline-block py-0.5"
+                  >
                     Galeri
                   </Link>
                 </li>
                 <li>
-                  <Link to="/berita" className="hover:text-blue-600 transition-colors inline-block py-0.5">
+                  <Link
+                    to="/berita"
+                    className="hover:text-blue-600 transition-colors inline-block py-0.5"
+                  >
                     Berita
                   </Link>
                 </li>
                 <li>
-                  <Link to="/kontak" className="hover:text-blue-600 transition-colors inline-block py-0.5">
+                  <Link
+                    to="/kontak"
+                    className="hover:text-blue-600 transition-colors inline-block py-0.5"
+                  >
                     Kontak Kami
                   </Link>
                 </li>
@@ -127,7 +150,8 @@ export default function Footer() {
                 <div className="flex items-start gap-2.5 text-inktext/70 dark:text-gray-400 leading-relaxed">
                   <MapPin className="w-4 h-4 shrink-0 text-navy dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mt-1" />
                   <span>
-                    Jl. Veteran No.5, RT.3/RW.2, Gambir, Kec. Gambir, Kota Jakarta Pusat, DKI Jakarta 10110
+                    Jl. Veteran No.5, RT.3/RW.2, Gambir, Kec. Gambir, Kota
+                    Jakarta Pusat, DKI Jakarta 10110
                   </span>
                 </div>
               </li>
@@ -143,7 +167,7 @@ export default function Footer() {
               <a
                 href="https://maps.google.com/?q=Jl.+Veteran+No.5,+Gambir,+Jakarta+Pusat"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer" // Penambahan noopener disini
                 className="text-xs font-semibold text-navy dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 transition-colors"
               >
                 Buka Peta <ExternalLink className="w-3 h-3" />
@@ -166,14 +190,16 @@ export default function Footer() {
         {/* Bottom Bar: Copyright Center */}
         <div className="pt-8 flex justify-center items-center text-xs md:text-sm text-inktext/60 dark:text-gray-500">
           <p className="text-center">
-            Copyright © {new Date().getFullYear()}{' '}
-            <Link to="/" className="font-bold text-navy dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            Copyright © {new Date().getFullYear()}{" "}
+            <Link
+              to="/"
+              className="font-bold text-navy dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
               Satlak Dukteksi PUSSIBERAD TNI AD
             </Link>
             . All Rights Reserved.
           </p>
         </div>
-
       </div>
     </footer>
   );
