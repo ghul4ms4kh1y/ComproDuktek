@@ -92,7 +92,7 @@ export default function Landing() {
       <section className="max-w-screen-2xl mx-auto px-6 md:px-12">
         <div className="relative rounded-[2.5rem] overflow-hidden flex items-center min-h-[75vh] shadow-xl shadow-navy/10 dark:shadow-black/40 border border-gray-100 dark:border-darkborder">
           <HeroSlider />
-          <div className="absolute inset-0 bg-[#0c1839]/40 bg-gradient-to-r from-[#0c1839]/80 via-[#0c1839]/60 to-transparent" />
+          <div className="absolute inset-0 bg-[#0c1839]/20 bg-gradient-to-r from-[#0c1839]/20 via-[#0c1839]/60 to-transparent" />
 
           <div className="relative z-10 px-8 md:px-16 lg:px-24 py-20 max-w-5xl animate-fade-in-up text-left">
             <span className="text-xs font-bold tracking-widest text-blue-400 uppercase bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 inline-block mb-6 shadow-inner">

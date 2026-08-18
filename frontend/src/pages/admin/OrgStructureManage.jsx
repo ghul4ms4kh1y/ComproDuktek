@@ -161,23 +161,47 @@ export default function OrgStructureManage() {
 
   useEffect(load, []);
 
+  // PERUBAHAN: Menambahkan property colSpan untuk layout grid
   const fields = [
-    { name: "photo", label: "Foto Profil", type: "file" },
-    { name: "name", label: "Nama Lengkap", type: "text", required: true },
-    { name: "rank", label: "Pangkat", type: "text" },
-    { name: "disc_kode", label: "Kode Karakter DISC (mis. DC)", type: "text" },
+    { name: "photo", label: "Foto Profil", type: "file", colSpan: 2 },
+    {
+      name: "name",
+      label: "Nama Lengkap",
+      type: "text",
+      required: true,
+      colSpan: 1,
+    },
+    { name: "rank", label: "Pangkat", type: "text", colSpan: 1 },
+    {
+      name: "disc_kode",
+      label: "Kode Karakter DISC (mis. DC)",
+      type: "text",
+      colSpan: 1,
+    },
     {
       name: "disc_label",
-      label: "Label Karakter (pisahkan koma sesuai urutan huruf, mis. Dominasi, Ketelitian)",
+      label: "Label Karakter (pisahkan koma sesuai urutan huruf)",
       type: "text",
+      colSpan: 1,
     },
-    { name: "kekuatan_utama", label: "Kekuatan Utama", type: "textarea" },
+    {
+      name: "kekuatan_utama",
+      label: "Kekuatan Utama",
+      type: "textarea",
+      colSpan: 1,
+    },
     {
       name: "rekomendasi_pengembangan",
       label: "Rekomendasi Pengembangan Diri",
       type: "textarea",
+      colSpan: 1,
     },
-    { name: "cara_komunikasi", label: "Cara Berkomunikasi", type: "textarea" },
+    {
+      name: "cara_komunikasi",
+      label: "Cara Berkomunikasi",
+      type: "textarea",
+      colSpan: 2,
+    },
   ];
 
   const openEdit = (item) => {
@@ -237,7 +261,6 @@ export default function OrgStructureManage() {
     }
   };
 
-  // --- LOGIKA SEARCHING & SORTING PINTAR ---
   const isSearchingOrSorting = q.trim() !== "" || sortBy !== "hierarki";
 
   const filteredAndSortedItems = useMemo(() => {
@@ -279,7 +302,6 @@ export default function OrgStructureManage() {
 
     return result;
   }, [rawItems, q, sortBy, isSearchingOrSorting]);
-  // -----------------------------------------
 
   return (
     <div className="font-dash pb-12">
@@ -293,7 +315,6 @@ export default function OrgStructureManage() {
         </p>
       </div>
 
-      {/* FILTER SEARCH BAR & SORTING MENU */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -322,7 +343,6 @@ export default function OrgStructureManage() {
         </div>
       </div>
 
-      {/* AREA RENDER DATA */}
       <div className="bg-white rounded-xl p-2 sm:p-5 shadow-dashCard border border-gray-100">
         {loading && (
           <p className="text-center text-dashNavy/40 py-10">
@@ -335,7 +355,6 @@ export default function OrgStructureManage() {
           </p>
         )}
 
-        {/* TAMPILAN NORMAL (TREE BERJENJANG) */}
         {!loading &&
           rawItems.length > 0 &&
           !isSearchingOrSorting &&
@@ -343,7 +362,6 @@ export default function OrgStructureManage() {
             <AdminOrgNode key={rootNode.id} node={rootNode} onEdit={openEdit} />
           ))}
 
-        {/* PESAN JIKA PENCARIAN KOSONG */}
         {!loading &&
           isSearchingOrSorting &&
           filteredAndSortedItems.length === 0 && (
@@ -352,7 +370,6 @@ export default function OrgStructureManage() {
             </p>
           )}
 
-        {/* TAMPILAN SEARCH/SORT (DATAR) */}
         {!loading &&
           isSearchingOrSorting &&
           filteredAndSortedItems.length > 0 && (
