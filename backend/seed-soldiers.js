@@ -7,22 +7,7 @@ async function seed() {
   try {
     await sequelize.sync();
 
-    // 1. Tambahkan admin_piket jika belum ada
-    const existingPiket = await Admin.findOne({ where: { username: 'admin_piket' } });
-    const hashedPiketPassword = await bcrypt.hash('adminpiket123', 10);
-    if (!existingPiket) {
-      await Admin.create({
-        username: 'admin_piket',
-        email: 'admin_piket@example.com',
-        password: hashedPiketPassword,
-        full_name: 'Admin Piket',
-      });
-      console.log('Akun admin_piket berhasil dibuat. Username: admin_piket, Pass: adminpiket123');
-    } else {
-      console.log('Akun admin_piket sudah ada.');
-    }
-
-    // 2. Tambahkan akun Soldier berdasarkan OrgStructure
+    // 1. Tambahkan akun Soldier berdasarkan OrgStructure
     // Ambil semua jabatan di OrgStructure yang bukan _EMPTY_, _TRUNK_, atau _SPACER_
     const structures = await OrgStructure.findAll({
       where: {

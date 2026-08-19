@@ -19,8 +19,6 @@ export default function Login() {
       const data = await login(identifier, password);
       if (data.user.role === 'admin') {
         navigate('/admin-portal/dashboard');
-      } else if (data.user.role === 'admin_piket') {
-        navigate('/admin-piket/dashboard');
       } else {
         navigate('/soldier/dashboard');
       }

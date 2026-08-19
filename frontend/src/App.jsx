@@ -24,7 +24,6 @@ import GalleryManage from './pages/admin/GalleryManage';
 import OrgStructureManage from './pages/admin/OrgStructureManage';
 import Inbox from './pages/admin/Inbox';
 
-import AdminPiketDashboard from './pages/admin-piket/Dashboard';
 import SoldierDashboard from './pages/soldier/Dashboard';
 
 export default function App() {
@@ -59,18 +58,6 @@ export default function App() {
         <Route path="galeri" element={<GalleryManage />} />
         <Route path="struktur-organisasi" element={<OrgStructureManage />} />
         <Route path="kotak-masuk" element={<Inbox />} />
-      </Route>
-
-      {/* Admin Piket */}
-      <Route
-        path="/admin-piket"
-        element={
-          <ProtectedRoute allowedRoles={['admin_piket']}>
-            <AdminPiketDashboard />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="dashboard" element={<AdminPiketDashboard />} />
       </Route>
 
       {/* Soldier / Prajurit */}
