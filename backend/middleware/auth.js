@@ -16,5 +16,20 @@ function requireAuth(req, res, next) {
     return res.status(401).json({ message: 'Sesi tidak valid atau kedaluwarsa, silakan login kembali.' });
   }
 }
+function isAdmin(req, res, next) {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Akses ditolak, butuh hak akses admin.' });
+  }
+}
 
-module.exports = { requireAuth };
+function isSoldier(req, res, next) {
+  if (req.user && req.user.role === 'soldier') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Akses ditolak, butuh hak akses prajurit.' });
+  }
+}
+
+module.exports = { requireAuth, isAdmin, isSoldier };
