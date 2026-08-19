@@ -16,6 +16,7 @@ const galleryRoutes = require('./routes/galleryRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const orgStructureRoutes = require('./routes/orgStructureRoutes');
+const soldierRoutes = require('./routes/soldierRoutes');
 
 const app = express();
 
@@ -80,6 +81,7 @@ app.use('/api/galleries', apiLimiter, galleryRoutes);
 app.use('/api/messages', apiLimiter, messageRoutes);
 app.use('/api/dashboard', apiLimiter, dashboardRoutes);
 app.use('/api/org-structures', apiLimiter, orgStructureRoutes);
+app.use('/api/soldiers', apiLimiter, soldierRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

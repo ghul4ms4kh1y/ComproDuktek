@@ -5,6 +5,7 @@ import {
   Images,
   Network,
   Mail,
+  Users,
 } from 'lucide-react';
 
 // Dipakai bersama oleh Sidebar (desktop, >=lg) dan BottomNav (mobile/tablet, <lg)
@@ -16,5 +17,6 @@ export const adminMenu = [
   { label: 'Produk', to: '/admin-portal/produk', icon: Package },
   { label: 'Galeri', to: '/admin-portal/galeri', icon: Images },
   { label: 'Struktur Organisasi', shortLabel: 'Struktur', to: '/admin-portal/struktur-organisasi', icon: Network },
+  { label: 'Anggota', to: '/admin-portal/anggota', icon: Users },
   { label: 'Kotak Masuk', shortLabel: 'Pesan', to: '/admin-portal/kotak-masuk', icon: Mail },
 ];
