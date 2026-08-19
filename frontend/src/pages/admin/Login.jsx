@@ -16,8 +16,14 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      await login(identifier, password);
-      navigate('/admin-portal/dashboard');
+      const data = await login(identifier, password);
+      if (data.user.role === 'admin') {
+        navigate('/admin-portal/dashboard');
+      } else if (data.user.role === 'admin_piket') {
+        navigate('/admin-piket/dashboard');
+      } else {
+        navigate('/soldier/dashboard');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Login gagal. Periksa kembali kredensial Anda.');
     } finally {
@@ -31,7 +37,7 @@ export default function Login() {
         <div className="w-11 h-11 rounded-lg bg-dashNavy flex items-center justify-center mx-auto mb-4">
           <ShieldCheck className="w-6 h-6 text-white" />
         </div>
-        <h1 className="text-[20px] font-semibold text-dashNavy text-center mb-1">Dashboard Admin</h1>
+        <h1 className="text-[20px] font-semibold text-dashNavy text-center mb-1">Login Portal</h1>
         <p className="text-xs text-dashNavy/60 text-center mb-6">Satlak Dukteksi Pussiberad TNI AD</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

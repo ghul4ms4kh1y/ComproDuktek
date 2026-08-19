@@ -4,30 +4,30 @@ import api from '../services/api';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [admin, setAdmin] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
       .get('/auth/me')
-      .then((res) => setAdmin(res.data.admin))
-      .catch(() => setAdmin(null))
+      .then((res) => setUser(res.data.user))
+      .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
 
   const login = async (identifier, password) => {
     const res = await api.post('/auth/login', { identifier, password });
-    setAdmin(res.data.admin);
+    setUser(res.data.user);
     return res.data;
   };
 
   const logout = async () => {
     await api.post('/auth/logout');
-    setAdmin(null);
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ admin, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -9,7 +9,8 @@ function requireAuth(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.admin = decoded;
+    req.admin = decoded; // for backward compatibility with old routes
+    req.user = decoded; // for new routes
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Sesi tidak valid atau kedaluwarsa, silakan login kembali.' });

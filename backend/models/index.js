@@ -6,6 +6,8 @@ const Gallery = require('./Gallery');
 const Message = require('./Message');
 const OrgStructure = require('./OrgStructure');
 
+const Soldier = require('./Soldier');
+
 // Relasi: audit trail -> admin pembuat konten
 Admin.hasMany(News, { foreignKey: 'admin_id' });
 News.belongsTo(Admin, { foreignKey: 'admin_id' });
@@ -20,9 +22,12 @@ Gallery.belongsTo(Admin, { foreignKey: 'admin_id' });
 Admin.hasMany(OrgStructure, { foreignKey: 'admin_id' });
 OrgStructure.belongsTo(Admin, { foreignKey: 'admin_id' });
 
-// Relasi hierarki: 1 orang bisa punya banyak bawahan langsung (children),
-// dan 1 orang punya paling banyak 1 atasan langsung (parent).
+// Relasi hierarki
 OrgStructure.hasMany(OrgStructure, { as: 'children', foreignKey: 'parent_id' });
 OrgStructure.belongsTo(OrgStructure, { as: 'parent', foreignKey: 'parent_id' });
 
-module.exports = { sequelize, Admin, News, Product, Gallery, Message, OrgStructure };
+// Relasi OrgStructure ke Soldier (1 jabatan bisa dipegang 1 orang/akun)
+OrgStructure.hasOne(Soldier, { foreignKey: 'org_structure_id' });
+Soldier.belongsTo(OrgStructure, { foreignKey: 'org_structure_id' });
+
+module.exports = { sequelize, Admin, News, Product, Gallery, Message, OrgStructure, Soldier };

@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Search, ArrowUpDown } from "lucide-react";
 import api from "../../services/api";
 import FormModal from "../../components/admin/FormModal";
+import ConfirmModal from "../../components/admin/ConfirmModal";
 import Toast from "../../components/admin/Toast";
 import { buildTree } from "../../components/public/orgTreeUtils";
 
@@ -13,7 +14,7 @@ const HIDDEN_NODES = [
 ];
 
 // Komponen Rekursif untuk Tampilan Hierarki (Standar)
-const AdminOrgNode = ({ node, onEdit }) => {
+const AdminOrgNode = ({ node, onEdit, onEmpty }) => {
   const sortedChildren = node.children
     ? [...node.children].sort((a, b) => {
         if (a.position === "_TRUNK_" && b.position !== "_TRUNK_") return 1;
@@ -26,7 +27,7 @@ const AdminOrgNode = ({ node, onEdit }) => {
     return (
       <>
         {sortedChildren.map((child) => (
-          <AdminOrgNode key={child.id} node={child} onEdit={onEdit} />
+          <AdminOrgNode key={child.id} node={child} onEdit={onEdit} onEmpty={onEmpty} />
         ))}
       </>
     );
@@ -66,18 +67,27 @@ const AdminOrgNode = ({ node, onEdit }) => {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => onEdit(node)}
-          className="bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
-        >
-          Edit Personel
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onEdit(node)}
+            className="bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
+          >
+            Edit Personel
+          </button>
+          <button
+            onClick={() => onEmpty(node)}
+            title="Kosongkan Jabatan (Orang Keluar)"
+            className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
+          >
+            Kosongkan
+          </button>
+        </div>
       </div>
 
       {sortedChildren.length > 0 && (
         <div className="pl-6 md:pl-10 mt-3 border-l-2 border-dashed border-gray-200 space-y-3">
           {sortedChildren.map((child) => (
-            <AdminOrgNode key={child.id} node={child} onEdit={onEdit} />
+            <AdminOrgNode key={child.id} node={child} onEdit={onEdit} onEmpty={onEmpty} />
           ))}
         </div>
       )}
@@ -86,7 +96,7 @@ const AdminOrgNode = ({ node, onEdit }) => {
 };
 
 // Komponen Card Datar Khusus untuk Tampilan Searching & Sorting
-const FlatAdminCard = ({ node, onEdit }) => (
+const FlatAdminCard = ({ node, onEdit, onEmpty }) => (
   <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:border-dashAccent/40 transition">
     <div className="flex items-center gap-4 mb-3 sm:mb-0">
       {node.photo ? (
@@ -119,12 +129,21 @@ const FlatAdminCard = ({ node, onEdit }) => (
         </p>
       </div>
     </div>
-    <button
-      onClick={() => onEdit(node)}
-      className="bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
-    >
-      Edit Personel
-    </button>
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => onEdit(node)}
+        className="bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
+      >
+        Edit Personel
+      </button>
+      <button
+        onClick={() => onEmpty(node)}
+        title="Kosongkan Jabatan (Orang Keluar)"
+        className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
+      >
+        Kosongkan
+      </button>
+    </div>
   </div>
 );
 
@@ -140,6 +159,11 @@ export default function OrgStructureManage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // State untuk Empty Modal
+  const [emptyConfirmOpen, setEmptyConfirmOpen] = useState(false);
+  const [itemToEmpty, setItemToEmpty] = useState(null);
+  const [emptying, setEmptying] = useState(false);
 
   const [toast, setToast] = useState(null);
   const showToast = (message, type = "success") => {
@@ -261,6 +285,27 @@ export default function OrgStructureManage() {
     }
   };
 
+  const openEmptyConfirm = (node) => {
+    setItemToEmpty(node);
+    setEmptyConfirmOpen(true);
+  };
+
+  const executeEmpty = async () => {
+    if (!itemToEmpty) return;
+    setEmptying(true);
+    try {
+      await api.put(`/org-structures/${itemToEmpty.id}/empty`);
+      showToast(`Data personel ${itemToEmpty.position} berhasil dikosongkan.`);
+      setEmptyConfirmOpen(false);
+      setItemToEmpty(null);
+      load();
+    } catch (err) {
+      showToast(err.response?.data?.message || "Gagal mengosongkan data.", "error");
+    } finally {
+      setEmptying(false);
+    }
+  };
+
   const isSearchingOrSorting = q.trim() !== "" || sortBy !== "hierarki";
 
   const filteredAndSortedItems = useMemo(() => {
@@ -359,7 +404,7 @@ export default function OrgStructureManage() {
           rawItems.length > 0 &&
           !isSearchingOrSorting &&
           roots.map((rootNode) => (
-            <AdminOrgNode key={rootNode.id} node={rootNode} onEdit={openEdit} />
+            <AdminOrgNode key={rootNode.id} node={rootNode} onEdit={openEdit} onEmpty={openEmptyConfirm} />
           ))}
 
         {!loading &&
@@ -378,7 +423,7 @@ export default function OrgStructureManage() {
                 Menampilkan {filteredAndSortedItems.length} hasil
               </p>
               {filteredAndSortedItems.map((item) => (
-                <FlatAdminCard key={item.id} node={item} onEdit={openEdit} />
+                <FlatAdminCard key={item.id} node={item} onEdit={openEdit} onEmpty={openEmptyConfirm} />
               ))}
             </div>
           )}
@@ -392,6 +437,16 @@ export default function OrgStructureManage() {
         submitting={submitting}
         onCancel={() => setFormOpen(false)}
         onSubmit={handleSubmit}
+      />
+
+      <ConfirmModal
+        open={emptyConfirmOpen}
+        headerTitle="Kosongkan Jabatan"
+        title={`Yakin ingin mengosongkan data personel untuk jabatan ${itemToEmpty?.position}? Tindakan ini juga akan mereset akun login prajurit tersebut ke password default.`}
+        confirmText="Kosongkan"
+        loading={emptying}
+        onCancel={() => setEmptyConfirmOpen(false)}
+        onConfirm={executeEmpty}
       />
 
       <Toast toast={toast} />

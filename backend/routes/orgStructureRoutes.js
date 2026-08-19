@@ -22,6 +22,7 @@ router.get('/:id', controller.show);
 
 router.post('/', requireAuth, orgStructureValidation, controller.create);
 router.put('/:id', requireAuth, orgStructureValidation, controller.update);
+router.put('/:id/empty', requireAuth, orgStructureController.emptyPosition);
 router.delete('/:id', requireAuth, orgStructureController.remove);
 
 module.exports = router;
