@@ -23,11 +23,6 @@ exports.login = async (req, res) => {
     });
     let role = 'admin';
 
-    // Jika admin_piket login, role-nya bisa kita set khusus
-    if (user && user.username === 'admin_piket') {
-      role = 'admin_piket';
-    }
-
     // Jika tidak ketemu di Admin, cari di Soldier
     if (!user) {
       user = await Soldier.findOne({
