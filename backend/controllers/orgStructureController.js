@@ -71,3 +71,49 @@ exports.reorder = async (req, res) => {
     res.status(500).json({ message: 'Gagal memperbarui urutan.', error: err.message });
   }
 };
+
+/**
+ * Mengosongkan data personil pada suatu jabatan (OrgStructure)
+ * dan mereset akun Soldier yang terhubung dengan jabatan tersebut.
+ */
+exports.emptyPosition = async (req, res) => {
+  const { id } = req.params;
+  const t = await sequelize.transaction();
+  try {
+    const item = await OrgStructure.findByPk(id, { transaction: t });
+    if (!item) {
+      await t.rollback();
+      return res.status(404).json({ message: 'Data jabatan tidak ditemukan.' });
+    }
+
+    // 1. Kosongkan data personil di struktur organisasi
+    await item.update({
+      name: '',
+      rank: null,
+      photo: null,
+      disc_kode: null,
+      disc_label: null,
+      kekuatan_utama: null,
+      rekomendasi_pengembangan: null,
+      cara_komunikasi: null,
+    }, { transaction: t });
+
+    // 2. Reset akun Soldier (jika ada)
+    const { Soldier } = require('../models');
+    const soldier = await Soldier.findOne({ where: { org_structure_id: id }, transaction: t });
+    if (soldier) {
+      const bcrypt = require('bcryptjs');
+      const defaultPassword = await bcrypt.hash('prajurit123', 10);
+      await soldier.update({
+        full_name: item.position, // kembalikan ke nama jabatan
+        password: defaultPassword
+      }, { transaction: t });
+    }
+
+    await t.commit();
+    res.json({ message: 'Identitas pejabat berhasil dikosongkan dan akun direset.' });
+  } catch (err) {
+    await t.rollback();
+    res.status(500).json({ message: 'Gagal mengosongkan identitas.', error: err.message });
+  }
+};

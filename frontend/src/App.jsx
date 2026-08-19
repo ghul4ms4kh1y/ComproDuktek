@@ -22,8 +22,10 @@ import NewsManage from './pages/admin/NewsManage';
 import ProductManage from './pages/admin/ProductManage';
 import GalleryManage from './pages/admin/GalleryManage';
 import OrgStructureManage from './pages/admin/OrgStructureManage';
-
 import Inbox from './pages/admin/Inbox';
+
+import AdminPiketDashboard from './pages/admin-piket/Dashboard';
+import SoldierDashboard from './pages/soldier/Dashboard';
 
 export default function App() {
   return (
@@ -41,12 +43,12 @@ export default function App() {
         <Route path="/kontak" element={<Contact />} />
       </Route>
 
-      {/* Admin - URL khusus, tidak ditautkan di navigasi publik */}
+      {/* Admin / Login */}
       <Route path="/admin-portal/login" element={<Login />} />
       <Route
         path="/admin-portal"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin']}>
             <AdminLayout />
           </ProtectedRoute>
         }
@@ -56,8 +58,32 @@ export default function App() {
         <Route path="produk" element={<ProductManage />} />
         <Route path="galeri" element={<GalleryManage />} />
         <Route path="struktur-organisasi" element={<OrgStructureManage />} />
-
         <Route path="kotak-masuk" element={<Inbox />} />
+      </Route>
+
+      {/* Admin Piket */}
+      <Route
+        path="/admin-piket"
+        element={
+          <ProtectedRoute allowedRoles={['admin_piket']}>
+            <AdminPiketDashboard />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<AdminPiketDashboard />} />
+      </Route>
+
+      {/* Soldier / Prajurit */}
+      <Route
+        path="/soldier"
+        element={
+          <ProtectedRoute allowedRoles={['soldier']}>
+            {/* For now we just render an outlet or directly the component. In the future, a SoldierLayout could be used. */}
+            <SoldierDashboard />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<SoldierDashboard />} />
       </Route>
 
       <Route path="*" element={<div className="p-20 text-center text-inktext/50">404 - Halaman tidak ditemukan</div>} />
