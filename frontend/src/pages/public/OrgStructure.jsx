@@ -32,15 +32,15 @@ export default function OrgStructure() {
         </RevealSection>
 
         {roots === null && !error && (
-          <p className="text-center text-inktext/50">Memuat struktur organisasi...</p>
+          <p role="status" className="text-center text-inktext/50">Memuat struktur organisasi...</p>
         )}
 
         {error && (
-          <p className="text-center text-inktext/50">Gagal memuat data struktur organisasi.</p>
+          <p role="alert" className="text-center text-inktext/50">Gagal memuat data struktur organisasi.</p>
         )}
 
         {roots?.length === 0 && (
-          <p className="text-center text-inktext/50">Struktur organisasi belum tersedia.</p>
+          <p role="status" className="text-center text-inktext/50">Struktur organisasi belum tersedia.</p>
         )}
 
         {roots?.length > 0 && (

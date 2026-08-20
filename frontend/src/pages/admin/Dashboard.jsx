@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Newspaper,
   Package,
@@ -10,6 +10,7 @@ import {
 import api from "../../services/api";
 import MiniCalendar from "../../components/admin/MiniCalendar";
 import DonutChart from "../../components/admin/DonutChart";
+import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
 
 const widgets = [
   { key: "totalNews", label: "Total Berita", icon: Newspaper, tint: "navy" },
@@ -64,14 +65,8 @@ export default function Dashboard() {
       .get("/org-structures", { params: { limit: 1000 } })
       .then((r) => {
         // FILTERING: Buang semua node bayangan/spacer agar tidak dihitung
-        const hiddenNodes = [
-          "_TRUNK_",
-          "_EMPTY_",
-          "_SPACER_BATIMIN_",
-          "_SPACER_PENATA_",
-        ];
         const actualMembers = r.data.data.filter(
-          (m) => !hiddenNodes.includes(m.position),
+          (m) => !isHiddenNode(m.position),
         );
 
         setMembers(actualMembers);
@@ -79,13 +74,13 @@ export default function Dashboard() {
       .catch(() => setMembers([]));
   }, []);
 
-  const segments = members
+  const segments = useMemo(() => members
     ? MEMBER_CATEGORIES.map((c) => ({
         label: c.label,
         color: c.color,
         value: members.filter((m) => m.box_color === c.key).length,
       })).filter((s) => s.value > 0)
-    : [];
+    : [], [members]);
 
   const totalMembers = members ? members.length : 0;
 

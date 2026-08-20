@@ -4,6 +4,7 @@
  */
 const fs = require("fs");
 const path = require("path"); // TAMBAHAN: Untuk ngatur path direktori dengan aman
+const { Op } = require("sequelize");
 
 // Field yang tidak boleh diisi langsung dari body request (dikelola oleh sistem/server).
 const PROTECTED_FIELDS = [
@@ -77,7 +78,7 @@ function crudFactory(Model, options = {}) {
   return {
     async index(req, res) {
       try {
-        const { Op } = require("sequelize");
+
         const { q, page = 1, limit = 10 } = req.query;
         const where = {};
 

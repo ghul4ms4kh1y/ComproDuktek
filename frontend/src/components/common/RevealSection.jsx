@@ -18,11 +18,12 @@ export default function RevealSection({
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
+        let timeoutId;
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
                     if (delay > 0) {
-                        setTimeout(() => setIsVisible(true), delay);
+                        timeoutId = setTimeout(() => setIsVisible(true), delay);
                     } else {
                         setIsVisible(true);
                     }
@@ -33,7 +34,10 @@ export default function RevealSection({
         );
 
         if (ref.current) observer.observe(ref.current);
-        return () => observer.disconnect();
+        return () => {
+            observer.disconnect();
+            if (timeoutId) clearTimeout(timeoutId);
+        };
     }, [threshold, delay]);
 
     const animationClass = animationVariants[variant] 

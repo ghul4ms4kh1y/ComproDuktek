@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { formatDate } from '../../lib/dateUtils';
 import { useParams, Link } from 'react-router-dom';
 import api from '../../services/api';
 import RevealSection from '../../components/common/RevealSection';
@@ -12,6 +13,7 @@ import {
   Check,
   ChevronRight
 } from 'lucide-react';
+import { getReadTime } from '../../hooks/useReadTime';
 
 export default function NewsDetail() {
   const { id } = useParams();
@@ -48,13 +50,7 @@ export default function NewsDetail() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [id]);
 
-  // Helper Estimasi Waktu Baca
-  const getReadTime = (content) => {
-    if (!content) return null;
-    const words = content.trim().split(/\s+/).length;
-    const time = Math.ceil(words / 150);
-    return `${time || 2} min read`;
-  };
+
 
   // Handler Copy Link Berita
   const handleShare = () => {
@@ -151,7 +147,7 @@ export default function NewsDetail() {
               <div className="flex items-center gap-5">
                 <span className="flex items-center gap-1.5 text-navy dark:text-gray-200 font-semibold">
                   <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-500" />
-                  {item.news_date || 'Terbaru'}
+                  {formatDate(item.news_date, 'Terbaru')}
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1.5">
@@ -266,7 +262,7 @@ export default function NewsDetail() {
                     <div className="flex items-center gap-2.5 text-[11px] font-medium text-inktext/50 dark:text-gray-400 mb-3">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3 text-navy dark:text-gray-400" />
-                        {news.news_date || 'Terbaru'}
+                        {formatDate(news.news_date, 'Terbaru')}
                       </span>
                     </div>
                   </div>
