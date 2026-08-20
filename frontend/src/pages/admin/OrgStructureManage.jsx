@@ -6,11 +6,50 @@ import ConfirmModal from "../../components/admin/ConfirmModal";
 import Toast from "../../components/admin/Toast";
 import { buildTree } from "../../components/public/orgTreeUtils";
 
-const HIDDEN_NODES = [
-  "_TRUNK_",
-  "_EMPTY_",
-  "_SPACER_BATIMIN_",
-  "_SPACER_PENATA_",
+import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
+import { useToast } from "../../hooks/useToast";
+import OrgNodeCard from "../../components/admin/OrgNodeCard";
+
+const ORG_FIELDS = [
+  { name: "photo", label: "Foto Profil", type: "file", colSpan: 2 },
+  {
+    name: "name",
+    label: "Nama Lengkap",
+    type: "text",
+    required: true,
+    colSpan: 1,
+  },
+  { name: "rank", label: "Pangkat", type: "text", colSpan: 1 },
+  {
+    name: "disc_kode",
+    label: "Kode Karakter DISC (mis. DC)",
+    type: "text",
+    colSpan: 1,
+  },
+  {
+    name: "disc_label",
+    label: "Label Karakter (pisahkan koma sesuai urutan huruf)",
+    type: "text",
+    colSpan: 1,
+  },
+  {
+    name: "kekuatan_utama",
+    label: "Kekuatan Utama",
+    type: "textarea",
+    colSpan: 1,
+  },
+  {
+    name: "rekomendasi_pengembangan",
+    label: "Rekomendasi Pengembangan Diri",
+    type: "textarea",
+    colSpan: 1,
+  },
+  {
+    name: "cara_komunikasi",
+    label: "Cara Berkomunikasi",
+    type: "textarea",
+    colSpan: 2,
+  },
 ];
 
 // Komponen Rekursif untuk Tampilan Hierarki (Standar)
@@ -23,7 +62,7 @@ const AdminOrgNode = ({ node, onEdit, onEmpty }) => {
       })
     : [];
 
-  if (HIDDEN_NODES.includes(node.position)) {
+  if (isHiddenNode(node.position)) {
     return (
       <>
         {sortedChildren.map((child) => (
@@ -34,118 +73,20 @@ const AdminOrgNode = ({ node, onEdit, onEmpty }) => {
   }
 
   return (
-    <div className="mb-3">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:border-dashAccent/40 transition">
-        <div className="flex items-center gap-4 mb-3 sm:mb-0">
-          {node.photo ? (
-            <img
-              src={node.photo}
-              alt={node.name}
-              loading="lazy"
-              className="w-12 h-12 rounded-full object-cover border border-gray-100"
-            />
-          ) : (
-            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-dashNavy/40 text-sm font-semibold">
-              ?
-            </div>
-          )}
-          <div>
-            <h3 className="text-[15px] font-bold text-dashNavy uppercase">
-              {node.position}
-            </h3>
-            <p className="text-sm text-gray-600 mt-0.5">
-              {node.name ? (
-                node.name
-              ) : (
-                <span className="italic text-gray-400">Belum ada nama</span>
-              )}
-              {node.rank && (
-                <span className="ml-1 px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md text-xs">
-                  {node.rank}
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onEdit(node)}
-            className="bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
-          >
-            Edit Personel
-          </button>
-          <button
-            onClick={() => onEmpty(node)}
-            title="Kosongkan Jabatan (Orang Keluar)"
-            className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
-          >
-            Kosongkan
-          </button>
-        </div>
-      </div>
-
-      {sortedChildren.length > 0 && (
-        <div className="pl-6 md:pl-10 mt-3 border-l-2 border-dashed border-gray-200 space-y-3">
-          {sortedChildren.map((child) => (
-            <AdminOrgNode key={child.id} node={child} onEdit={onEdit} onEmpty={onEmpty} />
-          ))}
-        </div>
-      )}
-    </div>
+    <OrgNodeCard 
+      node={node} 
+      onEdit={onEdit} 
+      onEmpty={onEmpty} 
+      childrenNodes={
+        sortedChildren.length > 0
+          ? sortedChildren.map((child) => (
+              <AdminOrgNode key={child.id} node={child} onEdit={onEdit} onEmpty={onEmpty} />
+            ))
+          : null
+      }
+    />
   );
 };
-
-// Komponen Card Datar Khusus untuk Tampilan Searching & Sorting
-const FlatAdminCard = ({ node, onEdit, onEmpty }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:border-dashAccent/40 transition">
-    <div className="flex items-center gap-4 mb-3 sm:mb-0">
-      {node.photo ? (
-        <img
-          src={node.photo}
-          alt={node.name}
-          loading="lazy"
-          className="w-12 h-12 rounded-full object-cover border border-gray-100"
-        />
-      ) : (
-        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-dashNavy/40 text-sm font-semibold">
-          ?
-        </div>
-      )}
-      <div>
-        <h3 className="text-[15px] font-bold text-dashNavy uppercase">
-          {node.position}
-        </h3>
-        <p className="text-sm text-gray-600 mt-0.5">
-          {node.name ? (
-            node.name
-          ) : (
-            <span className="italic text-gray-400">Belum ada nama</span>
-          )}
-          {node.rank && (
-            <span className="ml-1 px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md text-xs">
-              {node.rank}
-            </span>
-          )}
-        </p>
-      </div>
-    </div>
-    <div className="flex items-center gap-2">
-      <button
-        onClick={() => onEdit(node)}
-        className="bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
-      >
-        Edit Personel
-      </button>
-      <button
-        onClick={() => onEmpty(node)}
-        title="Kosongkan Jabatan (Orang Keluar)"
-        className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
-      >
-        Kosongkan
-      </button>
-    </div>
-  </div>
-);
 
 export default function OrgStructureManage() {
   const [rawItems, setRawItems] = useState([]);
@@ -165,11 +106,7 @@ export default function OrgStructureManage() {
   const [itemToEmpty, setItemToEmpty] = useState(null);
   const [emptying, setEmptying] = useState(false);
 
-  const [toast, setToast] = useState(null);
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+  const { toast, showToast } = useToast();
 
   const load = () => {
     setLoading(true);
@@ -185,48 +122,7 @@ export default function OrgStructureManage() {
 
   useEffect(load, []);
 
-  // PERUBAHAN: Menambahkan property colSpan untuk layout grid
-  const fields = [
-    { name: "photo", label: "Foto Profil", type: "file", colSpan: 2 },
-    {
-      name: "name",
-      label: "Nama Lengkap",
-      type: "text",
-      required: true,
-      colSpan: 1,
-    },
-    { name: "rank", label: "Pangkat", type: "text", colSpan: 1 },
-    {
-      name: "disc_kode",
-      label: "Kode Karakter DISC (mis. DC)",
-      type: "text",
-      colSpan: 1,
-    },
-    {
-      name: "disc_label",
-      label: "Label Karakter (pisahkan koma sesuai urutan huruf)",
-      type: "text",
-      colSpan: 1,
-    },
-    {
-      name: "kekuatan_utama",
-      label: "Kekuatan Utama",
-      type: "textarea",
-      colSpan: 1,
-    },
-    {
-      name: "rekomendasi_pengembangan",
-      label: "Rekomendasi Pengembangan Diri",
-      type: "textarea",
-      colSpan: 1,
-    },
-    {
-      name: "cara_komunikasi",
-      label: "Cara Berkomunikasi",
-      type: "textarea",
-      colSpan: 2,
-    },
-  ];
+
 
   const openEdit = (item) => {
     setEditing(item);
@@ -312,7 +208,7 @@ export default function OrgStructureManage() {
     if (!isSearchingOrSorting) return [];
 
     let result = rawItems.filter(
-      (item) => !HIDDEN_NODES.includes(item.position),
+      (item) => !isHiddenNode(item.position),
     );
 
     if (q.trim()) {
@@ -346,7 +242,7 @@ export default function OrgStructureManage() {
     });
 
     return result;
-  }, [rawItems, q, sortBy, isSearchingOrSorting]);
+  }, [rawItems, q, sortBy]);
 
   return (
     <div className="font-dash pb-12">
@@ -423,7 +319,7 @@ export default function OrgStructureManage() {
                 Menampilkan {filteredAndSortedItems.length} hasil
               </p>
               {filteredAndSortedItems.map((item) => (
-                <FlatAdminCard key={item.id} node={item} onEdit={openEdit} onEmpty={openEmptyConfirm} />
+                <OrgNodeCard key={item.id} node={item} onEdit={openEdit} onEmpty={openEmptyConfirm} />
               ))}
             </div>
           )}
@@ -432,7 +328,7 @@ export default function OrgStructureManage() {
       <FormModal
         open={formOpen}
         title={`Edit Personel: ${editing?.position || ""}`}
-        fields={fields}
+        fields={ORG_FIELDS}
         initialValues={editing || {}}
         submitting={submitting}
         onCancel={() => setFormOpen(false)}

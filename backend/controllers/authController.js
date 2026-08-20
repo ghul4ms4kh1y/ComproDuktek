@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { Admin, Soldier } = require('../models');
+const { Admin, Soldier, OrgStructure } = require('../models');
 const { Op } = require('sequelize');
 
 const cookieOptions = () => ({
@@ -26,7 +26,8 @@ exports.login = async (req, res) => {
     // Jika tidak ketemu di Admin, cari di Soldier
     if (!user) {
       user = await Soldier.findOne({
-        where: { username: identifier }
+        where: { username: identifier },
+        include: [{ model: OrgStructure, attributes: ['position', 'rank'] }]
       });
       role = 'soldier';
     }
@@ -52,7 +53,12 @@ exports.login = async (req, res) => {
     });
 
     res.cookie('token', token, cookieOptions());
-    res.json({ message: 'Login berhasil.', user: payload, token });
+    
+    // Return full user data with role
+    const userData = { ...user.toJSON(), role };
+    delete userData.password;
+    
+    res.json({ message: 'Login berhasil.', user: userData, token });
   } catch (err) {
     res.status(500).json({ message: 'Terjadi kesalahan pada server.', error: err.message });
   }
@@ -64,6 +70,23 @@ exports.logout = (req, res) => {
 };
 
 exports.me = async (req, res) => {
-  // middleware auth harusnya sudah set req.user atau req.admin
-  res.json({ user: req.user || req.admin });
+  try {
+    const { id, role } = req.user || req.admin;
+    let currentUser;
+    if (role === 'admin') {
+      currentUser = await Admin.findByPk(id, { attributes: { exclude: ['password'] } });
+    } else {
+      currentUser = await Soldier.findByPk(id, { 
+        attributes: { exclude: ['password'] },
+        include: [{ model: OrgStructure, attributes: ['position', 'rank'] }]
+      });
+    }
+    
+    if (!currentUser) return res.status(404).json({ message: "User not found" });
+
+    const userData = { ...currentUser.toJSON(), role };
+    res.json({ user: userData });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 };

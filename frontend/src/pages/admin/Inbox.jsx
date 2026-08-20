@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { formatDate, formatDateTime } from '../../lib/dateUtils';
 import { X } from 'lucide-react';
 import api from '../../services/api';
 import ConfirmModal from '../../components/admin/ConfirmModal';
 import Toast from '../../components/admin/Toast';
+import { useToast } from '../../hooks/useToast';
 
 export default function Inbox() {
   const [messages, setMessages] = useState([]);
@@ -14,11 +16,7 @@ export default function Inbox() {
   const [deleting, setDeleting] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const [toast, setToast] = useState(null);
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+  const { toast, showToast } = useToast();
 
   const load = () => {
     setLoading(true);
@@ -67,11 +65,11 @@ export default function Inbox() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-dashNavy text-left">
             <tr>
-              <th className="px-4 py-3 font-semibold">Nama Pengirim</th>
-              <th className="px-4 py-3 font-semibold">Subjek</th>
-              <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold">Tanggal</th>
-              <th className="px-4 py-3 font-semibold">Aksi</th>
+              <th scope="col" className="px-4 py-3 font-semibold">Nama Pengirim</th>
+              <th scope="col" className="px-4 py-3 font-semibold">Subjek</th>
+              <th scope="col" className="px-4 py-3 font-semibold">Status</th>
+              <th scope="col" className="px-4 py-3 font-semibold">Tanggal</th>
+              <th scope="col" className="px-4 py-3 font-semibold">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -88,7 +86,7 @@ export default function Inbox() {
                       {m.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-normal text-dashNavy/60">{new Date(m.created_at).toLocaleDateString('id-ID')}</td>
+                  <td className="px-4 py-3 font-normal text-dashNavy/60">{formatDate(m.created_at)}</td>
                   <td className="px-4 py-3 font-normal">
                     <button onClick={() => setDeleting(m)} className="text-red-600 hover:text-red-800 underline text-sm">Hapus</button>
                   </td>
@@ -116,9 +114,9 @@ export default function Inbox() {
       {/* Modal detail pesan */}
       {detail && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4" onClick={() => setDetail(null)}>
-          <div className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div role="dialog" aria-modal="true" aria-labelledby="inbox-detail-title" className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[18px] font-semibold text-dashNavy">Detail Pesan</h3>
+              <h3 id="inbox-detail-title" className="text-[18px] font-semibold text-dashNavy">Detail Pesan</h3>
               <button onClick={() => setDetail(null)} className="text-dashNavy/50 hover:text-dashNavy transition">
                 <X className="w-5 h-5" />
               </button>
@@ -127,7 +125,7 @@ export default function Inbox() {
               <div><dt className="text-dashNavy/50">Nama</dt><dd className="font-medium text-black">{detail.sender_name}</dd></div>
               <div><dt className="text-dashNavy/50">Email</dt><dd className="font-medium text-black">{detail.sender_email}</dd></div>
               <div><dt className="text-dashNavy/50">Subjek</dt><dd className="font-medium text-black">{detail.subject}</dd></div>
-              <div><dt className="text-dashNavy/50">Tanggal</dt><dd className="text-black">{new Date(detail.created_at).toLocaleString('id-ID')}</dd></div>
+              <div><dt className="text-dashNavy/50">Tanggal</dt><dd className="text-black">{formatDateTime(detail.created_at)}</dd></div>
               <div><dt className="text-dashNavy/50">Pesan</dt><dd className="whitespace-pre-line text-black">{detail.message}</dd></div>
             </dl>
             <button onClick={() => setDetail(null)} className="w-full mt-6 bg-dashAccent text-white rounded-md py-2.5 text-sm font-semibold hover:brightness-95 transition">Tutup</button>

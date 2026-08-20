@@ -55,7 +55,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-8">
-          <nav className="flex items-center gap-6">
+          <nav aria-label="Desktop Navigation" className="flex items-center gap-6">
             {MENU_ITEMS.slice(0, 6).map((item) => (
               <NavLink
                 key={item.to}
@@ -102,7 +102,7 @@ export default function Navbar() {
 
       {/* Mobile Navigation Menu Dropdown */}
       {open && (
-        <nav className="lg:hidden bg-white dark:bg-darkbg border-t border-gray-100 dark:border-darkborder px-6 py-5 flex flex-col gap-2 shadow-xl absolute w-full left-0 animate-fade-in">
+        <nav aria-label="Mobile Navigation" className="lg:hidden bg-white dark:bg-darkbg border-t border-gray-100 dark:border-darkborder px-6 py-5 flex flex-col gap-2 shadow-xl absolute w-full left-0 animate-fade-in">
           {MENU_ITEMS.map((item) => (
             <NavLink
               key={item.to}

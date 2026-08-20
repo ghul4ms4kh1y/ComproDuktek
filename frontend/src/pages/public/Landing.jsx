@@ -1,7 +1,9 @@
 import { useEffect, useState, useRef } from "react";
+import { formatDate } from "../../lib/dateUtils";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
 import { Marquee } from "../../components/ui/marquee";
+import RevealSection from "../../components/common/RevealSection";
 import HeroSlider from "../../components/public/HeroSlider";
 import {
   Terminal,
@@ -37,39 +39,7 @@ const highlights = [
   },
 ];
 
-// Helper Component untuk Animasi Scroll Smooth Reveal
-function RevealSection({ children, className = "" }) {
-  const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target); // Hanya animasi 1x saat muncul
-        }
-      },
-      { threshold: 0.15 }, // Muncul saat 15% bagian section masuk viewport
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out transform ${
-        isVisible
-          ? "opacity-100 translate-y-0 scale-100"
-          : "opacity-0 translate-y-10 scale-[0.98]"
-      } ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
 
 export default function Landing() {
   const [news, setNews] = useState([]);
@@ -411,7 +381,7 @@ export default function Landing() {
                         </span>
                         <span className="text-white/70 flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5" />
-                          {news[0].news_date || "Terbaru"}
+                          {formatDate(news[0].news_date, 'Terbaru')}
                         </span>
                       </div>
 
@@ -467,7 +437,7 @@ export default function Landing() {
                             Berita
                           </span>
                           <span className="text-inktext/50 text-[11px]">
-                            {n.news_date || "Terbaru"}
+                             {formatDate(n.news_date, 'Terbaru')}
                           </span>
                         </div>
 

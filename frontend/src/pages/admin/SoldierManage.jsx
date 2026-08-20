@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+import api from "../../services/api";
 import {
   Pencil,
   KeyRound,
@@ -32,8 +32,8 @@ export default function SoldierManage() {
       setLoading(true);
       // Ambil data anggota dan struktur organisasi secara paralel
       const [soldiersRes, orgRes] = await Promise.all([
-        axios.get(`/api/soldiers`, { withCredentials: true }),
-        axios.get(`/api/org-structures`, { params: { limit: 200 } }),
+        api.get(`/soldiers`),
+        api.get(`/org-structures`, { params: { limit: 200 } }),
       ]);
 
       if (Array.isArray(soldiersRes.data)) {
@@ -50,13 +50,10 @@ export default function SoldierManage() {
       const flattenTree = (nodes) => {
         let list = [];
         const traverse = (node) => {
-          const sortedChildren = [...node.children].sort((a, b) => {
-            if (a.position === "_TRUNK_" && b.position !== "_TRUNK_") return 1;
-            if (a.position !== "_TRUNK_" && b.position === "_TRUNK_") return -1;
-            return 0;
-          });
           list.push(node.id);
-          sortedChildren.forEach(traverse);
+          if (node.children) {
+            node.children.forEach(traverse);
+          }
         };
         nodes.forEach(traverse);
         return list;
@@ -88,9 +85,7 @@ export default function SoldierManage() {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/api/soldiers/${selectedSoldier.id}`, editForm, {
-        withCredentials: true,
-      });
+      await api.put(`/soldiers/${selectedSoldier.id}`, editForm);
       setMessage({
         type: "success",
         text: "Data anggota berhasil diperbarui.",
@@ -198,10 +193,10 @@ export default function SoldierManage() {
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-gray-50 text-gray-700 font-medium border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4">Nama Lengkap</th>
-                <th className="px-6 py-4">Username</th>
-                <th className="px-6 py-4">Jabatan</th>
-                <th className="px-6 py-4 text-center">Aksi</th>
+                <th scope="col" className="px-6 py-4">Nama Lengkap</th>
+                <th scope="col" className="px-6 py-4">Username</th>
+                <th scope="col" className="px-6 py-4">Jabatan</th>
+                <th scope="col" className="px-6 py-4 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -248,9 +243,9 @@ export default function SoldierManage() {
 
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+          <div role="dialog" aria-modal="true" aria-labelledby="edit-soldier-title" className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h3 className="text-lg font-semibold text-dashNavy">
+              <h3 id="edit-soldier-title" className="text-lg font-semibold text-dashNavy">
                 Edit Akun Anggota
               </h3>
               <button

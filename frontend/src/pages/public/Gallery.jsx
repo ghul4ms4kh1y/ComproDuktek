@@ -68,6 +68,14 @@ export default function Gallery() {
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && selectedPhoto) setSelectedPhoto(null);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [selectedPhoto]);
+
   return (
     <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen pb-20 transition-colors duration-300">
       <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-10 space-y-10">
@@ -289,6 +297,9 @@ export default function Gallery() {
             />
 
             <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="gallery-dialog-title"
               initial={{ scale: 0.95, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
@@ -320,7 +331,7 @@ export default function Gallery() {
                       <Info className="w-3.5 h-3.5" />
                       <span>Detail Dokumentasi</span>
                     </span>
-                    <h3 className="text-lg md:text-xl font-bold text-navy dark:text-white leading-snug pt-1">
+                    <h3 id="gallery-dialog-title" className="text-lg md:text-xl font-bold text-navy dark:text-white leading-snug pt-1">
                       {selectedPhoto.description}
                     </h3>
                   </div>

@@ -1,9 +1,10 @@
 import CrudManager from '../../components/admin/CrudManager';
+import { formatDate } from '../../lib/dateUtils';
 
 const columns = [
   { key: 'title', label: 'Judul' },
   { key: 'category', label: 'Kategori' },
-  { key: 'news_date', label: 'Tanggal' },
+  { key: 'news_date', label: 'Tanggal', render: (item) => formatDate(item.news_date) },
   {
     key: 'thumbnail',
     label: 'Thumbnail',

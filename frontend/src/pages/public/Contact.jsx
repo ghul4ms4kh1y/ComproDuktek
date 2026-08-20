@@ -149,10 +149,11 @@ export default function Contact() {
               {/* Form Row 1: Nama & Email (2 Kolom Sejajar) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-bold text-navy dark:text-gray-200 mb-2">
+                  <label htmlFor="sender_name" className="block text-sm font-bold text-navy dark:text-gray-200 mb-2">
                     Nama Lengkap
                   </label>
                   <input
+                    id="sender_name"
                     type="text"
                     placeholder="Contoh: Nama Lengkap Anda"
                     value={form.sender_name}
@@ -160,7 +161,7 @@ export default function Contact() {
                     className="w-full bg-[#f8fafc] dark:bg-[#112236] border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3.5 text-sm font-medium dark:text-gray-200 focus:outline-none focus:border-navy dark:focus:border-blue-500 focus:bg-white dark:focus:bg-darkbg focus:ring-1 focus:ring-navy dark:focus:ring-blue-500 transition-all"
                   />
                   {errors.sender_name && (
-                    <p className="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                    <p role="alert" className="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1 font-medium">
                       <AlertCircle className="w-3.5 h-3.5" />
                       {errors.sender_name}
                     </p>
@@ -168,10 +169,11 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-navy dark:text-gray-200 mb-2">
+                  <label htmlFor="sender_email" className="block text-sm font-bold text-navy dark:text-gray-200 mb-2">
                     Alamat Email
                   </label>
                   <input
+                    id="sender_email"
                     type="email"
                     placeholder="Contoh: nama@domain.com"
                     value={form.sender_email}
@@ -179,7 +181,7 @@ export default function Contact() {
                     className="w-full bg-[#f8fafc] dark:bg-[#112236] border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3.5 text-sm font-medium dark:text-gray-200 focus:outline-none focus:border-navy dark:focus:border-blue-500 focus:bg-white dark:focus:bg-darkbg focus:ring-1 focus:ring-navy dark:focus:ring-blue-500 transition-all"
                   />
                   {errors.sender_email && (
-                    <p className="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                    <p role="alert" className="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1 font-medium">
                       <AlertCircle className="w-3.5 h-3.5" />
                       {errors.sender_email}
                     </p>
@@ -189,10 +191,11 @@ export default function Contact() {
 
               {/* Form Row 2: Subjek / Instansi (Full Width) */}
               <div>
-                <label className="block text-sm font-bold text-navy dark:text-gray-200 mb-2">
+                <label htmlFor="subject" className="block text-sm font-bold text-navy dark:text-gray-200 mb-2">
                   Subjek
                 </label>
                 <input
+                  id="subject"
                   type="text"
                   placeholder="Tuliskan subjek pesan anda..."
                   value={form.subject}
@@ -200,7 +203,7 @@ export default function Contact() {
                   className="w-full bg-[#f8fafc] dark:bg-[#112236] border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3.5 text-sm font-medium dark:text-gray-200 focus:outline-none focus:border-navy dark:focus:border-blue-500 focus:bg-white dark:focus:bg-darkbg focus:ring-1 focus:ring-navy dark:focus:ring-blue-500 transition-all"
                 />
                 {errors.subject && (
-                  <p className="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                  <p role="alert" className="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1 font-medium">
                     <AlertCircle className="w-3.5 h-3.5" />
                     {errors.subject}
                   </p>
@@ -209,10 +212,11 @@ export default function Contact() {
 
               {/* Form Row 3: Pesan (Full Width) */}
               <div>
-                <label className="block text-sm font-bold text-navy dark:text-gray-200 mb-2">
+                <label htmlFor="message" className="block text-sm font-bold text-navy dark:text-gray-200 mb-2">
                   Pesan / Maksud Kedatangan
                 </label>
                 <textarea
+                  id="message"
                   rows={5}
                   placeholder="Tuliskan pesan atau konsultasi Anda secara detail di sini..."
                   value={form.message}
@@ -220,7 +224,7 @@ export default function Contact() {
                   className="w-full bg-[#f8fafc] dark:bg-[#112236] border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-2 text-sm font-medium dark:text-gray-200 focus:outline-none focus:border-navy dark:focus:border-blue-500 focus:bg-white dark:focus:bg-darkbg focus:ring-1 focus:ring-navy dark:focus:ring-blue-500 transition-all resize-none"
                 />
                 {errors.message && (
-                  <p className="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                  <p role="alert" className="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1 font-medium">
                     <AlertCircle className="w-3.5 h-3.5" />
                     {errors.message}
                   </p>
@@ -248,7 +252,7 @@ export default function Contact() {
 
               {/* Status Indicator Messages */}
               {status === 'success' && (
-                <div className="flex items-start gap-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 p-4 rounded-2xl text-xs font-medium animate-fade-in mt-4">
+                <div role="status" className="flex items-start gap-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 p-4 rounded-2xl text-xs font-medium animate-fade-in mt-4">
                   <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-bold text-sm">Pesan Berhasil Terkirim!</p>
@@ -260,7 +264,7 @@ export default function Contact() {
               )}
 
               {status === 'error' && (
-                <div className="flex items-start gap-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 p-4 rounded-2xl text-xs font-medium animate-fade-in mt-4">
+                <div role="status" className="flex items-start gap-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 p-4 rounded-2xl text-xs font-medium animate-fade-in mt-4">
                   <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-bold text-sm">Gagal Mengirim Pesan</p>

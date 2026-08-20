@@ -33,9 +33,9 @@ export default function About() {
         <RevealSection threshold={0.15} className="rounded-[2.5rem] p-8 md:p-12 -mt-20 relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-6">
-              <h2 className="text-3xl md:text-5xl font-bold text-navy dark:text-white leading-tight tracking-tight">
+              <h1 className="text-3xl md:text-5xl font-bold text-navy dark:text-white leading-tight tracking-tight">
                 Krtrima Raksa Mandalam
-              </h2>
+              </h1>
 
               <p className="text-inktext/80 dark:text-gray-400 text-base md:text-lg leading-relaxed font-light">
                 Satuan Pelaksana Dukungan Teknologi Siber (Satlak Dukteksi) bertugas menyelenggarakan riset terapan, rekayasa terbalik, serta pemeliharaan infrastruktur siber pertahanan untuk menjaga aset informasi kedaulatan TNI AD.

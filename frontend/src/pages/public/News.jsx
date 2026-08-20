@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { formatDate } from '../../lib/dateUtils';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import RevealSection from '../../components/common/RevealSection';
@@ -11,6 +12,7 @@ import {
   ChevronRight,
   Search
 } from 'lucide-react';
+import { getReadTime } from '../../hooks/useReadTime';
 
 export default function News() {
   const [newsList, setNewsList] = useState([]);
@@ -76,13 +78,7 @@ export default function News() {
     }
   };
 
-  // Helper Estimasi Waktu Baca
-  const getReadTime = (content) => {
-    if (!content) return '3 min read';
-    const words = content.trim().split(/\s+/).length;
-    const time = Math.ceil(words / 150);
-    return `${time || 2} min read`;
-  };
+
 
   return (
     <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen pb-20 transition-colors duration-300">
@@ -207,7 +203,7 @@ export default function News() {
                       <div className="flex items-center gap-3 text-xs font-medium text-inktext/60 dark:text-gray-400 pt-0.5">
                         <span className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-navy dark:text-gray-400" />
-                          {recentMain.news_date || 'Terbaru'}
+                          {formatDate(recentMain.news_date, 'Terbaru')}
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1.5">
@@ -272,7 +268,7 @@ export default function News() {
                         <div className="flex items-center gap-2.5 text-[11px] font-medium text-inktext/50 dark:text-gray-400 mt-1.5">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3 text-navy dark:text-gray-400" />
-                            {item.news_date}
+                            {formatDate(item.news_date, 'Terbaru')}
                           </span>
                           <span>•</span>
                           <span className="flex items-center gap-1">
@@ -359,7 +355,7 @@ export default function News() {
                   <div className="flex items-center gap-2.5 text-[11px] font-medium text-inktext/50 dark:text-gray-400 mb-3">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3 text-navy dark:text-gray-400" />
-                      {item.news_date || 'Terbaru'}
+                      {formatDate(item.news_date, 'Terbaru')}
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">

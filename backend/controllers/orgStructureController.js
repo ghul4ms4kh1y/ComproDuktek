@@ -1,4 +1,5 @@
-const { sequelize, OrgStructure } = require('../models');
+const { sequelize, OrgStructure, Soldier } = require('../models');
+const bcrypt = require('bcryptjs');
 
 /**
  * Menghapus 1 anggota. Kalau anggota ini punya bawahan langsung, parent_id
@@ -99,11 +100,9 @@ exports.emptyPosition = async (req, res) => {
     }, { transaction: t });
 
     // 2. Reset akun Soldier (jika ada)
-    const { Soldier } = require('../models');
     const soldier = await Soldier.findOne({ where: { org_structure_id: id }, transaction: t });
     if (soldier) {
-      const bcrypt = require('bcryptjs');
-      const defaultPassword = await bcrypt.hash('prajurit123', 10);
+      const defaultPassword = await bcrypt.hash(process.env.DEFAULT_SOLDIER_PASSWORD || 'prajurit123', 10);
       await soldier.update({
         full_name: item.position, // kembalikan ke nama jabatan
         password: defaultPassword

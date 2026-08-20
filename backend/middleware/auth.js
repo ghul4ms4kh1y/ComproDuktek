@@ -32,4 +32,18 @@ function isSoldier(req, res, next) {
   }
 }
 
-module.exports = { requireAuth, isAdmin, isSoldier };
+function requireRole(...roles) {
+  return (req, res, next) => {
+    if (!req.user || !req.user.role) {
+      return res.status(403).json({ message: 'Akses ditolak, butuh hak akses yang sesuai.' });
+    }
+    
+    if (roles.includes(req.user.role)) {
+      next();
+    } else {
+      res.status(403).json({ message: 'Akses ditolak, butuh hak akses yang sesuai.' });
+    }
+  };
+}
+
+module.exports = { requireAuth, isAdmin, isSoldier, requireRole };

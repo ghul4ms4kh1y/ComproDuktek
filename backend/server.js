@@ -17,6 +17,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const orgStructureRoutes = require('./routes/orgStructureRoutes');
 const soldierRoutes = require('./routes/soldierRoutes');
+const programKerjaRoutes = require('./routes/programKerjaRoutes');
 
 const app = express();
 
@@ -49,7 +50,15 @@ app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', cred
 app.use((req, res, next) => {
   if (req.is('multipart/form-data')) {
     upload.any()(req, res, (err) => {
-      if (err) return next(err);
+      if (err) {
+        // "Unexpected end of form" terjadi saat klien mengirim form multipart
+        // yang tidak lengkap (misalnya koneksi terputus atau boundary tidak
+        // ditutup dengan benar). Ini tidak berbahaya, cukup kembalikan 400.
+        if (err.message && err.message.toLowerCase().includes('unexpected end of form')) {
+          return res.status(400).json({ message: 'Form tidak lengkap atau koneksi terputus saat upload.' });
+        }
+        return next(err);
+      }
       next();
     });
   } else {
@@ -82,17 +91,28 @@ app.use('/api/messages', apiLimiter, messageRoutes);
 app.use('/api/dashboard', apiLimiter, dashboardRoutes);
 app.use('/api/org-structures', apiLimiter, orgStructureRoutes);
 app.use('/api/soldiers', apiLimiter, soldierRoutes);
+app.use('/api/program-kerja', apiLimiter, programKerjaRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 // Error handler global
 app.use((err, req, res, next) => {
+  // Tangani error dari Multer secara spesifik
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({ message: 'Ukuran file terlalu besar. Maksimal 5MB.' });
+  }
+  if (err.code && err.code.startsWith('LIMIT_')) {
+    return res.status(400).json({ message: `Upload error: ${err.message}` });
+  }
+  // Jangan log error "Unexpected end of form" ke konsol (noise dari klien)
+  if (err.message && err.message.toLowerCase().includes('unexpected end of form')) {
+    return res.status(400).json({ message: 'Form tidak lengkap atau koneksi terputus saat upload.' });
+  }
   console.error(err);
   const status = err.status || 500;
-  const message = process.env.NODE_ENV === 'production' 
-    ? 'Terjadi kesalahan pada server.' 
+  const message = process.env.NODE_ENV === 'production'
+    ? 'Terjadi kesalahan pada server.'
     : err.message;
-  
   res.status(status).json({ message });
 });
 

@@ -10,6 +10,8 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 
+const STATUSES = ['Semua', 'Aktif', 'Dalam Pengembangan', 'Nonaktif'];
+
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
@@ -28,9 +30,7 @@ export default function Products() {
     [products]
   );
 
-  const statuses = ['Semua', 'Aktif', 'Dalam Pengembangan', 'Nonaktif'];
-
-  const filtered = products.filter((p) => {
+  const filtered = useMemo(() => products.filter((p) => {
     const matchesSearch =
       p.name?.toLowerCase().includes(search.toLowerCase()) ||
       p.description?.toLowerCase().includes(search.toLowerCase());
@@ -38,7 +38,7 @@ export default function Products() {
     const matchesStatus = status === 'Semua' || p.status === status;
 
     return matchesSearch && matchesCategory && matchesStatus;
-  });
+  }), [products, search, category, status]);
 
   return (
     <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen pb-20 transition-colors duration-300">
@@ -82,7 +82,7 @@ export default function Products() {
                 onChange={(e) => setStatus(e.target.value)}
                 className="bg-white dark:bg-darkbg border border-gray-200 dark:border-gray-700 hover:border-navy dark:hover:border-blue-500 rounded-xl px-4 py-3 text-xs font-semibold text-navy dark:text-gray-300 focus:outline-none transition-all cursor-pointer shadow-sm"
               >
-                {statuses.map((s) => (
+                {STATUSES.map((s) => (
                   <option key={s} value={s}>
                     Status: {s}
                   </option>

@@ -3,6 +3,7 @@ import api from '../../services/api';
 import FormModal from './FormModal';
 import ConfirmModal from './ConfirmModal';
 import Toast from './Toast';
+import { useToast } from '../../hooks/useToast';
 
 /**
  * columns: [{ key, label, render? }]
@@ -22,11 +23,7 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
   const [deleting, setDeleting] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const [toast, setToast] = useState(null);
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+  const { toast, showToast } = useToast();
 
   const load = () => {
     setLoading(true);
@@ -56,10 +53,10 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
       Object.entries(files).forEach(([k, f]) => { if (f) fd.append(k, f); });
 
       if (editing) {
-        await api.put(`${endpoint}/${editing.id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await api.put(`${endpoint}/${editing.id}`, fd);
         showToast('Data berhasil diperbarui.');
       } else {
-        await api.post(endpoint, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await api.post(endpoint, fd);
         showToast('Data berhasil ditambahkan.');
       }
       setFormOpen(false);
@@ -106,8 +103,8 @@ export default function CrudManager({ title, endpoint, columns, fields }) {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-dashNavy text-left">
             <tr>
-              {columns.map((c) => <th key={c.key} className="px-4 py-3 font-semibold">{c.label}</th>)}
-              <th className="px-4 py-3 font-semibold">Aksi</th>
+              {columns.map((c) => <th scope="col" key={c.key} className="px-4 py-3 font-semibold">{c.label}</th>)}
+              <th scope="col" className="px-4 py-3 font-semibold">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
