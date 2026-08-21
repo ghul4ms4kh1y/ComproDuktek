@@ -403,7 +403,7 @@ export default function SoldierDashboard() {
         <div className="px-2 pt-6">
           <div className="mb-4">
             <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-              Program Kerja Saya
+              Daftar Program Kerja
             </h2>
           </div>
 
@@ -412,7 +412,7 @@ export default function SoldierDashboard() {
           ) : prokers.length === 0 ? (
             <div className="py-8">
               <p className="text-sm text-gray-500">
-                Belum ada program kerja yang ditugaskan kepada Anda.
+                Belum ada program kerja.
               </p>
             </div>
           ) : (
@@ -420,7 +420,7 @@ export default function SoldierDashboard() {
               {prokers.map((proker) => (
                 <div
                   key={proker.id}
-                  className="bg-white border border-gray-200 rounded-[12px] p-5 shadow-sm"
+                  className="bg-white border border-gray-200 rounded-[12px] p-5 shadow-sm flex flex-col"
                 >
                   <div className="mb-4">
                     <h3 className="font-bold text-gray-800 text-[15px] mb-1">
@@ -429,14 +429,20 @@ export default function SoldierDashboard() {
                     <div className="w-full h-px bg-gray-100 my-3"></div>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-4 flex-1">
                     <div>
                       <p className="text-sm text-gray-700">
                         {proker.keterangan}
                       </p>
                     </div>
 
-                    <div className="text-[13px] text-gray-500 space-y-1">
+                    <div className="text-[13px] text-gray-500 space-y-1 mt-auto pt-2">
+                      <div className="flex justify-between">
+                        <span>Penanggung Jawab:</span>
+                        <span className="text-gray-700 font-medium">
+                          {proker.pic?.position || "Belum ditentukan"}
+                        </span>
+                      </div>
                       <div className="flex justify-between">
                         <span>Mulai:</span>
                         <span className="text-gray-700">
@@ -456,19 +462,21 @@ export default function SoldierDashboard() {
 
                   <div className="flex justify-between items-center mt-auto">
                     <StatusBadge status={proker.status} />
-                    <button
-                      onClick={() => handleToggleSelesai(proker)}
-                      className="text-xs text-dashNavy font-medium hover:underline flex items-center gap-1"
-                    >
-                      {proker.is_selesai ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4 text-green-600" />{" "}
-                          Selesai
-                        </>
-                      ) : (
-                        "Tandai Selesai"
-                      )}
-                    </button>
+                    {user?.org_structure_id === proker.pic_org_structure_id && (
+                      <button
+                        onClick={() => handleToggleSelesai(proker)}
+                        className="text-xs text-dashNavy font-medium hover:underline flex items-center gap-1"
+                      >
+                        {proker.is_selesai ? (
+                          <>
+                            <CheckCircle2 className="w-4 h-4 text-green-600" />{" "}
+                            Selesai
+                          </>
+                        ) : (
+                          "Tandai Selesai"
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

@@ -17,23 +17,6 @@ exports.index = async (req, res) => {
       ];
     }
 
-    // Role-based scoping
-    if (req.user.role === "soldier") {
-      const soldier = await Soldier.findByPk(req.user.id);
-      if (!soldier || !soldier.org_structure_id) {
-        return res.json({
-          data: [],
-          pagination: {
-            total: 0,
-            page: 1,
-            limit: parseInt(limit),
-            totalPages: 0,
-          },
-        });
-      }
-      where.pic_org_structure_id = soldier.org_structure_id;
-    }
-
     const { rows, count } = await ProgramKerja.findAndCountAll({
       where,
       limit: parseInt(limit),
@@ -82,14 +65,6 @@ exports.show = async (req, res) => {
     const { id } = req.params;
 
     const where = { id };
-
-    if (req.user.role === "soldier") {
-      const soldier = await Soldier.findByPk(req.user.id);
-      if (!soldier || !soldier.org_structure_id) {
-        return res.status(403).json({ message: "Akses ditolak." });
-      }
-      where.pic_org_structure_id = soldier.org_structure_id;
-    }
 
     const item = await ProgramKerja.findOne({
       where,
