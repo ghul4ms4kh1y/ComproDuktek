@@ -193,10 +193,18 @@ export default function SoldierManage() {
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-gray-50 text-gray-700 font-medium border-b border-gray-100">
               <tr>
-                <th scope="col" className="px-6 py-4">Nama Lengkap</th>
-                <th scope="col" className="px-6 py-4">Username</th>
-                <th scope="col" className="px-6 py-4">Jabatan</th>
-                <th scope="col" className="px-6 py-4 text-center">Aksi</th>
+                <th scope="col" className="px-6 py-4">
+                  Nama Lengkap
+                </th>
+                <th scope="col" className="px-6 py-4">
+                  Username
+                </th>
+                <th scope="col" className="px-6 py-4">
+                  Jabatan
+                </th>
+                <th scope="col" className="px-6 py-4 text-center">
+                  Aksi
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -213,10 +221,11 @@ export default function SoldierManage() {
                     <div className="flex justify-center">
                       <button
                         onClick={() => handleEditClick(soldier)}
-                        className="p-1.5 text-dashAccent bg-dashAccent/10 rounded hover:bg-dashAccent/20 transition"
+                        className="flex items-center gap-1.5 p-1.5 text-dashAccent bg-dashAccent/10 rounded hover:bg-dashAccent/20 transition"
                         title="Edit Akun"
                       >
                         <Pencil className="w-4 h-4" />
+                        <span>Edit Akun</span>
                       </button>
                     </div>
                   </td>
@@ -243,9 +252,17 @@ export default function SoldierManage() {
 
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div role="dialog" aria-modal="true" aria-labelledby="edit-soldier-title" className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-soldier-title"
+            className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden"
+          >
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h3 id="edit-soldier-title" className="text-lg font-semibold text-dashNavy">
+              <h3
+                id="edit-soldier-title"
+                className="text-lg font-semibold text-dashNavy"
+              >
                 Edit Akun Anggota
               </h3>
               <button
