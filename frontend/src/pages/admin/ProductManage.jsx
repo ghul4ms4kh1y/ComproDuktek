@@ -16,6 +16,16 @@ const fields = [
   { name: 'image', label: 'Gambar Produk', type: 'file' },
 ];
 
+const sortOptions = [
+  { value: 'default', label: 'Default' },
+  { value: 'nama_asc', label: 'Nama Produk (A - Z)', sortKey: 'name' },
+  { value: 'nama_desc', label: 'Nama Produk (Z - A)', sortKey: 'name' },
+  { value: 'kategori_asc', label: 'Kategori (A - Z)', sortKey: 'category' },
+  { value: 'kategori_desc', label: 'Kategori (Z - A)', sortKey: 'category' },
+  { value: 'status_asc', label: 'Status (A - Z)', sortKey: 'status' },
+  { value: 'status_desc', label: 'Status (Z - A)', sortKey: 'status' },
+];
+
 export default function ProductManage() {
-  return <CrudManager title="Produk" endpoint="/products" columns={columns} fields={fields} />;
+  return <CrudManager title="Produk" endpoint="/products" columns={columns} fields={fields} sortOptions={sortOptions} />;
 }

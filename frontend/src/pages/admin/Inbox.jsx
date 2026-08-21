@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { formatDate, formatDateTime } from '../../lib/dateUtils';
-import { X } from 'lucide-react';
+import { X, Search, ArrowUpDown } from 'lucide-react';
 import api from '../../services/api';
 import ConfirmModal from '../../components/admin/ConfirmModal';
 import Toast from '../../components/admin/Toast';
@@ -15,6 +15,9 @@ export default function Inbox() {
   const [detail, setDetail] = useState(null);
   const [deleting, setDeleting] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const [q, setQ] = useState("");
+  const [sortBy, setSortBy] = useState("tanggal_desc");
 
   const { toast, showToast } = useToast();
 
@@ -57,9 +60,77 @@ export default function Inbox() {
     }
   };
 
+  const filteredAndSortedMessages = useMemo(() => {
+    let result = [...messages];
+
+    if (q.trim()) {
+      const lowerQ = q.toLowerCase();
+      result = result.filter((m) =>
+        (m.sender_name || "").toLowerCase().includes(lowerQ) ||
+        (m.subject || "").toLowerCase().includes(lowerQ) ||
+        (m.message || "").toLowerCase().includes(lowerQ)
+      );
+    }
+
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case "tanggal_desc":
+          return new Date(b.created_at) - new Date(a.created_at);
+        case "tanggal_asc":
+          return new Date(a.created_at) - new Date(b.created_at);
+        case "nama_asc":
+          return (a.sender_name || "").localeCompare(b.sender_name || "");
+        case "nama_desc":
+          return (b.sender_name || "").localeCompare(a.sender_name || "");
+        case "status_unread":
+          return a.status === "Belum Dibaca" ? -1 : 1;
+        case "status_read":
+          return a.status === "Sudah Dibaca" ? -1 : 1;
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [messages, q, sortBy]);
+
   return (
     <div className="font-dash">
-      <h1 className="text-[20px] font-semibold text-dashNavy mb-6">Kotak Masuk</h1>
+      <div className="mb-6 border-b border-gray-200 pb-4">
+        <h1 className="text-[20px] font-semibold text-dashNavy">Kotak Masuk</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Lihat dan kelola pesan masuk dari pengunjung website.
+        </p>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3 mb-5">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Cari nama pengirim, subjek, atau isi pesan..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
+          />
+        </div>
+
+        <div className="relative shrink-0 w-full sm:w-auto">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="w-full sm:w-64 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+          >
+            <option value="tanggal_desc">Tanggal Terbaru</option>
+            <option value="tanggal_asc">Tanggal Terlama</option>
+            <option value="nama_asc">Nama Pengirim (A - Z)</option>
+            <option value="nama_desc">Nama Pengirim (Z - A)</option>
+            <option value="status_unread">Status (Belum Dibaca Dulu)</option>
+            <option value="status_read">Status (Sudah Dibaca Dulu)</option>
+          </select>
+          <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        </div>
+      </div>
 
       <div className="bg-white rounded-lg border border-gray-200 shadow-dashCard overflow-x-auto">
         <table className="w-full text-sm">
@@ -74,8 +145,9 @@ export default function Inbox() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading && <tr><td colSpan={5} className="px-4 py-6 text-center text-dashNavy/40">Memuat...</td></tr>}
-            {!loading && messages.length === 0 && <tr><td colSpan={5} className="px-4 py-6 text-center text-dashNavy/40">Belum ada pesan.</td></tr>}
-            {messages.map((m) => {
+            {!loading && filteredAndSortedMessages.length === 0 && messages.length === 0 && <tr><td colSpan={5} className="px-4 py-6 text-center text-dashNavy/40">Belum ada pesan.</td></tr>}
+            {!loading && filteredAndSortedMessages.length === 0 && messages.length > 0 && <tr><td colSpan={5} className="px-4 py-6 text-center text-dashNavy/40">Pesan tidak ditemukan untuk kata kunci pencarian ini.</td></tr>}
+            {filteredAndSortedMessages.map((m) => {
               const unread = m.status === 'Belum Dibaca';
               return (
                 <tr key={m.id} className={unread ? 'font-semibold' : ''}>

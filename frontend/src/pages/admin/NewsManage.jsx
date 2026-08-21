@@ -32,6 +32,16 @@ const fields = [
   { name: 'thumbnail', label: 'Thumbnail (gambar)', type: 'file' },
 ];
 
+const sortOptions = [
+  { value: 'default', label: 'Default' },
+  { value: 'judul_asc', label: 'Judul (A - Z)', sortKey: 'title' },
+  { value: 'judul_desc', label: 'Judul (Z - A)', sortKey: 'title' },
+  { value: 'tanggal_asc', label: 'Tanggal Terlama', sortKey: 'news_date' },
+  { value: 'tanggal_desc', label: 'Tanggal Terbaru', sortKey: 'news_date' },
+  { value: 'kategori_asc', label: 'Kategori (A - Z)', sortKey: 'category' },
+  { value: 'kategori_desc', label: 'Kategori (Z - A)', sortKey: 'category' },
+];
+
 export default function NewsManage() {
-  return <CrudManager title="Berita" endpoint="/news" columns={columns} fields={fields} />;
+  return <CrudManager title="Berita" endpoint="/news" columns={columns} fields={fields} sortOptions={sortOptions} />;
 }
