@@ -7,11 +7,8 @@ import {
   Search,
   ArrowUpDown,
 } from "lucide-react";
-import { buildTree } from "../../components/public/orgTreeUtils";
-
 export default function SoldierManage() {
   const [soldiers, setSoldiers] = useState([]);
-  const [orgHierarchy, setOrgHierarchy] = useState([]); // array of org_structure_id in hierarchical order
   const [loading, setLoading] = useState(true);
 
   const [selectedSoldier, setSelectedSoldier] = useState(null);
@@ -26,15 +23,12 @@ export default function SoldierManage() {
   // Sorting & Searching State
   const [q, setQ] = useState("");
   const [sortBy, setSortBy] = useState("hierarki");
+  const [page, setPage] = useState(1);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      // Ambil data anggota dan struktur organisasi secara paralel
-      const [soldiersRes, orgRes] = await Promise.all([
-        api.get(`/soldiers`),
-        api.get(`/org-structures`, { params: { limit: 200 } }),
-      ]);
+      const [soldiersRes] = await Promise.all([api.get(`/soldiers`)]);
 
       if (Array.isArray(soldiersRes.data)) {
         setSoldiers(soldiersRes.data);
@@ -42,24 +36,6 @@ export default function SoldierManage() {
         console.error("API did not return an array:", soldiersRes.data);
         setSoldiers([]);
       }
-
-      // Bangun struktur tree untuk mengetahui urutan hierarki
-      const rawOrg = orgRes.data?.data || [];
-      const roots = buildTree(rawOrg);
-
-      const flattenTree = (nodes) => {
-        let list = [];
-        const traverse = (node) => {
-          list.push(node.id);
-          if (node.children) {
-            node.children.forEach(traverse);
-          }
-        };
-        nodes.forEach(traverse);
-        return list;
-      };
-
-      setOrgHierarchy(flattenTree(roots));
     } catch (err) {
       console.error(err);
     } finally {
@@ -132,18 +108,28 @@ export default function SoldierManage() {
           return unameB.localeCompare(unameA);
         case "hierarki":
         default: {
-          const idxA = orgHierarchy.indexOf(a.org_structure_id);
-          const idxB = orgHierarchy.indexOf(b.org_structure_id);
-          // Jika tidak ada di orgHierarchy (misal admin murni dsb), taruh di paling bawah
-          const posA = idxA === -1 ? 999999 : idxA;
-          const posB = idxB === -1 ? 999999 : idxB;
-          return posA - posB;
+          const orderA = a.OrgStructure?.display_order ?? 999999;
+          const orderB = b.OrgStructure?.display_order ?? 999999;
+          return orderA - orderB;
         }
       }
     });
 
     return result;
-  }, [soldiers, q, sortBy, orgHierarchy]);
+  }, [soldiers, q, sortBy]);
+
+  const ITEMS_PER_PAGE = 12;
+  const totalPages = Math.ceil(
+    filteredAndSortedSoldiers.length / ITEMS_PER_PAGE,
+  );
+  const paginatedData = filteredAndSortedSoldiers.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE,
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [q, sortBy]);
 
   if (loading) return <div className="p-8">Memuat data...</div>;
 
@@ -208,7 +194,7 @@ export default function SoldierManage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredAndSortedSoldiers.map((soldier) => (
+              {paginatedData.map((soldier) => (
                 <tr key={soldier.id} className="hover:bg-gray-50/50 transition">
                   <td className="px-6 py-4 font-medium text-gray-900">
                     {soldier.full_name || "-"}
@@ -245,10 +231,25 @@ export default function SoldierManage() {
         </div>
         {filteredAndSortedSoldiers.length > 0 && (
           <div className="p-4 border-t border-gray-100 text-xs text-gray-500 text-right">
-            Menampilkan {filteredAndSortedSoldiers.length} data anggota
+            Menampilkan {paginatedData.length} dari{" "}
+            {filteredAndSortedSoldiers.length} data anggota
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex gap-2 justify-center mt-2">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              className={`w-8 h-8 rounded-md text-sm transition ${p === page ? "bg-dashNavy text-white" : "bg-white border border-gray-200 text-dashNavy hover:border-dashAccent"}`}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      )}
 
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">

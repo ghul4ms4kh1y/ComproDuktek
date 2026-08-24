@@ -1,4 +1,4 @@
-const { LaporanHarian, LaporanHarianSesi, Soldier } = require('../models');
+const { LaporanHarian, LaporanHarianSesi, Soldier, OrgStructure } = require('../models');
 const moment = require('moment-timezone');
 
 const getLocalToday = () => moment.tz('Asia/Jakarta').format('YYYY-MM-DD');
@@ -166,7 +166,8 @@ const laporanController = {
         include: [
           {
             model: Soldier,
-            attributes: ['id', 'username', 'full_name']
+            attributes: ['id', 'username', 'full_name', 'org_structure_id'],
+            include: [{ model: OrgStructure, attributes: ['position', 'display_order'] }]
           },
           {
             model: LaporanHarianSesi,

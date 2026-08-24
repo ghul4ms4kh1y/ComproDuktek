@@ -59,10 +59,42 @@ export default function LaporanManage() {
     }
   };
 
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("hierarki");
+
   const filtered = laporan.filter((l) => {
     const name = (l.Soldier?.full_name ?? l.Soldier?.username ?? "").toLowerCase();
-    return name.includes(q.toLowerCase());
+    const position = (l.Soldier?.OrgStructure?.position ?? "").toLowerCase();
+    const lowerQ = q.toLowerCase();
+    return name.includes(lowerQ) || position.includes(lowerQ);
   });
+
+  const filteredAndSorted = [...filtered].sort((a, b) => {
+    const nameA = (a.Soldier?.full_name ?? a.Soldier?.username ?? "").toLowerCase();
+    const nameB = (b.Soldier?.full_name ?? b.Soldier?.username ?? "").toLowerCase();
+    const dateA = a.tanggal || "";
+    const dateB = b.tanggal || "";
+    
+    if (sortBy === "hierarki") {
+      const orderA = a.Soldier?.OrgStructure?.display_order ?? 999999;
+      const orderB = b.Soldier?.OrgStructure?.display_order ?? 999999;
+      return orderA - orderB;
+    }
+    if (sortBy === "nama_asc") return nameA.localeCompare(nameB);
+    if (sortBy === "nama_desc") return nameB.localeCompare(nameA);
+    if (sortBy === "tanggal_asc") return dateA.localeCompare(dateB);
+    if (sortBy === "tanggal_desc") return dateB.localeCompare(dateA);
+    return 0;
+  });
+
+  const ITEMS_PER_PAGE = 12;
+  const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
+  const paginatedData = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  // Reset page to 1 when search, sort, or date filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [q, tanggal, sortBy]);
 
   return (
     <div className="font-dash">
@@ -79,7 +111,7 @@ export default function LaporanManage() {
             type="text"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Cari nama anggota..."
+            placeholder="Cari nama atau jabatan..."
             className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:border-dashAccent"
           />
         </div>
@@ -101,6 +133,22 @@ export default function LaporanManage() {
             </button>
           )}
         </div>
+        
+        {/* Sort */}
+        <div className="relative shrink-0 w-full sm:w-auto">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="w-full sm:w-48 px-3 py-2 border border-gray-200 rounded-md text-sm text-dashNavy focus:outline-none focus:border-dashAccent appearance-none cursor-pointer bg-white shadow-sm"
+          >
+            <option value="hierarki">Urutan Jabatan (Hierarki)</option>
+            <option value="nama_asc">Nama (A - Z)</option>
+            <option value="nama_desc">Nama (Z - A)</option>
+            <option value="tanggal_desc">Terbaru</option>
+            <option value="tanggal_asc">Terlama</option>
+          </select>
+        </div>
+
         <button
           id="refresh-laporan"
           onClick={fetchLaporan}
@@ -122,7 +170,7 @@ export default function LaporanManage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((l) => (
+          {paginatedData.map((l) => (
             <div
               key={l.id}
               className="bg-white border border-gray-200 rounded-lg shadow-dashCard overflow-hidden"
@@ -151,6 +199,12 @@ export default function LaporanManage() {
                       <span className="mx-1">·</span>
                       <Users className="w-3 h-3" />
                       {l.LaporanHarianSesis?.length ?? 0} sesi
+                      {l.Soldier?.OrgStructure?.position && (
+                        <>
+                          <span className="mx-1">·</span>
+                          <span>{l.Soldier.OrgStructure.position}</span>
+                        </>
+                      )}
                     </p>
                   </div>
                 </button>
@@ -190,6 +244,20 @@ export default function LaporanManage() {
                 </div>
               )}
             </div>
+          ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex gap-2 justify-center mt-6">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              className={`w-8 h-8 rounded-md text-sm transition ${p === page ? "bg-dashNavy text-white" : "bg-white border border-gray-200 text-dashNavy hover:border-dashAccent"}`}
+            >
+              {p}
+            </button>
           ))}
         </div>
       )}

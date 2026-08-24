@@ -284,10 +284,46 @@ export default function AbsensiManage() {
     showToast("success", "Berhasil disimpan.");
   };
 
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("hierarki");
+  const [filterStatus, setFilterStatus] = useState("all");
+
   const filtered = absensiList.filter((a) => {
     const name = (a.Soldier?.full_name ?? a.Soldier?.username ?? "").toLowerCase();
-    return name.includes(q.toLowerCase());
+    const position = (a.Soldier?.OrgStructure?.position ?? "").toLowerCase();
+    const lowerQ = q.toLowerCase();
+    
+    const matchSearch = name.includes(lowerQ) || position.includes(lowerQ);
+    const matchStatus = filterStatus === "all" || a.status === filterStatus;
+    
+    return matchSearch && matchStatus;
   });
+
+  const filteredAndSorted = [...filtered].sort((a, b) => {
+    const nameA = (a.Soldier?.full_name ?? a.Soldier?.username ?? "").toLowerCase();
+    const nameB = (b.Soldier?.full_name ?? b.Soldier?.username ?? "").toLowerCase();
+    const statusA = (a.status ?? "").toLowerCase();
+    const statusB = (b.status ?? "").toLowerCase();
+
+    if (sortBy === "hierarki") {
+      const orderA = a.Soldier?.OrgStructure?.display_order ?? 999999;
+      const orderB = b.Soldier?.OrgStructure?.display_order ?? 999999;
+      return orderA - orderB;
+    }
+    if (sortBy === "nama_asc") return nameA.localeCompare(nameB);
+    if (sortBy === "nama_desc") return nameB.localeCompare(nameA);
+    if (sortBy === "status_asc") return statusA.localeCompare(statusB);
+    if (sortBy === "status_desc") return statusB.localeCompare(statusA);
+    return 0;
+  });
+
+  const ITEMS_PER_PAGE = 12;
+  const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
+  const paginatedData = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    setPage(1);
+  }, [q, tanggal, tab, sortBy, filterStatus]);
 
   const prevDay = () => {
     const d = new Date(tanggal);
@@ -383,9 +419,40 @@ export default function AbsensiManage() {
                 type="text"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Cari nama anggota..."
+                placeholder="Cari nama atau jabatan..."
                 className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:border-dashAccent"
               />
+            </div>
+
+            {/* Filter Status */}
+            <div className="relative shrink-0 w-full sm:w-auto">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="w-full sm:w-40 px-3 py-2 border border-gray-200 rounded-md text-sm text-dashNavy focus:outline-none focus:border-dashAccent appearance-none cursor-pointer bg-white shadow-sm"
+              >
+                <option value="all">Semua Status</option>
+                <option value="hadir">Hadir</option>
+                <option value="sakit">Sakit</option>
+                <option value="izin">Izin</option>
+                <option value="alpa">Alpa</option>
+                <option value="belum_diisi">Belum Diisi</option>
+              </select>
+            </div>
+
+            {/* Sort */}
+            <div className="relative shrink-0 w-full sm:w-auto">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full sm:w-48 px-3 py-2 border border-gray-200 rounded-md text-sm text-dashNavy focus:outline-none focus:border-dashAccent appearance-none cursor-pointer bg-white shadow-sm"
+              >
+                <option value="hierarki">Urutan Jabatan (Hierarki)</option>
+                <option value="nama_asc">Nama (A - Z)</option>
+                <option value="nama_desc">Nama (Z - A)</option>
+                <option value="status_asc">Status (A - Z)</option>
+                <option value="status_desc">Status (Z - A)</option>
+              </select>
             </div>
 
             <button
@@ -410,7 +477,7 @@ export default function AbsensiManage() {
             ) : (
               <table className="w-full text-sm text-dashNavy">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-dashNavy/50">
+                  <tr className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-gray-700">
                     <th className="text-left px-4 py-3 font-semibold">Nama Anggota</th>
                     <th className="text-left px-4 py-3 font-semibold">Jabatan</th>
                     <th className="text-center px-4 py-3 font-semibold">Status</th>
@@ -420,7 +487,7 @@ export default function AbsensiManage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((a) => (
+                  {paginatedData.map((a) => (
                     <tr
                       key={a.id}
                       className="border-b border-gray-50 hover:bg-gray-50/50 transition"
@@ -476,6 +543,20 @@ export default function AbsensiManage() {
               </table>
             )}
           </div>
+          
+          {totalPages > 1 && (
+            <div className="flex gap-2 justify-center mt-6">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`w-8 h-8 rounded-md text-sm transition ${p === page ? "bg-dashNavy text-white" : "bg-white border border-gray-200 text-dashNavy hover:border-dashAccent"}`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          )}
         </>
       )}
 

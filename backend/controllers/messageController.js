@@ -19,14 +19,19 @@ exports.submit = async (req, res) => {
 // Admin: list pesan (Kotak Masuk)
 exports.index = async (req, res) => {
   try {
-    const { page = 1, limit = 10, status } = req.query;
+    const { page = 1, limit = 10, status, sortBy, sortOrder = 'ASC' } = req.query;
     const where = {};
     if (status) where.status = status;
     const offset = (Number(page) - 1) * Number(limit);
 
+    let order = [['created_at', 'DESC']];
+    if (sortBy) {
+        order = [[sortBy, sortOrder]];
+    }
+
     const { rows, count } = await Message.findAndCountAll({
       where,
-      order: [['created_at', 'DESC']],
+      order,
       limit: Number(limit),
       offset,
     });
