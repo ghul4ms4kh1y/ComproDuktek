@@ -166,7 +166,7 @@ export default function About() {
                       <h4 className="font-bold text-navy dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 text-base mb-2">
                         {item.title}
                       </h4>
-                      <p className="text-inktext/70 dark:text-gray-400 text-xs leading-relaxed">
+                      <p className="text-inktext/70 dark:text-gray-400 text-sm leading-relaxed">
                         {item.desc}
                       </p>
                     </div>
