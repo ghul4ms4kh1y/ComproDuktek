@@ -80,7 +80,7 @@ export default function Landing() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/kontak"
-                className="bg-[#4361EE]/80 hover:bg-blue-600 text-white px-7 py-3 rounded-xl font-medium transition-all duration-300 text-center shadow-lg hover:shadow-blue-500/25 inline-flex items-center justify-center gap-2 group shrink-0"
+                className="bg-[#4361EE]/90 hover:bg-blue-600 text-white px-7 py-3 rounded-xl font-medium transition-all duration-300 text-center shadow-lg hover:shadow-blue-500/25 inline-flex items-center justify-center gap-2 group shrink-0"
               >
                 Hubungi Kami{" "}
                 <span className="text-sm transition-transform group-hover:translate-x-1">
@@ -89,7 +89,7 @@ export default function Landing() {
               </Link>
               <Link
                 to="/produk"
-                className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md px-7 py-3 rounded-xl font-medium transition-all duration-300 text-center inline-flex items-center justify-center border border-white/15"
+                className="bg-white/85 hover:bg-white text-navy px-7 py-3 rounded-xl font-medium transition-all duration-300 text-center inline-flex items-center justify-center border border-white/15"
               >
                 Layanan & Produk
               </Link>
