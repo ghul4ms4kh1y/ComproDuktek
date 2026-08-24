@@ -4,7 +4,7 @@ const computeProkerStatus = require("../utils/computeProkerStatus");
 
 exports.index = async (req, res) => {
   try {
-    const { page = 1, limit = 10, q = "", status = "" } = req.query;
+    const { page = 1, limit = 10, q = "", status = "", sortBy, sortOrder = 'ASC' } = req.query;
     const offset = (page - 1) * limit;
 
     const where = {};
@@ -16,12 +16,17 @@ exports.index = async (req, res) => {
         { keterangan: { [Op.iLike]: `%${q}%` } },
       ];
     }
+    
+    let order = [["created_at", "DESC"]];
+    if (sortBy) {
+        order = [[sortBy, sortOrder]];
+    }
 
     const { rows, count } = await ProgramKerja.findAndCountAll({
       where,
       limit: parseInt(limit),
       offset: parseInt(offset),
-      order: [["created_at", "DESC"]],
+      order: order,
       include: [
         {
           model: OrgStructure,

@@ -64,7 +64,7 @@ exports.updateProfile = async (req, res) => {
 exports.getAllSoldiers = async (req, res) => {
   try {
     const soldiers = await Soldier.findAll({
-      include: [{ model: OrgStructure, attributes: ["position"] }],
+      include: [{ model: OrgStructure, attributes: ["position", "display_order"] }],
       attributes: { exclude: ["password"] }, // Jangan kirim password
     });
     res.json(soldiers);

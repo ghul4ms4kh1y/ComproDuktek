@@ -79,7 +79,7 @@ function crudFactory(Model, options = {}) {
     async index(req, res) {
       try {
 
-        const { q, page = 1, limit = 10 } = req.query;
+        const { q, page = 1, limit = 10, sortBy, sortOrder = 'ASC' } = req.query;
         const where = {};
 
         if (q && searchFields.length) {
@@ -88,10 +88,15 @@ function crudFactory(Model, options = {}) {
           }));
         }
 
+        let order = defaultOrder;
+        if (sortBy) {
+          order = [[sortBy, sortOrder]];
+        }
+
         const offset = (Number(page) - 1) * Number(limit);
         const { rows, count } = await Model.findAndCountAll({
           where,
-          order: defaultOrder,
+          order: order,
           limit: Number(limit),
           offset,
         });

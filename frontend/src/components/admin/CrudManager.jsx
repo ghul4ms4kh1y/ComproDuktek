@@ -38,8 +38,27 @@ export default function CrudManager({
 
   const load = () => {
     setLoading(true);
+    let sortKeyParam = undefined;
+    let sortOrderParam = undefined;
+
+    if (sortBy !== "default") {
+      const sortOption = sortOptions.find((opt) => opt.value === sortBy);
+      if (sortOption && sortOption.sortKey) {
+        sortKeyParam = sortOption.sortKey;
+        sortOrderParam = sortBy.includes("_asc") ? "ASC" : "DESC";
+      }
+    }
+
     api
-      .get(endpoint, { params: { page, limit: 8, q: q || undefined } })
+      .get(endpoint, {
+        params: {
+          page,
+          limit: 12,
+          q: q || undefined,
+          sortBy: sortKeyParam,
+          sortOrder: sortOrderParam,
+        },
+      })
       .then((r) => {
         setItems(r.data.data);
         setTotalPages(r.data.pagination.totalPages || 1);

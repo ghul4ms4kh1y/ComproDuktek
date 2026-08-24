@@ -50,8 +50,8 @@ const absensiController = {
         include: [
           {
             model: Soldier,
-            attributes: ['id', 'username', 'full_name', 'photo'],
-            include: [{ model: OrgStructure, attributes: ['position'] }]
+            attributes: ['id', 'username', 'full_name', 'photo', 'org_structure_id'],
+            include: [{ model: OrgStructure, attributes: ['position', 'display_order'] }]
           },
           {
             model: Admin,
