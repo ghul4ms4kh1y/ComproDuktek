@@ -18,6 +18,8 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const orgStructureRoutes = require('./routes/orgStructureRoutes');
 const soldierRoutes = require('./routes/soldierRoutes');
 const programKerjaRoutes = require('./routes/programKerjaRoutes');
+const absensiRoutes = require('./routes/absensiRoutes');
+const laporanRoutes = require('./routes/laporanRoutes');
 
 const app = express();
 
@@ -92,6 +94,8 @@ app.use('/api/dashboard', apiLimiter, dashboardRoutes);
 app.use('/api/org-structures', apiLimiter, orgStructureRoutes);
 app.use('/api/soldiers', apiLimiter, soldierRoutes);
 app.use('/api/program-kerja', apiLimiter, programKerjaRoutes);
+app.use('/api/absensi', apiLimiter, absensiRoutes);
+app.use('/api/laporan-harian', apiLimiter, laporanRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
