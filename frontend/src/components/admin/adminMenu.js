@@ -7,6 +7,8 @@ import {
   Mail,
   Users,
   ClipboardList,
+  CalendarCheck,
+  FileText,
 } from 'lucide-react';
 
 // Dipakai bersama oleh Sidebar (desktop, >=lg) dan BottomNav (mobile/tablet, <lg)
@@ -20,5 +22,7 @@ export const adminMenu = [
   { label: 'Struktur Organisasi', shortLabel: 'Struktur', to: '/admin-portal/struktur-organisasi', icon: Network },
   { label: 'Anggota', to: '/admin-portal/anggota', icon: Users },
   { label: 'Program Kerja', shortLabel: 'Proker', to: '/admin-portal/program-kerja', icon: ClipboardList },
+  { label: 'Rekap Presensi', shortLabel: 'Presensi', to: '/admin-portal/rekap-presensi', icon: CalendarCheck },
+  { label: 'Laporan Harian', shortLabel: 'Laporan', to: '/admin-portal/laporan-harian', icon: FileText },
   { label: 'Kotak Masuk', shortLabel: 'Pesan', to: '/admin-portal/kotak-masuk', icon: Mail },
 ];

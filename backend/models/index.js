@@ -8,6 +8,9 @@ const OrgStructure = require('./OrgStructure');
 
 const Soldier = require('./Soldier');
 const ProgramKerja = require('./ProgramKerja');
+const Absensi = require('./Absensi');
+const LaporanHarian = require('./LaporanHarian');
+const LaporanHarianSesi = require('./LaporanHarianSesi');
 
 // Relasi: audit trail -> admin pembuat konten
 Admin.hasMany(News, { foreignKey: 'admin_id' });
@@ -37,4 +40,16 @@ Soldier.belongsTo(OrgStructure, { foreignKey: 'org_structure_id' });
 OrgStructure.hasMany(ProgramKerja, { foreignKey: 'pic_org_structure_id' });
 ProgramKerja.belongsTo(OrgStructure, { as: 'pic', foreignKey: 'pic_org_structure_id' });
 
-module.exports = { sequelize, Admin, News, Product, Gallery, Message, OrgStructure, Soldier, ProgramKerja };
+// Relasi Absensi
+Soldier.hasMany(Absensi, { foreignKey: 'soldier_id' });
+Absensi.belongsTo(Soldier, { foreignKey: 'soldier_id' });
+Admin.hasMany(Absensi, { foreignKey: 'reviewed_by_admin_id' });
+Absensi.belongsTo(Admin, { foreignKey: 'reviewed_by_admin_id' });
+
+// Relasi Laporan Harian (Header – Detail dengan Cascade Delete)
+Soldier.hasMany(LaporanHarian, { foreignKey: 'soldier_id' });
+LaporanHarian.belongsTo(Soldier, { foreignKey: 'soldier_id' });
+LaporanHarian.hasMany(LaporanHarianSesi, { foreignKey: 'laporan_harian_id', onDelete: 'CASCADE', hooks: true });
+LaporanHarianSesi.belongsTo(LaporanHarian, { foreignKey: 'laporan_harian_id' });
+
+module.exports = { sequelize, Admin, News, Product, Gallery, Message, OrgStructure, Soldier, ProgramKerja, Absensi, LaporanHarian, LaporanHarianSesi };

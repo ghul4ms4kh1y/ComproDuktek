@@ -24,6 +24,8 @@ import GalleryManage from "./pages/admin/GalleryManage";
 import OrgStructureManage from "./pages/admin/OrgStructureManage";
 import SoldierManage from "./pages/admin/SoldierManage";
 import ProgramKerjaManage from "./pages/admin/ProgramKerjaManage";
+import AbsensiManage from "./pages/admin/AbsensiManage";
+import LaporanManage from "./pages/admin/LaporanManage";
 import Inbox from "./pages/admin/Inbox";
 
 import SoldierDashboard from "./pages/soldier/Dashboard";
@@ -61,6 +63,8 @@ export default function App() {
         <Route path="struktur-organisasi" element={<OrgStructureManage />} />
         <Route path="anggota" element={<SoldierManage />} />
         <Route path="program-kerja" element={<ProgramKerjaManage />} />
+        <Route path="rekap-presensi" element={<AbsensiManage />} />
+        <Route path="laporan-harian" element={<LaporanManage />} />
         <Route path="kotak-masuk" element={<Inbox />} />
       </Route>
 
