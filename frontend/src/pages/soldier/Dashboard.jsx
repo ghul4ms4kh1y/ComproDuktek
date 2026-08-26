@@ -744,67 +744,60 @@ export default function SoldierDashboard() {
 
         {/* ── 5. REKAP ABSENSI SAYA ── */}
         <div className="px-2 pt-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+          <div className="flex items-center justify-between mb-[14px]">
+            <h2 className="text-[14.5px] font-bold tracking-[0.02em] uppercase text-[#3C4453] flex items-center gap-2">
               <CalendarCheck className="w-4 h-4" /> Rekap Absensi Saya
             </h2>
+            <span className="text-[12px] text-[#767E8C] border border-[#E5E8EF] px-[10px] py-[4px] rounded-full">
+              {new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" })}
+            </span>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-[#E5E8EF] bg-[#EAF6F0]">
+              <div className="text-[34px] font-extrabold text-[#1F8A5D] leading-none mb-1">
+                {absensiStats.hadir ?? 0}
+              </div>
+              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">Hadir</div>
+            </div>
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-[#E5E8EF] bg-[#FBF3E3]">
+              <div className="text-[34px] font-extrabold text-[#A9781E] leading-none mb-1">
+                {absensiStats.sakit ?? 0}
+              </div>
+              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">Sakit</div>
+            </div>
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-[#E5E8EF] bg-[#FBF3E3]">
+              <div className="text-[34px] font-extrabold text-[#A9781E] leading-none mb-1">
+                {absensiStats.izin ?? 0}
+              </div>
+              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">Izin</div>
+            </div>
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-[#E5E8EF] bg-[#FBEBEB]">
+              <div className="text-[34px] font-extrabold text-[#B23838] leading-none mb-1">
+                {absensiStats.tk ?? 0}
+              </div>
+              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">Tanpa Keterangan</div>
+            </div>
+          </div>
+
+          <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#767E8C] mt-[22px] mb-[10px]">
+            Kategori Penugasan Lainnya
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 mb-5">
             {[
-              {
-                label: "Hadir",
-                key: "hadir",
-                color: "bg-green-50 border-green-200 text-green-700",
-              },
-              {
-                label: "Sakit",
-                key: "sakit",
-                color: "bg-yellow-50 border-yellow-200 text-yellow-700",
-              },
-              {
-                label: "Izin",
-                key: "izin",
-                color: "bg-blue-50 border-blue-200 text-blue-700",
-              },
-              {
-                label: "Dinas Dalam",
-                key: "dd",
-                color: "bg-purple-50 border-purple-200 text-purple-700",
-              },
-              {
-                label: "Bawan Perintah",
-                key: "bp",
-                color: "bg-pink-50 border-pink-200 text-pink-700",
-              },
-              {
-                label: "Dinas Luar",
-                key: "dl",
-                color: "bg-indigo-50 border-indigo-200 text-indigo-700",
-              },
-              {
-                label: "Pendidikan",
-                key: "dik",
-                color: "bg-teal-50 border-teal-200 text-teal-700",
-              },
-              {
-                label: "Satgas",
-                key: "satgas",
-                color: "bg-cyan-50 border-cyan-200 text-cyan-700",
-              },
-              {
-                label: "Tanpa Keterangan",
-                key: "tk",
-                color: "bg-red-50 border-red-200 text-red-700",
-              },
+              { label: "Dinas Dalam", key: "dd" },
+              { label: "Dinas Luar", key: "dl" },
+              { label: "Pendidikan", key: "dik" },
+              { label: "Satgas", key: "satgas" },
+              { label: "Bawah Perintah", key: "bp" }
             ].map((s) => (
-              <div
-                key={s.key}
-                className={`rounded-xl border p-4 text-center ${s.color}`}
-              >
-                <p className="text-2xl font-bold">{absensiStats[s.key] ?? 0}</p>
-                <p className="text-xs font-semibold mt-1">{s.label}</p>
+              <div key={s.key} className="bg-white border border-[#E5E8EF] rounded-[10px] p-[14px_10px] text-center">
+                <div className="font-bold text-[18px] text-[#B7BCC6]">
+                  {absensiStats[s.key] ?? 0}
+                </div>
+                <div className="text-[11px] text-[#767E8C] mt-1 leading-[1.3]">
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
@@ -855,7 +848,7 @@ export default function SoldierDashboard() {
                       sakit: "Sakit",
                       izin: "Izin",
                       dd: "Dinas Dalam",
-                      bp: "Bawan Perintah",
+                      bp: "Bawah Perintah",
                       dl: "Dinas Luar",
                       dik: "Pendidikan",
                       satgas: "Satgas",
