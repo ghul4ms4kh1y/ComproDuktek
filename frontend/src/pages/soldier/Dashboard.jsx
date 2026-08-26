@@ -1,4 +1,11 @@
-import { useState, useEffect, useRef, useMemo, useCallback, Fragment } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+  Fragment,
+} from "react";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
 import { formatDate } from "../../lib/dateUtils";
@@ -597,7 +604,6 @@ export default function SoldierDashboard() {
               <button
                 onClick={logout}
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-100 transition"
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-100 transition"
               >
                 <LogOut className="w-4 h-4" /> Log Out
               </button>
@@ -750,38 +756,49 @@ export default function SoldierDashboard() {
               <CalendarCheck className="w-4 h-4" /> Rekap Absensi Saya
             </h2>
             <span className="text-[12px] text-[#767E8C] border border-[#E5E8EF] px-[10px] py-[4px] rounded-full">
-              {new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" })}
+              {new Date().toLocaleDateString("id-ID", {
+                month: "long",
+                year: "numeric",
+              })}
             </span>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-[#E5E8EF] bg-[#EAF6F0]">
-              <div className="text-[34px] font-extrabold text-[#1F8A5D] leading-none mb-1">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-green-100 bg-green-100">
+              <div className="text-[34px] font-extrabold text-green-700 leading-none mb-1">
                 {absensiStats.hadir ?? 0}
               </div>
-              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">Hadir</div>
+              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
+                Hadir
+              </div>
             </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-[#E5E8EF] bg-[#FBF3E3]">
-              <div className="text-[34px] font-extrabold text-[#A9781E] leading-none mb-1">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-yellow-100 bg-yellow-100">
+              <div className="text-[34px] font-extrabold text-yellow-700 leading-none mb-1">
                 {absensiStats.sakit ?? 0}
               </div>
-              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">Sakit</div>
+              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
+                Sakit
+              </div>
             </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-[#E5E8EF] bg-[#FBF3E3]">
-              <div className="text-[34px] font-extrabold text-[#A9781E] leading-none mb-1">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-blue-100 bg-blue-100">
+              <div className="text-[34px] font-extrabold text-blue-700 leading-none mb-1">
                 {absensiStats.izin ?? 0}
               </div>
-              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">Izin</div>
+              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
+                Izin
+              </div>
             </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-[#E5E8EF] bg-[#FBEBEB]">
-              <div className="text-[34px] font-extrabold text-[#B23838] leading-none mb-1">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-red-100 bg-red-100">
+              <div className="text-[34px] font-extrabold text-red-700 leading-none mb-1">
                 {absensiStats.tk ?? 0}
               </div>
-              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">Tanpa Keterangan</div>
+              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
+                Tanpa Keterangan
+              </div>
             </div>
           </div>
 
-          <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#767E8C] mt-[22px] mb-[10px]">
+          <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-gray-800 mt-[22px] mb-[10px]">
             Kategori Penugasan Lainnya
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 mb-5">
@@ -790,13 +807,16 @@ export default function SoldierDashboard() {
               { label: "Dinas Luar", key: "dl" },
               { label: "Pendidikan", key: "dik" },
               { label: "Satgas", key: "satgas" },
-              { label: "Bawah Perintah", key: "bp" }
+              { label: "Bawah Perintah", key: "bp" },
             ].map((s) => (
-              <div key={s.key} className="bg-white border border-[#E5E8EF] rounded-[10px] p-[14px_10px] text-center">
-                <div className="font-bold text-[18px] text-[#B7BCC6]">
+              <div
+                key={s.key}
+                className="bg-white border border-[#E5E8EF] rounded-[10px] p-[14px_10px] text-center"
+              >
+                <div className="font-bold text-[18px] text-gray-600 leading-none">
                   {absensiStats[s.key] ?? 0}
                 </div>
-                <div className="text-[11px] text-[#767E8C] mt-1 leading-[1.3]">
+                <div className="text-[12px] text-gray-600 mt-1 leading-[1.3]">
                   {s.label}
                 </div>
               </div>
@@ -1023,7 +1043,7 @@ export default function SoldierDashboard() {
               <button
                 id="buat-laporan-hari-ini"
                 onClick={() => setShowLaporanForm(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-dashNavy text-white hover:bg-dashNavy/90 transition"
+                className="flex items-center gap-1.5 px-4 py-3 text-xs font-semibold rounded-lg bg-dashNavy text-white hover:bg-dashNavy/90 transition"
               >
                 <Plus className="w-3.5 h-3.5" /> Buat Laporan Hari Ini
               </button>
