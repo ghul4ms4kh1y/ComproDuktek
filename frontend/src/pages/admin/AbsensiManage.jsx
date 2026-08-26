@@ -27,7 +27,12 @@ const STATUS_LABELS = {
   hadir: "Hadir",
   sakit: "Sakit",
   izin: "Izin",
-  alpa: "Alpa",
+  dd: "Dinas Dalam",
+  bp: "Bawah Perintah",
+  dl: "Dinas Luar",
+  dik: "Pendidikan",
+  satgas: "Satgas",
+  tk: "Tanpa Keterangan",
   belum_diisi: "Belum Diisi",
 };
 
@@ -35,7 +40,12 @@ const STATUS_BADGE = {
   hadir: "bg-green-100 text-green-700 border-green-200",
   sakit: "bg-yellow-100 text-yellow-700 border-yellow-200",
   izin: "bg-blue-100 text-blue-700 border-blue-200",
-  alpa: "bg-red-100 text-red-700 border-red-200",
+  dd: "bg-purple-100 text-purple-700 border-purple-200",
+  bp: "bg-pink-100 text-pink-700 border-pink-200",
+  dl: "bg-indigo-100 text-indigo-700 border-indigo-200",
+  dik: "bg-teal-100 text-teal-700 border-teal-200",
+  satgas: "bg-cyan-100 text-cyan-700 border-cyan-200",
+  tk: "bg-red-100 text-red-700 border-red-200",
   belum_diisi: "bg-gray-100 text-gray-500 border-gray-200",
 };
 
@@ -435,7 +445,12 @@ export default function AbsensiManage() {
                 <option value="hadir">Hadir</option>
                 <option value="sakit">Sakit</option>
                 <option value="izin">Izin</option>
-                <option value="alpa">Alpa</option>
+                <option value="dd">Dinas Dalam</option>
+                <option value="bp">Bawah Perintah</option>
+                <option value="dl">Dinas Luar</option>
+                <option value="dik">Pendidikan</option>
+                <option value="satgas">Satgas</option>
+                <option value="tk">Tanpa Keterangan</option>
                 <option value="belum_diisi">Belum Diisi</option>
               </select>
             </div>

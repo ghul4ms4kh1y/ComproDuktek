@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback, Fragment } from "react";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
 import { formatDate } from "../../lib/dateUtils";
@@ -31,7 +31,7 @@ const StatusBadge = ({ status }) => {
       );
     case "merah":
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-100 text-cyan-700 border border-cyan-200">
           Terlambat
         </span>
       );
@@ -53,42 +53,79 @@ const StatusBadge = ({ status }) => {
 // Komponen inline untuk tambah sesi baru ke laporan hari ini
 function AddSesiInline({ laporanId, onAdded, showToast }) {
   const [open, setOpen] = useState(false);
-  const [aktivitas, setAktivitas] = useState('');
-  const [outputHasil, setOutputHasil] = useState('');
+  const [aktivitas, setAktivitas] = useState("");
+  const [outputHasil, setOutputHasil] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!aktivitas.trim() || !outputHasil.trim()) {
-      showToast('error', 'Aktivitas dan output harus diisi.');
+      showToast("error", "Aktivitas dan output harus diisi.");
       return;
     }
     try {
       setLoading(true);
-      await api.post('/laporan-harian/sesi', { laporan_id: laporanId, aktivitas, output_hasil: outputHasil });
-      showToast('success', 'Sesi ditambahkan.');
-      setAktivitas('');
-      setOutputHasil('');
+      await api.post("/laporan-harian/sesi", {
+        laporan_id: laporanId,
+        aktivitas,
+        output_hasil: outputHasil,
+      });
+      showToast("success", "Sesi ditambahkan.");
+      setAktivitas("");
+      setOutputHasil("");
       setOpen(false);
       onAdded();
-    } catch(e) {
-      showToast('error', e.response?.data?.message ?? 'Gagal menambah sesi.');
-    } finally { setLoading(false); }
+    } catch (e) {
+      showToast("error", e.response?.data?.message ?? "Gagal menambah sesi.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (!open) return (
-    <button id="inline-add-sesi" onClick={() => setOpen(true)} className="flex items-center gap-1 text-xs font-semibold text-dashNavy/60 hover:text-dashNavy transition mt-1">
-      <Plus className="w-3 h-3" /> Tambah Sesi Baru
-    </button>
-  );
+  if (!open)
+    return (
+      <button
+        id="inline-add-sesi"
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-1 text-xs font-semibold text-dashNavy/60 hover:text-dashNavy transition mt-1"
+      >
+        <Plus className="w-3 h-3" /> Tambah Sesi Baru
+      </button>
+    );
 
   return (
     <div className="border border-dashNavy/20 rounded-lg p-3 space-y-2 bg-dashNavy/5 mt-1">
       <p className="text-xs font-semibold text-dashNavy">Tambah Sesi Baru</p>
-      <textarea id="inline-aktivitas" value={aktivitas} onChange={e => setAktivitas(e.target.value)} rows={2} placeholder="Aktivitas..." className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none" />
-      <textarea id="inline-output" value={outputHasil} onChange={e => setOutputHasil(e.target.value)} rows={2} placeholder="Output/Hasil..." className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none" />
+      <textarea
+        id="inline-aktivitas"
+        value={aktivitas}
+        onChange={(e) => setAktivitas(e.target.value)}
+        rows={2}
+        placeholder="Aktivitas..."
+        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none"
+      />
+      <textarea
+        id="inline-output"
+        value={outputHasil}
+        onChange={(e) => setOutputHasil(e.target.value)}
+        rows={2}
+        placeholder="Output/Hasil..."
+        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none"
+      />
       <div className="flex gap-2">
-        <button onClick={() => setOpen(false)} className="text-xs text-gray-400 hover:text-gray-600">Batal</button>
-        <button id="inline-save-sesi" onClick={handleSubmit} disabled={loading} className="text-xs font-semibold text-dashNavy hover:underline disabled:opacity-60">{loading ? 'Menyimpan...' : 'Simpan Sesi'}</button>
+        <button
+          onClick={() => setOpen(false)}
+          className="text-xs text-gray-400 hover:text-gray-600"
+        >
+          Batal
+        </button>
+        <button
+          id="inline-save-sesi"
+          onClick={handleSubmit}
+          disabled={loading}
+          className="text-xs font-semibold text-dashNavy hover:underline disabled:opacity-60"
+        >
+          {loading ? "Menyimpan..." : "Simpan Sesi"}
+        </button>
       </div>
     </div>
   );
@@ -148,10 +185,21 @@ export default function SoldierDashboard() {
   // ── STATE ABSENSI ────────────────────────────────────────────────────────
   const toLocalToday = () => {
     const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   };
   const [absensiList, setAbsensiList] = useState([]);
-  const [absensiStats, setAbsensiStats] = useState({ hadir:0, sakit:0, izin:0, alpa:0, belum_diisi:0 });
+  const [absensiStats, setAbsensiStats] = useState({
+    hadir: 0,
+    sakit: 0,
+    izin: 0,
+    dd: 0,
+    bp: 0,
+    dl: 0,
+    dik: 0,
+    satgas: 0,
+    tk: 0,
+    belum_diisi: 0,
+  });
   const [absensiLoading, setAbsensiLoading] = useState(false);
   const [sanggahanForm, setSanggahanForm] = useState(null); // { id, status_usulan, keterangan_sanggahan }
   const [sanggahanLoading, setSanggahanLoading] = useState(false);
@@ -161,13 +209,16 @@ export default function SoldierDashboard() {
       setAbsensiLoading(true);
       const today = toLocalToday();
       const [listRes, statsRes] = await Promise.all([
-        api.get('/absensi', { params: { tanggal: today } }),
-        api.get('/absensi/stats'),
+        api.get("/absensi", { params: { tanggal: today } }),
+        api.get("/absensi/stats"),
       ]);
       setAbsensiList(Array.isArray(listRes.data) ? listRes.data : []);
       setAbsensiStats(statsRes.data);
-    } catch(e) { /* silent */ }
-    finally { setAbsensiLoading(false); }
+    } catch (e) {
+      /* silent */
+    } finally {
+      setAbsensiLoading(false);
+    }
   }, []);
 
   const submitSanggahan = async () => {
@@ -178,12 +229,17 @@ export default function SoldierDashboard() {
         status_usulan: sanggahanForm.status_usulan,
         keterangan_sanggahan: sanggahanForm.keterangan_sanggahan,
       });
-      showToast('success', 'Sanggahan berhasil diajukan.');
+      showToast("success", "Sanggahan berhasil diajukan.");
       setSanggahanForm(null);
       fetchAbsensi();
-    } catch(e) {
-      showToast('error', e.response?.data?.message ?? 'Gagal mengajukan sanggahan.');
-    } finally { setSanggahanLoading(false); }
+    } catch (e) {
+      showToast(
+        "error",
+        e.response?.data?.message ?? "Gagal mengajukan sanggahan.",
+      );
+    } finally {
+      setSanggahanLoading(false);
+    }
   };
 
   // ── STATE LAPORAN HARIAN ─────────────────────────────────────────────────
@@ -192,7 +248,9 @@ export default function SoldierDashboard() {
   const [laporanExpandedId, setLaporanExpandedId] = useState(null);
   // Form tambah laporan hari ini
   const [showLaporanForm, setShowLaporanForm] = useState(false);
-  const [laporanSesiRows, setLaporanSesiRows] = useState([{ aktivitas: '', output_hasil: '' }]);
+  const [laporanSesiRows, setLaporanSesiRows] = useState([
+    { aktivitas: "", output_hasil: "" },
+  ]);
   const [laporanSubmitting, setLaporanSubmitting] = useState(false);
   // today's laporan header id (for add/edit sesi on existing)
   const [todayLaporanId, setTodayLaporanId] = useState(null);
@@ -203,44 +261,61 @@ export default function SoldierDashboard() {
   const fetchLaporan = useCallback(async () => {
     try {
       setLaporanLoading(true);
-      const res = await api.get('/laporan-harian/mine');
+      const res = await api.get("/laporan-harian/mine");
       const data = Array.isArray(res.data) ? res.data : [];
       setLaporanList(data);
       const today = toLocalToday();
-      const todayEntry = data.find(l => l.tanggal === today);
+      const todayEntry = data.find((l) => l.tanggal === today);
       setTodayLaporanId(todayEntry ? todayEntry.id : null);
-    } catch(e) { /* silent */ }
-    finally { setLaporanLoading(false); }
+    } catch (e) {
+      /* silent */
+    } finally {
+      setLaporanLoading(false);
+    }
   }, []);
 
   const submitLaporan = async () => {
-    const valid = laporanSesiRows.every(r => r.aktivitas.trim() && r.output_hasil.trim());
-    if (!valid) { showToast('error', 'Semua baris sesi harus diisi.'); return; }
+    const valid = laporanSesiRows.every(
+      (r) => r.aktivitas.trim() && r.output_hasil.trim(),
+    );
+    if (!valid) {
+      showToast("error", "Semua baris sesi harus diisi.");
+      return;
+    }
     try {
       setLaporanSubmitting(true);
-      await api.post('/laporan-harian', { sesi: laporanSesiRows });
-      showToast('success', 'Laporan berhasil disimpan.');
+      await api.post("/laporan-harian", { sesi: laporanSesiRows });
+      showToast("success", "Laporan berhasil disimpan.");
       setShowLaporanForm(false);
-      setLaporanSesiRows([{ aktivitas: '', output_hasil: '' }]);
+      setLaporanSesiRows([{ aktivitas: "", output_hasil: "" }]);
       fetchLaporan();
-    } catch(e) {
-      showToast('error', e.response?.data?.message ?? 'Gagal menyimpan laporan.');
-    } finally { setLaporanSubmitting(false); }
+    } catch (e) {
+      showToast(
+        "error",
+        e.response?.data?.message ?? "Gagal menyimpan laporan.",
+      );
+    } finally {
+      setLaporanSubmitting(false);
+    }
   };
 
   const addSesiToToday = async () => {
     if (!todayLaporanId) return;
-    const row = { aktivitas: '', output_hasil: '' };
-    setLaporanSesiRows(prev => [...prev, row]);
+    const row = { aktivitas: "", output_hasil: "" };
+    setLaporanSesiRows((prev) => [...prev, row]);
   };
 
   const submitAddSesi = async (laporan_id, aktivitas, output_hasil) => {
     try {
-      await api.post('/laporan-harian/sesi', { laporan_id, aktivitas, output_hasil });
-      showToast('success', 'Sesi ditambahkan.');
+      await api.post("/laporan-harian/sesi", {
+        laporan_id,
+        aktivitas,
+        output_hasil,
+      });
+      showToast("success", "Sesi ditambahkan.");
       fetchLaporan();
-    } catch(e) {
-      showToast('error', e.response?.data?.message ?? 'Gagal menambah sesi.');
+    } catch (e) {
+      showToast("error", e.response?.data?.message ?? "Gagal menambah sesi.");
     }
   };
 
@@ -252,22 +327,27 @@ export default function SoldierDashboard() {
         aktivitas: editSesi.aktivitas,
         output_hasil: editSesi.output_hasil,
       });
-      showToast('success', 'Sesi diperbarui.');
+      showToast("success", "Sesi diperbarui.");
       setEditSesi(null);
       fetchLaporan();
-    } catch(e) {
-      showToast('error', e.response?.data?.message ?? 'Gagal memperbarui sesi.');
-    } finally { setEditSesiLoading(false); }
+    } catch (e) {
+      showToast(
+        "error",
+        e.response?.data?.message ?? "Gagal memperbarui sesi.",
+      );
+    } finally {
+      setEditSesiLoading(false);
+    }
   };
 
   const deleteSesi = async (sesiId) => {
-    if (!window.confirm('Hapus sesi ini?')) return;
+    if (!window.confirm("Hapus sesi ini?")) return;
     try {
       await api.delete(`/laporan-harian/sesi/${sesiId}`);
-      showToast('success', 'Sesi dihapus.');
+      showToast("success", "Sesi dihapus.");
       fetchLaporan();
-    } catch(e) {
-      showToast('error', e.response?.data?.message ?? 'Gagal menghapus sesi.');
+    } catch (e) {
+      showToast("error", e.response?.data?.message ?? "Gagal menghapus sesi.");
     }
   };
   // Helper untuk mendapatkan URL gambar dari Backend
@@ -434,13 +514,13 @@ export default function SoldierDashboard() {
           className={`fixed top-5 right-5 z-[100] flex items-start gap-3 px-5 py-4 rounded-xl shadow-lg border text-sm font-medium transition-all animate-in slide-in-from-top-2 duration-300 ${
             toast.type === "success"
               ? "bg-green-50 border-green-200 text-green-800"
-              : "bg-red-50 border-red-200 text-red-800"
+              : "bg-cyan-50 border-cyan-200 text-cyan-800"
           }`}
         >
           {toast.type === "success" ? (
             <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
           ) : (
-            <XCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+            <XCircle className="w-5 h-5 text-cyan-500 shrink-0 mt-0.5" />
           )}
           <span>{toast.text}</span>
           <button
@@ -516,7 +596,7 @@ export default function SoldierDashboard() {
               <div className="border-t border-gray-100 my-1"></div>
               <button
                 onClick={logout}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-cyan-600 hover:bg-cyan-50 transition"
               >
                 <LogOut className="w-4 h-4" /> Log Out
               </button>
@@ -591,9 +671,7 @@ export default function SoldierDashboard() {
             <p className="text-gray-400 py-10">Memuat program kerja...</p>
           ) : prokers.length === 0 ? (
             <div className="py-8">
-              <p className="text-sm text-gray-500">
-                Belum ada program kerja.
-              </p>
+              <p className="text-sm text-gray-500">Belum ada program kerja.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -675,12 +753,56 @@ export default function SoldierDashboard() {
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
-              { label: 'Hadir', key: 'hadir', color: 'bg-green-50 border-green-200 text-green-700' },
-              { label: 'Sakit', key: 'sakit', color: 'bg-yellow-50 border-yellow-200 text-yellow-700' },
-              { label: 'Izin', key: 'izin', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-              { label: 'Alpa', key: 'alpa', color: 'bg-red-50 border-red-200 text-red-700' },
-            ].map(s => (
-              <div key={s.key} className={`rounded-xl border p-4 text-center ${s.color}`}>
+              {
+                label: "Hadir",
+                key: "hadir",
+                color: "bg-green-50 border-green-200 text-green-700",
+              },
+              {
+                label: "Sakit",
+                key: "sakit",
+                color: "bg-yellow-50 border-yellow-200 text-yellow-700",
+              },
+              {
+                label: "Izin",
+                key: "izin",
+                color: "bg-blue-50 border-blue-200 text-blue-700",
+              },
+              {
+                label: "Dinas Dalam",
+                key: "dd",
+                color: "bg-purple-50 border-purple-200 text-purple-700",
+              },
+              {
+                label: "Bawan Perintah",
+                key: "bp",
+                color: "bg-pink-50 border-pink-200 text-pink-700",
+              },
+              {
+                label: "Dinas Luar",
+                key: "dl",
+                color: "bg-indigo-50 border-indigo-200 text-indigo-700",
+              },
+              {
+                label: "Pendidikan",
+                key: "dik",
+                color: "bg-teal-50 border-teal-200 text-teal-700",
+              },
+              {
+                label: "Satgas",
+                key: "satgas",
+                color: "bg-cyan-50 border-cyan-200 text-cyan-700",
+              },
+              {
+                label: "Tanpa Keterangan",
+                key: "tk",
+                color: "bg-red-50 border-red-200 text-red-700",
+              },
+            ].map((s) => (
+              <div
+                key={s.key}
+                className={`rounded-xl border p-4 text-center ${s.color}`}
+              >
                 <p className="text-2xl font-bold">{absensiStats[s.key] ?? 0}</p>
                 <p className="text-xs font-semibold mt-1">{s.label}</p>
               </div>
@@ -697,73 +819,177 @@ export default function SoldierDashboard() {
               <table className="w-full text-sm text-gray-700">
                 <thead>
                   <tr className="bg-gray-50 text-xs text-gray-400 uppercase border-b border-gray-100">
-                    <th className="text-left px-4 py-3 font-semibold">Tanggal</th>
-                    <th className="text-center px-4 py-3 font-semibold">Status</th>
-                    <th className="text-center px-4 py-3 font-semibold">Sanggahan</th>
-                    <th className="text-left px-4 py-3 font-semibold">Keterangan</th>
-                    <th className="text-center px-4 py-3 font-semibold">Aksi</th>
+                    <th className="text-left px-4 py-3 font-semibold">
+                      Tanggal
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold">
+                      Status
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold">
+                      Sanggahan
+                    </th>
+                    <th className="text-left px-4 py-3 font-semibold">
+                      Keterangan
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold">
+                      Aksi
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {absensiList.map(a => {
-                    const statusColors = { hadir: 'bg-green-100 text-green-700', sakit: 'bg-yellow-100 text-yellow-700', izin: 'bg-blue-100 text-blue-700', alpa: 'bg-red-100 text-red-700', belum_diisi: 'bg-gray-100 text-gray-500' };
-                    const statusLabels = { hadir: 'Hadir', sakit: 'Sakit', izin: 'Izin', alpa: 'Alpa', belum_diisi: 'Belum Diisi' };
-                    const sanggahanColors = { none: '', pending: 'bg-orange-100 text-orange-700', approved: 'bg-green-100 text-green-700', rejected: 'bg-red-100 text-red-700' };
-                    const sanggahanLabels = { none: '—', pending: 'Menunggu', approved: 'Disetujui', rejected: 'Ditolak' };
-                    const isPending = a.sanggahan_status === 'pending';
+                  {absensiList.map((a) => {
+                    const statusColors = {
+                      hadir: "bg-green-100 text-green-700",
+                      sakit: "bg-yellow-100 text-yellow-700",
+                      izin: "bg-blue-100 text-blue-700",
+                      dd: "bg-purple-100 text-purple-700",
+                      bp: "bg-pink-100 text-pink-700",
+                      dl: "bg-indigo-100 text-indigo-700",
+                      dik: "bg-teal-100 text-teal-700",
+                      satgas: "bg-cyan-100 text-cyan-700",
+                      tk: "bg-red-100 text-red-700",
+                      belum_diisi: "bg-gray-100 text-gray-500",
+                    };
+                    const statusLabels = {
+                      hadir: "Hadir",
+                      sakit: "Sakit",
+                      izin: "Izin",
+                      dd: "Dinas Dalam",
+                      bp: "Bawan Perintah",
+                      dl: "Dinas Luar",
+                      dik: "Pendidikan",
+                      satgas: "Satgas",
+                      tk: "Tanpa Keterangan",
+                      belum_diisi: "Belum Diisi",
+                    };
+                    const sanggahanColors = {
+                      none: "",
+                      pending: "bg-orange-100 text-orange-700",
+                      approved: "bg-green-100 text-green-700",
+                      rejected: "bg-cyan-100 text-cyan-700",
+                    };
+                    const sanggahanLabels = {
+                      none: "—",
+                      pending: "Menunggu",
+                      approved: "Disetujui",
+                      rejected: "Ditolak",
+                    };
+                    const isPending = a.sanggahan_status === "pending";
                     const isFormOpen = sanggahanForm?.id === a.id;
                     return (
-                      <>
-                        <tr key={a.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition">
+                      <Fragment key={a.id}>
+                        <tr
+                          key={a.id}
+                          className="border-b border-gray-50 hover:bg-gray-50/50 transition"
+                        >
                           <td className="px-4 py-3 font-medium">{a.tanggal}</td>
                           <td className="px-4 py-3 text-center">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusColors[a.status] ?? 'bg-gray-100 text-gray-500'}`}>
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusColors[a.status] ?? "bg-gray-100 text-gray-500"}`}
+                            >
                               {statusLabels[a.status] ?? a.status}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-center">
-                            {a.sanggahan_status !== 'none' ? (
-                              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${sanggahanColors[a.sanggahan_status]}`}>
+                            {a.sanggahan_status !== "none" ? (
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-xs font-semibold ${sanggahanColors[a.sanggahan_status]}`}
+                              >
                                 {sanggahanLabels[a.sanggahan_status]}
                               </span>
-                            ) : <span className="text-gray-300 text-xs">—</span>}
+                            ) : (
+                              <span className="text-gray-300 text-xs">—</span>
+                            )}
                           </td>
-                          <td className="px-4 py-3 text-gray-500 text-xs max-w-[160px] truncate">{a.keterangan || '—'}</td>
+                          <td className="px-4 py-3 text-gray-500 text-xs max-w-[160px] truncate">
+                            {a.keterangan || "—"}
+                          </td>
                           <td className="px-4 py-3 text-center">
                             {!isPending && (
                               <button
                                 id={`sanggahan-btn-${a.id}`}
-                                onClick={() => setSanggahanForm(isFormOpen ? null : { id: a.id, status_usulan: a.status, keterangan_sanggahan: '' })}
+                                onClick={() =>
+                                  setSanggahanForm(
+                                    isFormOpen
+                                      ? null
+                                      : {
+                                          id: a.id,
+                                          status_usulan: a.status,
+                                          keterangan_sanggahan: "",
+                                        },
+                                  )
+                                }
                                 className="px-2 py-1 text-xs rounded-lg bg-dashNavy/10 text-dashNavy hover:bg-dashNavy/20 transition font-semibold"
                               >
-                                {isFormOpen ? 'Batal' : 'Sanggah'}
+                                {isFormOpen ? "Batal" : "Sanggah"}
                               </button>
                             )}
-                            {isPending && <span className="text-xs text-orange-500 font-semibold flex items-center gap-1 justify-center"><AlertCircle className="w-3 h-3" />Pending</span>}
+                            {isPending && (
+                              <span className="text-xs text-orange-500 font-semibold flex items-center gap-1 justify-center">
+                                <AlertCircle className="w-3 h-3" />
+                                Pending
+                              </span>
+                            )}
                           </td>
                         </tr>
                         {isFormOpen && (
                           <tr key={`form-${a.id}`}>
-                            <td colSpan={5} className="px-4 pb-3 pt-0 bg-orange-50/50">
+                            <td
+                              colSpan={5}
+                              className="px-4 pb-3 pt-0 bg-orange-50/50"
+                            >
                               <div className="border border-orange-200 rounded-xl p-4 space-y-3">
-                                <p className="text-xs font-semibold text-orange-700">Ajukan Sanggahan</p>
+                                <p className="text-xs font-semibold text-orange-700">
+                                  Ajukan Sanggahan
+                                </p>
                                 <div>
-                                  <label className="text-xs text-gray-500 mb-1 block">Status Usulan</label>
+                                  <label className="text-xs text-gray-500 mb-1 block">
+                                    Status Usulan
+                                  </label>
                                   <select
                                     id="sanggahan-status-usulan"
                                     value={sanggahanForm.status_usulan}
-                                    onChange={e => setSanggahanForm(prev => ({ ...prev, status_usulan: e.target.value }))}
+                                    onChange={(e) =>
+                                      setSanggahanForm((prev) => ({
+                                        ...prev,
+                                        status_usulan: e.target.value,
+                                      }))
+                                    }
                                     className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-dashAccent"
                                   >
-                                    {['hadir','sakit','izin','alpa'].map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase()+s.slice(1)}</option>)}
+                                    {[
+                                      { value: "hadir", label: "Hadir" },
+                                      { value: "sakit", label: "Sakit" },
+                                      { value: "izin", label: "Izin" },
+                                      { value: "dd", label: "Dinas Dalam" },
+                                      { value: "bp", label: "Bawah Perintah" },
+                                      { value: "dl", label: "Dinas Luar" },
+                                      { value: "dik", label: "Pendidikan" },
+                                      { value: "satgas", label: "Satgas" },
+                                      {
+                                        value: "tk",
+                                        label: "Tanpa Keterangan",
+                                      },
+                                    ].map((s) => (
+                                      <option key={s.value} value={s.value}>
+                                        {s.label}
+                                      </option>
+                                    ))}
                                   </select>
                                 </div>
                                 <div>
-                                  <label className="text-xs text-gray-500 mb-1 block">Alasan</label>
+                                  <label className="text-xs text-gray-500 mb-1 block">
+                                    Alasan
+                                  </label>
                                   <textarea
                                     id="sanggahan-keterangan"
                                     value={sanggahanForm.keterangan_sanggahan}
-                                    onChange={e => setSanggahanForm(prev => ({ ...prev, keterangan_sanggahan: e.target.value }))}
+                                    onChange={(e) =>
+                                      setSanggahanForm((prev) => ({
+                                        ...prev,
+                                        keterangan_sanggahan: e.target.value,
+                                      }))
+                                    }
                                     rows={2}
                                     placeholder="Jelaskan alasan sanggahan..."
                                     className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-dashAccent resize-none"
@@ -775,13 +1001,15 @@ export default function SoldierDashboard() {
                                   disabled={sanggahanLoading}
                                   className="px-4 py-2 text-xs font-semibold rounded-lg bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-60 transition"
                                 >
-                                  {sanggahanLoading ? 'Mengajukan...' : 'Kirim Sanggahan'}
+                                  {sanggahanLoading
+                                    ? "Mengajukan..."
+                                    : "Kirim Sanggahan"}
                                 </button>
                               </div>
                             </td>
                           </tr>
                         )}
-                      </>
+                      </Fragment>
                     );
                   })}
                 </tbody>
@@ -810,35 +1038,69 @@ export default function SoldierDashboard() {
           {/* Form buat laporan baru (hari ini) */}
           {showLaporanForm && !todayLaporanId && (
             <div className="bg-white border border-dashNavy/20 rounded-xl p-5 mb-5 shadow-sm">
-              <p className="text-sm font-semibold text-dashNavy mb-3">Laporan Hari Ini</p>
+              <p className="text-sm font-semibold text-dashNavy mb-3">
+                Laporan Hari Ini
+              </p>
               <div className="space-y-3">
                 {laporanSesiRows.map((row, i) => (
-                  <div key={i} className="border border-gray-100 rounded-lg p-3 space-y-2">
-                    <p className="text-xs font-semibold text-gray-400">Sesi {i + 1}</p>
+                  <div
+                    key={i}
+                    className="border border-gray-100 rounded-lg p-3 space-y-2"
+                  >
+                    <p className="text-xs font-semibold text-gray-400">
+                      Sesi {i + 1}
+                    </p>
                     <div>
-                      <label className="text-xs text-gray-500 mb-1 block">Aktivitas</label>
+                      <label className="text-xs text-gray-500 mb-1 block">
+                        Aktivitas
+                      </label>
                       <textarea
                         id={`sesi-aktivitas-${i}`}
                         value={row.aktivitas}
-                        onChange={e => setLaporanSesiRows(prev => prev.map((r,idx) => idx===i ? {...r, aktivitas: e.target.value} : r))}
+                        onChange={(e) =>
+                          setLaporanSesiRows((prev) =>
+                            prev.map((r, idx) =>
+                              idx === i
+                                ? { ...r, aktivitas: e.target.value }
+                                : r,
+                            ),
+                          )
+                        }
                         rows={2}
                         placeholder="Uraikan aktivitas yang dilakukan..."
                         className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-dashAccent resize-none"
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 mb-1 block">Output / Hasil</label>
+                      <label className="text-xs text-gray-500 mb-1 block">
+                        Output / Hasil
+                      </label>
                       <textarea
                         id={`sesi-output-${i}`}
                         value={row.output_hasil}
-                        onChange={e => setLaporanSesiRows(prev => prev.map((r,idx) => idx===i ? {...r, output_hasil: e.target.value} : r))}
+                        onChange={(e) =>
+                          setLaporanSesiRows((prev) =>
+                            prev.map((r, idx) =>
+                              idx === i
+                                ? { ...r, output_hasil: e.target.value }
+                                : r,
+                            ),
+                          )
+                        }
                         rows={2}
                         placeholder="Hasil yang dicapai..."
                         className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-dashAccent resize-none"
                       />
                     </div>
                     {laporanSesiRows.length > 1 && (
-                      <button onClick={() => setLaporanSesiRows(prev => prev.filter((_,idx) => idx!==i))} className="text-xs text-red-400 hover:text-red-600">
+                      <button
+                        onClick={() =>
+                          setLaporanSesiRows((prev) =>
+                            prev.filter((_, idx) => idx !== i),
+                          )
+                        }
+                        className="text-xs text-cyan-400 hover:text-cyan-600"
+                      >
                         Hapus sesi ini
                       </button>
                     )}
@@ -848,13 +1110,24 @@ export default function SoldierDashboard() {
               <div className="flex items-center gap-3 mt-4">
                 <button
                   id="tambah-sesi-baru"
-                  onClick={() => setLaporanSesiRows(prev => [...prev, { aktivitas: '', output_hasil: '' }])}
+                  onClick={() =>
+                    setLaporanSesiRows((prev) => [
+                      ...prev,
+                      { aktivitas: "", output_hasil: "" },
+                    ])
+                  }
                   className="flex items-center gap-1 text-xs font-semibold text-dashNavy hover:underline"
                 >
                   <Plus className="w-3 h-3" /> Tambah Sesi
                 </button>
                 <div className="ml-auto flex gap-2">
-                  <button onClick={() => { setShowLaporanForm(false); setLaporanSesiRows([{ aktivitas:'', output_hasil:'' }]); }} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+                  <button
+                    onClick={() => {
+                      setShowLaporanForm(false);
+                      setLaporanSesiRows([{ aktivitas: "", output_hasil: "" }]);
+                    }}
+                    className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50"
+                  >
                     Batal
                   </button>
                   <button
@@ -863,7 +1136,8 @@ export default function SoldierDashboard() {
                     disabled={laporanSubmitting}
                     className="px-4 py-1.5 text-xs font-semibold bg-dashNavy text-white rounded-lg hover:bg-dashNavy/90 disabled:opacity-60 transition flex items-center gap-1"
                   >
-                    <Save className="w-3.5 h-3.5" />{laporanSubmitting ? 'Menyimpan...' : 'Simpan Laporan'}
+                    <Save className="w-3.5 h-3.5" />
+                    {laporanSubmitting ? "Menyimpan..." : "Simpan Laporan"}
                   </button>
                 </div>
               </div>
@@ -874,59 +1148,127 @@ export default function SoldierDashboard() {
           {laporanLoading ? (
             <p className="text-gray-400 py-4 text-sm">Memuat laporan...</p>
           ) : laporanList.length === 0 ? (
-            <p className="text-sm text-gray-400">Belum ada laporan aktivitas.</p>
+            <p className="text-sm text-gray-400">
+              Belum ada laporan aktivitas.
+            </p>
           ) : (
             <div className="space-y-3">
-              {laporanList.map(l => {
+              {laporanList.map((l) => {
                 const isToday = l.tanggal === toLocalToday();
                 const isExpanded = laporanExpandedId === l.id;
                 return (
-                  <div key={l.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                  <div
+                    key={l.id}
+                    className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+                  >
                     <button
                       id={`expand-laporan-${l.id}`}
-                      onClick={() => setLaporanExpandedId(isExpanded ? null : l.id)}
+                      onClick={() =>
+                        setLaporanExpandedId(isExpanded ? null : l.id)
+                      }
                       className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50/50 text-left transition"
                     >
-                      <span className="text-sm font-semibold text-dashNavy">{l.tanggal} {isToday && <span className="ml-2 text-xs text-dashAccent font-normal">(Hari Ini)</span>}</span>
+                      <span className="text-sm font-semibold text-dashNavy">
+                        {l.tanggal}{" "}
+                        {isToday && (
+                          <span className="ml-2 text-xs text-dashAccent font-normal">
+                            (Hari Ini)
+                          </span>
+                        )}
+                      </span>
                       <div className="flex items-center gap-2 text-xs text-gray-400">
                         <span>{l.LaporanHarianSesis?.length ?? 0} sesi</span>
-                        {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4" />
+                        )}
                       </div>
                     </button>
                     {isExpanded && (
                       <div className="border-t border-gray-100 px-4 py-3 space-y-3">
-                        {l.LaporanHarianSesis?.map(s => (
+                        {l.LaporanHarianSesis?.map((s) => (
                           <div key={s.id}>
                             {editSesi?.id === s.id ? (
                               <div className="border border-dashNavy/20 rounded-lg p-3 space-y-2">
                                 <textarea
                                   id={`edit-aktivitas-${s.id}`}
                                   value={editSesi.aktivitas}
-                                  onChange={e => setEditSesi(prev => ({ ...prev, aktivitas: e.target.value }))}
-                                  rows={2} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none"
+                                  onChange={(e) =>
+                                    setEditSesi((prev) => ({
+                                      ...prev,
+                                      aktivitas: e.target.value,
+                                    }))
+                                  }
+                                  rows={2}
+                                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none"
                                 />
                                 <textarea
                                   id={`edit-output-${s.id}`}
                                   value={editSesi.output_hasil}
-                                  onChange={e => setEditSesi(prev => ({ ...prev, output_hasil: e.target.value }))}
-                                  rows={2} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none"
+                                  onChange={(e) =>
+                                    setEditSesi((prev) => ({
+                                      ...prev,
+                                      output_hasil: e.target.value,
+                                    }))
+                                  }
+                                  rows={2}
+                                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none resize-none"
                                 />
                                 <div className="flex gap-2">
-                                  <button onClick={() => setEditSesi(null)} className="text-xs text-gray-400 hover:text-gray-600">Batal</button>
-                                  <button id={`save-edit-sesi-${s.id}`} onClick={submitEditSesi} disabled={editSesiLoading} className="text-xs font-semibold text-dashNavy hover:underline">{editSesiLoading ? 'Menyimpan...' : 'Simpan'}</button>
+                                  <button
+                                    onClick={() => setEditSesi(null)}
+                                    className="text-xs text-gray-400 hover:text-gray-600"
+                                  >
+                                    Batal
+                                  </button>
+                                  <button
+                                    id={`save-edit-sesi-${s.id}`}
+                                    onClick={submitEditSesi}
+                                    disabled={editSesiLoading}
+                                    className="text-xs font-semibold text-dashNavy hover:underline"
+                                  >
+                                    {editSesiLoading
+                                      ? "Menyimpan..."
+                                      : "Simpan"}
+                                  </button>
                                 </div>
                               </div>
                             ) : (
                               <div className="flex gap-3 border-l-2 border-dashSky/40 pl-3">
                                 <div className="flex-1">
-                                  <p className="text-xs text-gray-400 font-semibold">Sesi {s.urutan_sesi}</p>
-                                  <p className="text-sm text-dashNavy font-medium mt-0.5">{s.aktivitas}</p>
-                                  <p className="text-xs text-gray-500">{s.output_hasil}</p>
+                                  <p className="text-xs text-gray-400 font-semibold">
+                                    Sesi {s.urutan_sesi}
+                                  </p>
+                                  <p className="text-sm text-dashNavy font-medium mt-0.5">
+                                    {s.aktivitas}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {s.output_hasil}
+                                  </p>
                                 </div>
                                 {isToday && (
                                   <div className="flex gap-1.5 mt-1 shrink-0">
-                                    <button id={`edit-sesi-${s.id}`} onClick={() => setEditSesi({ id: s.id, aktivitas: s.aktivitas, output_hasil: s.output_hasil })} className="p-1 rounded hover:bg-gray-100 text-dashNavy/60 hover:text-dashNavy transition"><Edit2 className="w-3.5 h-3.5" /></button>
-                                    <button id={`delete-sesi-${s.id}`} onClick={() => deleteSesi(s.id)} className="p-1 rounded hover:bg-red-50 text-red-400 hover:text-red-600 transition"><Trash2 className="w-3.5 h-3.5" /></button>
+                                    <button
+                                      id={`edit-sesi-${s.id}`}
+                                      onClick={() =>
+                                        setEditSesi({
+                                          id: s.id,
+                                          aktivitas: s.aktivitas,
+                                          output_hasil: s.output_hasil,
+                                        })
+                                      }
+                                      className="p-1 rounded hover:bg-gray-100 text-dashNavy/60 hover:text-dashNavy transition"
+                                    >
+                                      <Edit2 className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                      id={`delete-sesi-${s.id}`}
+                                      onClick={() => deleteSesi(s.id)}
+                                      className="p-1 rounded hover:bg-cyan-50 text-cyan-400 hover:text-cyan-600 transition"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
                                   </div>
                                 )}
                               </div>
@@ -935,7 +1277,11 @@ export default function SoldierDashboard() {
                         ))}
                         {/* Add sesi on today's laporan */}
                         {isToday && (
-                          <AddSesiInline laporanId={l.id} onAdded={fetchLaporan} showToast={showToast} />
+                          <AddSesiInline
+                            laporanId={l.id}
+                            onAdded={fetchLaporan}
+                            showToast={showToast}
+                          />
                         )}
                       </div>
                     )}
@@ -1032,7 +1378,7 @@ export default function SoldierDashboard() {
                 </label>
                 <input
                   type="text"
-                  required
+                  requicyan
                   value={editFullName}
                   onChange={(e) => setEditFullName(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
@@ -1044,7 +1390,7 @@ export default function SoldierDashboard() {
                 </label>
                 <input
                   type="text"
-                  required
+                  requicyan
                   value={editUsername}
                   onChange={(e) => setEditUsername(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
@@ -1053,7 +1399,7 @@ export default function SoldierDashboard() {
 
               {messageEdit.text && (
                 <div
-                  className={`p-3 rounded-lg text-xs ${messageEdit.type === "error" ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"}`}
+                  className={`p-3 rounded-lg text-xs ${messageEdit.type === "error" ? "bg-cyan-50 text-cyan-600" : "bg-green-50 text-green-600"}`}
                 >
                   {messageEdit.text}
                 </div>
@@ -1102,7 +1448,7 @@ export default function SoldierDashboard() {
                 </label>
                 <input
                   type="password"
-                  required
+                  requicyan
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
@@ -1114,7 +1460,7 @@ export default function SoldierDashboard() {
                 </label>
                 <input
                   type="password"
-                  required
+                  requicyan
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
@@ -1126,7 +1472,7 @@ export default function SoldierDashboard() {
                 </label>
                 <input
                   type="password"
-                  required
+                  requicyan
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
@@ -1135,7 +1481,7 @@ export default function SoldierDashboard() {
 
               {messagePass.text && (
                 <div
-                  className={`p-3 rounded-lg text-xs ${messagePass.type === "error" ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"}`}
+                  className={`p-3 rounded-lg text-xs ${messagePass.type === "error" ? "bg-cyan-50 text-cyan-600" : "bg-green-50 text-green-600"}`}
                 >
                   {messagePass.text}
                 </div>
