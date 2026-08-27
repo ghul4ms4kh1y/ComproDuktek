@@ -9,7 +9,9 @@ import {
   ClipboardList,
   CalendarCheck,
   FileText,
+  CalendarDays,
 } from 'lucide-react';
+
 
 // Dipakai bersama oleh Sidebar (desktop, >=lg) dan BottomNav (mobile/tablet, <lg)
 // supaya daftar menu tidak perlu didefinisikan dua kali.
@@ -21,6 +23,7 @@ export const adminMenu = [
   { label: 'Galeri', to: '/admin-portal/galeri', icon: Images },
   { label: 'Struktur Organisasi', shortLabel: 'Struktur', to: '/admin-portal/struktur-organisasi', icon: Network },
   { label: 'Anggota', to: '/admin-portal/anggota', icon: Users },
+  { label: 'Jadwal Piket', shortLabel: 'Piket', to: '/admin-portal/jadwal-piket', icon: CalendarDays },
   { label: 'Program Kerja', shortLabel: 'Proker', to: '/admin-portal/program-kerja', icon: ClipboardList },
   { label: 'Rekap Presensi', shortLabel: 'Presensi', to: '/admin-portal/rekap-presensi', icon: CalendarCheck },
   { label: 'Laporan Harian', shortLabel: 'Laporan', to: '/admin-portal/laporan-harian', icon: FileText },

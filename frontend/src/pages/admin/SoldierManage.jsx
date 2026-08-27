@@ -305,7 +305,7 @@ export default function SoldierManage() {
               </div>
 
               <div className="pt-4 border-t border-gray-100">
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
                   <KeyRound className="w-4 h-4" /> Reset Password (Opsional)
                 </label>
                 <input

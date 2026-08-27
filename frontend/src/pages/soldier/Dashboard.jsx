@@ -32,25 +32,25 @@ const StatusBadge = ({ status }) => {
   switch (status) {
     case "hijau":
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">
           Beres
         </span>
       );
     case "merah":
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-100 text-cyan-700 border border-cyan-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-50 text-cyan-600 border border-cyan-200">
           Terlambat
         </span>
       );
     case "biru":
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200">
           Dalam Pengerjaan
         </span>
       );
     default:
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200">
           {status}
         </span>
       );
@@ -391,7 +391,7 @@ export default function SoldierDashboard() {
   const loadProkers = () => {
     setProkerLoading(true);
     api
-      .get("/program-kerja", { params: { limit: 100 } })
+      .get("/program-kerja", { params: { limit: 50 } })
       .then((res) => setProkers(res.data.data || []))
       .catch((err) => console.error("Gagal memuat program kerja:", err))
       .finally(() => setProkerLoading(false));
@@ -518,7 +518,7 @@ export default function SoldierDashboard() {
       {/* TOAST NOTIFIKASI CUSTOM */}
       {toast && (
         <div
-          className={`fixed top-5 right-5 z-[100] flex items-start gap-3 px-5 py-4 rounded-xl shadow-lg border text-sm font-medium transition-all animate-in slide-in-from-top-2 duration-300 ${
+          className={`fixed top-5 right-5 z-[50] flex items-start gap-3 px-5 py-4 rounded-xl shadow-lg border text-sm font-medium transition-all animate-in slide-in-from-top-2 duration-300 ${
             toast.type === "success"
               ? "bg-green-50 border-green-200 text-green-800"
               : "bg-cyan-50 border-cyan-200 text-cyan-800"
@@ -549,7 +549,7 @@ export default function SoldierDashboard() {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-dashNavy transition py-1 px-2 rounded-lg hover:bg-gray-100"
+            className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-dashNavy transition py-1 px-2 rounded-lg hover:bg-gray-50"
           >
             <span>{user?.full_name || user?.username || "Prajurit"}</span>
             <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-300">
@@ -570,7 +570,7 @@ export default function SoldierDashboard() {
 
           {/* Menu Dropdown */}
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-40 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-50 py-2 z-40 animate-in fade-in zoom-in-95 duration-150">
               <button
                 onClick={() => {
                   setDropdownOpen(false);
@@ -578,7 +578,7 @@ export default function SoldierDashboard() {
                   setEditUsername(user?.username || "");
                   setActiveModal("profile");
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition"
               >
                 <User className="w-4 h-4 text-gray-500" /> Edit Profil
               </button>
@@ -587,7 +587,7 @@ export default function SoldierDashboard() {
                   setDropdownOpen(false);
                   setActiveModal("photo");
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition"
               >
                 <Camera className="w-4 h-4 text-gray-500" /> Ganti Foto Profil
               </button>
@@ -596,14 +596,14 @@ export default function SoldierDashboard() {
                   setDropdownOpen(false);
                   setActiveModal("password");
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition"
               >
                 <Lock className="w-4 h-4 text-gray-500" /> Ganti Password
               </button>
-              <div className="border-t border-gray-100 my-1"></div>
+              <div className="border-t border-gray-50 my-1"></div>
               <button
                 onClick={logout}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-100 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
               >
                 <LogOut className="w-4 h-4" /> Log Out
               </button>
@@ -622,7 +622,7 @@ export default function SoldierDashboard() {
               className="w-20 h-20 object-contain mb-4"
             />
             <h2 className="text-3xl font-bold text-[#353460] tracking-tight mb-2">
-              Satuan Pelaksana Dukungan Teknik
+              Satuan Pelaksana Dukungan Teknologi Siber
             </h2>
             <div className="flex items-center gap-1.5 text-sm font-medium text-gray-500 mb-2">
               <span>Portal Manajemen & Penugasan Personel</span>
@@ -658,12 +658,6 @@ export default function SoldierDashboard() {
               Satuan Pelaksana Dukungan Teknologi Siber
             </p>
           </div>
-          <button
-            onClick={() => setActiveModal("photo")}
-            className="text-xs font-semibold text-gray-500 hover:text-dashNavy transition border border-gray-300 px-3 py-1.5 rounded-md"
-          >
-            Ubah Foto
-          </button>
         </div>
 
         {/* 4. BAGIAN UTAMA: PROGRAM KERJA SAYA (JURNAL SAYA) */}
@@ -691,12 +685,12 @@ export default function SoldierDashboard() {
                     <h3 className="font-bold text-gray-800 text-[15px] mb-1">
                       {proker.program}
                     </h3>
-                    <div className="w-full h-px bg-gray-100 my-3"></div>
+                    <div className="w-full h-px bg-gray-50 my-3"></div>
                   </div>
 
                   <div className="space-y-4 flex-1">
                     <div>
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-gray-600">
                         {proker.keterangan}
                       </p>
                     </div>
@@ -704,26 +698,26 @@ export default function SoldierDashboard() {
                     <div className="text-[13px] text-gray-500 space-y-1 mt-auto pt-2">
                       <div className="flex justify-between">
                         <span>Penanggung Jawab:</span>
-                        <span className="text-gray-700 font-medium">
+                        <span className="text-gray-600 font-medium">
                           {proker.pic?.position || "Belum ditentukan"}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Mulai:</span>
-                        <span className="text-gray-700">
+                        <span className="text-gray-600">
                           {formatDate(proker.tanggal_mulai)}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Deadline:</span>
-                        <span className="text-gray-700">
+                        <span className="text-gray-600">
                           {formatDate(proker.deadline)}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="w-full h-px bg-gray-100 my-4"></div>
+                  <div className="w-full h-px bg-gray-50 my-4"></div>
 
                   <div className="flex justify-between items-center mt-auto">
                     <StatusBadge status={proker.status} />
@@ -764,32 +758,32 @@ export default function SoldierDashboard() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-green-100 bg-green-100">
-              <div className="text-[34px] font-extrabold text-green-700 leading-none mb-1">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-green-50 bg-green-50">
+              <div className="text-[34px] font-extrabold text-green-600 leading-none mb-1">
                 {absensiStats.hadir ?? 0}
               </div>
               <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
                 Hadir
               </div>
             </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-yellow-100 bg-yellow-100">
-              <div className="text-[34px] font-extrabold text-yellow-700 leading-none mb-1">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-yellow-50 bg-yellow-50">
+              <div className="text-[34px] font-extrabold text-yellow-600 leading-none mb-1">
                 {absensiStats.sakit ?? 0}
               </div>
               <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
                 Sakit
               </div>
             </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-blue-100 bg-blue-100">
-              <div className="text-[34px] font-extrabold text-blue-700 leading-none mb-1">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-blue-50 bg-blue-50">
+              <div className="text-[34px] font-extrabold text-blue-600 leading-none mb-1">
                 {absensiStats.izin ?? 0}
               </div>
               <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
                 Izin
               </div>
             </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-red-100 bg-red-100">
-              <div className="text-[34px] font-extrabold text-red-700 leading-none mb-1">
+            <div className="rounded-[14px] p-5 relative overflow-hidden border border-red-50 bg-red-50">
+              <div className="text-[34px] font-extrabold text-red-600 leading-none mb-1">
                 {absensiStats.tk ?? 0}
               </div>
               <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
@@ -830,9 +824,9 @@ export default function SoldierDashboard() {
             <p className="text-sm text-gray-400">Belum ada data absensi.</p>
           ) : (
             <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-sm">
-              <table className="w-full text-sm text-gray-700">
+              <table className="w-full text-sm text-gray-600">
                 <thead>
-                  <tr className="bg-gray-50 text-xs text-gray-400 uppercase border-b border-gray-100">
+                  <tr className="bg-gray-50 text-xs text-gray-400 uppercase border-b border-gray-50">
                     <th className="text-left px-4 py-3 font-semibold">
                       Tanggal
                     </th>
@@ -853,23 +847,22 @@ export default function SoldierDashboard() {
                 <tbody>
                   {absensiList.map((a) => {
                     const statusColors = {
-                      hadir: "bg-green-100 text-green-700",
-                      sakit: "bg-yellow-100 text-yellow-700",
-                      izin: "bg-blue-100 text-blue-700",
-                      dd: "bg-purple-100 text-purple-700",
-                      bp: "bg-pink-100 text-pink-700",
-                      dl: "bg-indigo-100 text-indigo-700",
-                      dik: "bg-teal-100 text-teal-700",
-                      satgas: "bg-cyan-100 text-cyan-700",
-                      tk: "bg-red-100 text-red-700",
-                      belum_diisi: "bg-gray-100 text-gray-500",
+                      hadir: "bg-green-50 text-green-600",
+                      sakit: "bg-yellow-50 text-yellow-600",
+                      izin: "bg-blue-50 text-blue-600",
+                      dd: "bg-purple-50 text-purple-600",
+                      bp: "bg-pink-50 text-pink-600",
+                      dl: "bg-indigo-50 text-indigo-600",
+                      dik: "bg-teal-50 text-teal-600",
+                      satgas: "bg-cyan-50 text-cyan-600",
+                      tk: "bg-red-50 text-red-600",
+                      belum_diisi: "bg-gray-50 text-gray-500",
                     };
                     const statusLabels = {
                       hadir: "Hadir",
                       sakit: "Sakit",
                       izin: "Izin",
                       dd: "Dinas Dalam",
-                      bp: "Bawah Perintah",
                       bp: "Bawah Perintah",
                       dl: "Dinas Luar",
                       dik: "Pendidikan",
@@ -879,9 +872,9 @@ export default function SoldierDashboard() {
                     };
                     const sanggahanColors = {
                       none: "",
-                      pending: "bg-orange-100 text-orange-700",
-                      approved: "bg-green-100 text-green-700",
-                      rejected: "bg-cyan-100 text-cyan-700",
+                      pending: "bg-orange-50 text-orange-600",
+                      approved: "bg-green-50 text-green-600",
+                      rejected: "bg-cyan-50 text-cyan-600",
                     };
                     const sanggahanLabels = {
                       none: "—",
@@ -900,7 +893,7 @@ export default function SoldierDashboard() {
                           <td className="px-4 py-3 font-medium">{a.tanggal}</td>
                           <td className="px-4 py-3 text-center">
                             <span
-                              className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusColors[a.status] ?? "bg-gray-100 text-gray-500"}`}
+                              className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusColors[a.status] ?? "bg-gray-50 text-gray-500"}`}
                             >
                               {statusLabels[a.status] ?? a.status}
                             </span>
@@ -954,7 +947,7 @@ export default function SoldierDashboard() {
                               className="px-4 pb-3 pt-0 bg-orange-50/50"
                             >
                               <div className="border border-orange-200 rounded-xl p-4 space-y-3">
-                                <p className="text-xs font-semibold text-orange-700">
+                                <p className="text-xs font-semibold text-orange-600">
                                   Ajukan Sanggahan
                                 </p>
                                 <div>
@@ -1060,7 +1053,7 @@ export default function SoldierDashboard() {
                 {laporanSesiRows.map((row, i) => (
                   <div
                     key={i}
-                    className="border border-gray-100 rounded-lg p-3 space-y-2"
+                    className="border border-gray-50 rounded-lg p-3 space-y-2"
                   >
                     <p className="text-xs font-semibold text-gray-400">
                       Sesi {i + 1}
@@ -1201,7 +1194,7 @@ export default function SoldierDashboard() {
                       </div>
                     </button>
                     {isExpanded && (
-                      <div className="border-t border-gray-100 px-4 py-3 space-y-3">
+                      <div className="border-t border-gray-50 px-4 py-3 space-y-3">
                         {l.LaporanHarianSesis?.map((s) => (
                           <div key={s.id}>
                             {editSesi?.id === s.id ? (
@@ -1273,7 +1266,7 @@ export default function SoldierDashboard() {
                                           output_hasil: s.output_hasil,
                                         })
                                       }
-                                      className="p-1 rounded hover:bg-gray-100 text-dashNavy/60 hover:text-dashNavy transition"
+                                      className="p-1 rounded hover:bg-gray-50 text-dashNavy/60 hover:text-dashNavy transition"
                                     >
                                       <Edit2 className="w-3.5 h-3.5" />
                                     </button>
@@ -1325,7 +1318,7 @@ export default function SoldierDashboard() {
             </h3>
             <form onSubmit={handlePhotoSubmit} className="space-y-4">
               <div className="flex flex-col items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden mb-3">
+                <div className="w-24 h-24 rounded-full bg-gray-50 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden mb-3">
                   {selectedPhoto ? (
                     <img
                       src={previewUrl}
@@ -1350,7 +1343,7 @@ export default function SoldierDashboard() {
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-2 pt-4 border-t border-gray-50">
                 <button
                   type="button"
                   onClick={() => setActiveModal(null)}
@@ -1420,7 +1413,7 @@ export default function SoldierDashboard() {
                 </div>
               )}
 
-              <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-2 pt-4 border-t border-gray-50">
                 <button
                   type="button"
                   onClick={() => setActiveModal(null)}
@@ -1502,7 +1495,7 @@ export default function SoldierDashboard() {
                 </div>
               )}
 
-              <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-2 pt-4 border-t border-gray-50">
                 <button
                   type="button"
                   onClick={() => setActiveModal(null)}
