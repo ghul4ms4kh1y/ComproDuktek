@@ -17,6 +17,7 @@ export default function CrudManager({
   columns,
   fields,
   sortOptions = [],
+  onDataChange,
 }) {
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
@@ -125,6 +126,7 @@ export default function CrudManager({
       }
       setFormOpen(false);
       load();
+      onDataChange?.();
     } catch (err) {
       showToast(
         err.response?.data?.message || "Gagal menyimpan data.",
@@ -142,6 +144,7 @@ export default function CrudManager({
       showToast("Data berhasil dihapus.");
       setDeleting(null);
       load();
+      onDataChange?.();
     } catch (err) {
       console.error("Error deleting data:", err);
       showToast(

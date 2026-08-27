@@ -1,4 +1,7 @@
+import { useState, useEffect, useMemo } from 'react';
 import CrudManager from '../../components/admin/CrudManager';
+import InfoCardGrid from '../../components/admin/InfoCardGrid';
+import api from '../../services/api';
 
 const columns = [
   { key: 'name', label: 'Nama Produk' },
@@ -26,6 +29,72 @@ const sortOptions = [
   { value: 'status_desc', label: 'Status (Z - A)', sortKey: 'status' },
 ];
 
+const countByUnit = (items) => {
+  const counts = {};
+  items.forEach(item => {
+    counts[item.unit_pengampu] = (counts[item.unit_pengampu] || 0) + 1;
+  });
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  return sorted.length > 0 ? sorted[0] : null;
+};
+
 export default function ProductManage() {
-  return <CrudManager title="Produk" endpoint="/products" columns={columns} fields={fields} sortOptions={sortOptions} />;
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadAllProducts = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/products', { params: { limit: 1000 } });
+      setAllProducts(res.data.data || []);
+    } catch (error) {
+      console.error('Error loading products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAllProducts();
+  }, []);
+
+  const metrics = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) return null;
+    
+    const aktif = allProducts.filter(p => p.status === 'Aktif').length;
+    const nonaktif = allProducts.filter(p => p.status === 'Nonaktif').length;
+    const topUnit = countByUnit(allProducts);
+
+    return {
+      total: allProducts.length,
+      aktif,
+      nonaktif,
+      topUnit: topUnit ? `${topUnit[0]} (${topUnit[1]})` : '-'
+    };
+  }, [allProducts]);
+
+  const infoCards = [
+    { label: 'Total Produk', value: metrics?.total || 0, loading },
+    { label: 'Produk Aktif', value: metrics?.aktif || 0, loading },
+    { label: 'Produk Nonaktif', value: metrics?.nonaktif || 0, loading },
+    { label: 'Unit Terbanyak', value: metrics?.topUnit || '-', loading, subtitle: 'Unit + Jumlah' },
+  ];
+
+  const handleCrudComplete = () => {
+    loadAllProducts();
+  };
+
+  return (
+    <div className="font-dash space-y-5">
+      <InfoCardGrid cards={infoCards} />
+      <CrudManager 
+        title="Produk" 
+        endpoint="/products" 
+        columns={columns} 
+        fields={fields} 
+        sortOptions={sortOptions}
+        onDataChange={handleCrudComplete}
+      />
+    </div>
+  );
 }

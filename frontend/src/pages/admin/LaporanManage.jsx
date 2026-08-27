@@ -1,8 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import api from "../../services/api";
 import { useToast } from "../../hooks/useToast";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
+import InfoCardGrid from "../../components/admin/InfoCardGrid";
 import {
   FileText,
   Search,
@@ -59,6 +60,27 @@ export default function LaporanManage() {
     }
   };
 
+  const metrics = useMemo(() => {
+    if (!laporan || laporan.length === 0) return null;
+    
+    const uniqueSoldiers = new Set(laporan.map(l => l.soldier_id)).size;
+    const totalSesi = laporan.reduce((sum, l) => sum + (l.LaporanHarianSesis?.length || 0), 0);
+
+    return {
+      total: laporan.length,
+      uniqueSoldiers,
+      totalSesi,
+      avgSesiPerLaporan: laporan.length > 0 ? Math.round(totalSesi / laporan.length * 10) / 10 : 0
+    };
+  }, [laporan]);
+
+  const infoCards = [
+    { label: 'Total Laporan', value: metrics?.total || 0, loading },
+    { label: 'Personel Unik', value: metrics?.uniqueSoldiers || 0, loading },
+    { label: 'Total Sesi', value: metrics?.totalSesi || 0, loading },
+    { label: 'Rata-rata/Laporan', value: metrics?.avgSesiPerLaporan || 0, loading, subtitle: 'sesi' },
+  ];
+
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("hierarki");
 
@@ -112,7 +134,9 @@ export default function LaporanManage() {
   }, [q, tanggal, sortBy]);
 
   return (
-    <div className="font-dash">
+    <div className="font-dash space-y-5">
+      <InfoCardGrid cards={infoCards} />
+      <div>
       <h1 className="text-[20px] font-semibold text-dashNavy mb-6">
         Laporan Aktivitas Harian
       </h1>
@@ -293,6 +317,7 @@ export default function LaporanManage() {
       />
 
       <Toast toast={toast} />
+      </div>
     </div>
   );
 }

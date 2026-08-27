@@ -4,6 +4,7 @@ import api from "../../services/api";
 import FormModal from "../../components/admin/FormModal";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import Toast from "../../components/admin/Toast";
+import InfoCardGrid from "../../components/admin/InfoCardGrid";
 import { buildTree } from "../../components/public/orgTreeUtils";
 
 import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
@@ -244,8 +245,31 @@ export default function OrgStructureManage() {
     return result;
   }, [rawItems, q, sortBy]);
 
+  const metrics = useMemo(() => {
+    const visibleItems = rawItems.filter(item => !isHiddenNode(item.position));
+    const filled = visibleItems.filter(item => item.name && item.name.trim()).length;
+    const empty = visibleItems.length - filled;
+    const withPhoto = visibleItems.filter(item => item.photo).length;
+    
+    return {
+      total: visibleItems.length,
+      filled,
+      empty,
+      withPhoto
+    };
+  }, [rawItems]);
+
+  const infoCards = [
+    { label: 'Total Jabatan', value: metrics.total, loading },
+    { label: 'Terisi', value: metrics.filled, loading },
+    { label: 'Kosong', value: metrics.empty, loading },
+    { label: 'Dengan Foto', value: metrics.withPhoto, loading },
+  ];
+
   return (
-    <div className="font-dash pb-12">
+    <div className="font-dash pb-12 space-y-5">
+      <InfoCardGrid cards={infoCards} />
+      <div>
       <div className="mb-6 border-b border-gray-200 pb-4">
         <h1 className="text-[20px] font-semibold text-dashNavy">
           Kelola Personel Struktur Organisasi
@@ -346,6 +370,7 @@ export default function OrgStructureManage() {
       />
 
       <Toast toast={toast} />
+      </div>
     </div>
   );
 }
