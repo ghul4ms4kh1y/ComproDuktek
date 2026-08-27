@@ -63,18 +63,30 @@ export default function LaporanManage() {
   const [sortBy, setSortBy] = useState("hierarki");
 
   const filtered = laporan.filter((l) => {
-    const name = (l.Soldier?.full_name ?? l.Soldier?.username ?? "").toLowerCase();
+    const name = (
+      l.Soldier?.full_name ??
+      l.Soldier?.username ??
+      ""
+    ).toLowerCase();
     const position = (l.Soldier?.OrgStructure?.position ?? "").toLowerCase();
     const lowerQ = q.toLowerCase();
     return name.includes(lowerQ) || position.includes(lowerQ);
   });
 
   const filteredAndSorted = [...filtered].sort((a, b) => {
-    const nameA = (a.Soldier?.full_name ?? a.Soldier?.username ?? "").toLowerCase();
-    const nameB = (b.Soldier?.full_name ?? b.Soldier?.username ?? "").toLowerCase();
+    const nameA = (
+      a.Soldier?.full_name ??
+      a.Soldier?.username ??
+      ""
+    ).toLowerCase();
+    const nameB = (
+      b.Soldier?.full_name ??
+      b.Soldier?.username ??
+      ""
+    ).toLowerCase();
     const dateA = a.tanggal || "";
     const dateB = b.tanggal || "";
-    
+
     if (sortBy === "hierarki") {
       const orderA = a.Soldier?.OrgStructure?.display_order ?? 999999;
       const orderB = b.Soldier?.OrgStructure?.display_order ?? 999999;
@@ -89,7 +101,10 @@ export default function LaporanManage() {
 
   const ITEMS_PER_PAGE = 12;
   const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
-  const paginatedData = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const paginatedData = filteredAndSorted.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE,
+  );
 
   // Reset page to 1 when search, sort, or date filter changes
   useEffect(() => {
@@ -133,7 +148,7 @@ export default function LaporanManage() {
             </button>
           )}
         </div>
-        
+
         {/* Sort */}
         <div className="relative shrink-0 w-full sm:w-auto">
           <select
@@ -221,7 +236,8 @@ export default function LaporanManage() {
               {/* Expanded detail */}
               {expanded[l.id] && (
                 <div className="border-t border-gray-100 px-4 py-3">
-                  {!l.LaporanHarianSesis || l.LaporanHarianSesis.length === 0 ? (
+                  {!l.LaporanHarianSesis ||
+                  l.LaporanHarianSesis.length === 0 ? (
                     <p className="text-sm text-dashNavy/40">Tidak ada sesi.</p>
                   ) : (
                     <div className="space-y-3">
@@ -234,8 +250,12 @@ export default function LaporanManage() {
                             Sesi {s.urutan_sesi}
                           </span>
                           <div className="space-y-0.5 flex-1">
-                            <p className="text-dashNavy font-medium">{s.aktivitas}</p>
-                            <p className="text-dashNavy/60 text-xs">{s.output_hasil}</p>
+                            <p className="text-dashNavy font-medium">
+                              {s.aktivitas}
+                            </p>
+                            <p className="text-dashNavy/60 text-xs">
+                              {s.output_hasil}
+                            </p>
                           </div>
                         </div>
                       ))}

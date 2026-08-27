@@ -20,6 +20,7 @@ const soldierRoutes = require('./routes/soldierRoutes');
 const programKerjaRoutes = require('./routes/programKerjaRoutes');
 const absensiRoutes = require('./routes/absensiRoutes');
 const laporanRoutes = require('./routes/laporanRoutes');
+const jadwalPiketRoutes = require('./routes/jadwalPiketRoutes');
 
 const app = express();
 
@@ -96,6 +97,7 @@ app.use('/api/soldiers', apiLimiter, soldierRoutes);
 app.use('/api/program-kerja', apiLimiter, programKerjaRoutes);
 app.use('/api/absensi', apiLimiter, absensiRoutes);
 app.use('/api/laporan-harian', apiLimiter, laporanRoutes);
+app.use('/api/jadwal-piket', apiLimiter, jadwalPiketRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
