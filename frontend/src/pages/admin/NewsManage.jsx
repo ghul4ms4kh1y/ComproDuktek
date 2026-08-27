@@ -1,5 +1,8 @@
+import { useState, useEffect, useMemo } from 'react';
 import CrudManager from '../../components/admin/CrudManager';
+import InfoCardGrid from '../../components/admin/InfoCardGrid';
 import { formatDate } from '../../lib/dateUtils';
+import api from '../../services/api';
 
 const columns = [
   { key: 'title', label: 'Judul' },
@@ -42,6 +45,88 @@ const sortOptions = [
   { value: 'kategori_desc', label: 'Kategori (Z - A)', sortKey: 'category' },
 ];
 
+const getCurrentMonth = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+};
+
+const countByCategory = (items) => {
+  const counts = {};
+  items.forEach(item => {
+    counts[item.category] = (counts[item.category] || 0) + 1;
+  });
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  return sorted.length > 0 ? sorted[0] : null;
+};
+
 export default function NewsManage() {
-  return <CrudManager title="Berita" endpoint="/news" columns={columns} fields={fields} sortOptions={sortOptions} />;
+  const [allNews, setAllNews] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadAllNews = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/news', { params: { limit: 1000 } });
+      setAllNews(res.data.data || []);
+    } catch (error) {
+      console.error('Error loading all news:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAllNews();
+  }, []);
+
+  const metrics = useMemo(() => {
+    if (!allNews || allNews.length === 0) return null;
+    
+    const thisMonth = allNews.filter(item => {
+      const newsDate = new Date(item.news_date);
+      const current = new Date();
+      return newsDate.getMonth() === current.getMonth() && 
+             newsDate.getFullYear() === current.getFullYear();
+    }).length;
+
+    const latestNews = allNews.sort((a, b) => 
+      new Date(b.news_date) - new Date(a.news_date)
+    )[0];
+
+    const topCategory = countByCategory(allNews);
+
+    return {
+      total: allNews.length,
+      thisMonth,
+      latestDate: latestNews ? formatDate(latestNews.news_date) : '-',
+      topCategory: topCategory ? `${topCategory[0]} (${topCategory[1]})` : '-'
+    };
+  }, [allNews]);
+
+  const infoCards = [
+    { label: 'Total Berita', value: metrics?.total || 0, loading },
+    { label: 'Bulan Ini', value: metrics?.thisMonth || 0, loading },
+    { label: 'Terbaru', value: metrics?.latestDate || '-', loading, subtitle: 'Tanggal publikasi' },
+    { label: 'Kategori Terbanyak', value: metrics?.topCategory || '-', loading, subtitle: 'Kategori + Jumlah' },
+  ];
+
+  const handleCrudComplete = () => {
+    loadAllNews();
+  };
+
+  return (
+    <div className="font-dash space-y-5">
+      <InfoCardGrid cards={infoCards} />
+      <CrudManager 
+        title="Berita" 
+        endpoint="/news" 
+        columns={columns} 
+        fields={fields} 
+        sortOptions={sortOptions}
+        onDataChange={handleCrudComplete}
+      />
+    </div>
+  );
 }

@@ -1,8 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import api from "../../services/api";
 import { useToast } from "../../hooks/useToast";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
+import InfoCardGrid from "../../components/admin/InfoCardGrid";
 import {
   CalendarCheck,
   Search,
@@ -294,6 +295,28 @@ export default function AbsensiManage() {
     showToast("success", "Berhasil disimpan.");
   };
 
+  const metrics = useMemo(() => {
+    if (!absensiList || absensiList.length === 0) return null;
+    
+    const hadir = absensiList.filter(a => a.status === 'hadir').length;
+    const tidakHadir = absensiList.filter(a => !['hadir', 'belum_diisi'].includes(a.status)).length;
+    const belumIsi = absensiList.filter(a => a.status === 'belum_diisi').length;
+
+    return {
+      total: absensiList.length,
+      hadir,
+      tidakHadir,
+      belumIsi
+    };
+  }, [absensiList]);
+
+  const infoCards = [
+    { label: 'Total Personel', value: metrics?.total || 0, loading },
+    { label: 'Hadir', value: metrics?.hadir || 0, loading },
+    { label: 'Tidak Hadir', value: metrics?.tidakHadir || 0, loading },
+    { label: 'Belum Diisi', value: metrics?.belumIsi || 0, loading },
+  ];
+
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("hierarki");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -349,7 +372,9 @@ export default function AbsensiManage() {
   const pendingCount = sanggahanList.length;
 
   return (
-    <div className="font-dash">
+    <div className="font-dash space-y-5">
+      <InfoCardGrid cards={infoCards} />
+      <div>
       <h1 className="text-[20px] font-semibold text-dashNavy mb-6">
         Rekap Presensi
       </h1>
@@ -644,6 +669,7 @@ export default function AbsensiManage() {
       />
 
       <Toast toast={toast} />
+      </div>
     </div>
   );
 }

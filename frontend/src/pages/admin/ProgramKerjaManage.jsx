@@ -14,6 +14,7 @@ import api from "../../services/api";
 import FormModal from "../../components/admin/FormModal";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import Toast from "../../components/admin/Toast";
+import InfoCardGrid from "../../components/admin/InfoCardGrid";
 import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
 import { useToast } from "../../hooks/useToast";
 
@@ -358,6 +359,35 @@ export default function ProgramKerjaManage() {
     return Array.from(months).sort((a, b) => b.localeCompare(a));
   }, [rawItems]);
 
+  const metrics = useMemo(() => {
+    if (!rawItems || rawItems.length === 0) return null;
+    
+    const selesai = rawItems.filter(p => p.is_selesai).length;
+    const belum = rawItems.filter(p => !p.is_selesai).length;
+    const terlambat = rawItems.filter(p => {
+      if (p.is_selesai) return false;
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const deadline = new Date(p.deadline);
+      deadline.setHours(0, 0, 0, 0);
+      return now > deadline;
+    }).length;
+
+    return {
+      total: rawItems.length,
+      selesai,
+      belum,
+      terlambat
+    };
+  }, [rawItems]);
+
+  const infoCards = [
+    { label: 'Total Program', value: metrics?.total || 0, loading },
+    { label: 'Selesai', value: metrics?.selesai || 0, loading },
+    { label: 'Dalam Pengerjaan', value: metrics?.belum || 0, loading },
+    { label: 'Terlambat', value: metrics?.terlambat || 0, loading },
+  ];
+
   const filteredAndSortedItems = useMemo(() => {
     let result = [...rawItems];
 
@@ -401,7 +431,9 @@ export default function ProgramKerjaManage() {
   }, [rawItems, q, sortBy, selectedMonth]);
 
   return (
-    <div className="font-dash pb-12">
+    <div className="font-dash pb-12 space-y-5">
+      <InfoCardGrid cards={infoCards} />
+      <div>
       <div className="mb-6 border-b border-gray-200 pb-4">
         <h1 className="text-[20px] font-semibold text-dashNavy">
           Manajemen Program Kerja
@@ -543,6 +575,7 @@ export default function ProgramKerjaManage() {
       />
 
       <Toast toast={toast} />
+      </div>
     </div>
   );
 }

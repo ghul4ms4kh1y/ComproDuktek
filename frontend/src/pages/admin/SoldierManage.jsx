@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import api from "../../services/api";
+import InfoCardGrid from "../../components/admin/InfoCardGrid";
 import {
   Pencil,
   KeyRound,
@@ -131,10 +132,33 @@ export default function SoldierManage() {
     setPage(1);
   }, [q, sortBy]);
 
+  const metrics = useMemo(() => {
+    const withFullName = soldiers.filter(s => s.full_name && s.full_name.trim()).length;
+    const withoutFullName = soldiers.length - withFullName;
+    const withOrg = soldiers.filter(s => s.OrgStructure).length;
+    const withoutOrg = soldiers.length - withOrg;
+    
+    return {
+      total: soldiers.length,
+      withFullName,
+      withoutFullName,
+      withOrg
+    };
+  }, [soldiers]);
+
+  const infoCards = [
+    { label: 'Total Personel', value: metrics.total, loading },
+    { label: 'Nama Lengkap', value: metrics.withFullName, loading },
+    { label: 'Tanpa Nama', value: metrics.withoutFullName, loading },
+    { label: 'Jabatan Terisi', value: metrics.withOrg, loading },
+  ];
+
   if (loading) return <div className="p-8">Memuat data...</div>;
 
   return (
     <div className="space-y-6 pb-12 font-dash">
+      <InfoCardGrid cards={infoCards} />
+      <div>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
         <div>
           <h1 className="text-[20px] font-semibold text-dashNavy">
@@ -250,6 +274,8 @@ export default function SoldierManage() {
           ))}
         </div>
       )}
+
+      </div>
 
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">

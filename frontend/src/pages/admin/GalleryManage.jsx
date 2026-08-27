@@ -1,4 +1,8 @@
+import { useState, useEffect, useMemo } from 'react';
 import CrudManager from '../../components/admin/CrudManager';
+import InfoCardGrid from '../../components/admin/InfoCardGrid';
+import { formatDate } from '../../lib/dateUtils';
+import api from '../../services/api';
 
 const columns = [
   {
@@ -31,5 +35,68 @@ const sortOptions = [
 ];
 
 export default function GalleryManage() {
-  return <CrudManager title="Galeri" endpoint="/galleries" columns={columns} fields={fields} sortOptions={sortOptions} />;
+  const [allGalleries, setAllGalleries] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadAllGalleries = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/galleries', { params: { limit: 1000 } });
+      setAllGalleries(res.data.data || []);
+    } catch (error) {
+      console.error('Error loading galleries:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAllGalleries();
+  }, []);
+
+  const metrics = useMemo(() => {
+    if (!allGalleries || allGalleries.length === 0) return null;
+    
+    const thisMonth = allGalleries.filter(item => {
+      const galDate = new Date(item.gallery_date);
+      const current = new Date();
+      return galDate.getMonth() === current.getMonth() && 
+             galDate.getFullYear() === current.getFullYear();
+    }).length;
+
+    const latestGal = allGalleries.sort((a, b) => 
+      new Date(b.gallery_date) - new Date(a.gallery_date)
+    )[0];
+
+    return {
+      total: allGalleries.length,
+      thisMonth,
+      latestDate: latestGal ? formatDate(latestGal.gallery_date) : '-'
+    };
+  }, [allGalleries]);
+
+  const infoCards = [
+    { label: 'Total Foto', value: metrics?.total || 0, loading },
+    { label: 'Foto Bulan Ini', value: metrics?.thisMonth || 0, loading },
+    { label: 'Upload Terakhir', value: metrics?.latestDate || '-', loading, subtitle: 'Tanggal' },
+    { label: 'Rata-rata/Bulan', value: metrics?.total ? Math.round(metrics.total / 12) : 0, loading, subtitle: 'Estimasi' },
+  ];
+
+  const handleCrudComplete = () => {
+    loadAllGalleries();
+  };
+
+  return (
+    <div className="font-dash space-y-5">
+      <InfoCardGrid cards={infoCards} />
+      <CrudManager 
+        title="Galeri" 
+        endpoint="/galleries" 
+        columns={columns} 
+        fields={fields} 
+        sortOptions={sortOptions}
+        onDataChange={handleCrudComplete}
+      />
+    </div>
+  );
 }

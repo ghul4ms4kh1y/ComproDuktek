@@ -4,10 +4,12 @@ import { X, Search, ArrowUpDown } from 'lucide-react';
 import api from '../../services/api';
 import ConfirmModal from '../../components/admin/ConfirmModal';
 import Toast from '../../components/admin/Toast';
+import InfoCardGrid from '../../components/admin/InfoCardGrid';
 import { useToast } from '../../hooks/useToast';
 
 export default function Inbox() {
   const [messages, setMessages] = useState([]);
+  const [allMessages, setAllMessages] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,15 @@ export default function Inbox() {
       .finally(() => setLoading(false));
   };
 
+  const loadAllMessages = () => {
+    api
+      .get('/messages', { params: { limit: 1000 } })
+      .then((r) => setAllMessages(r.data.data || []))
+      .catch(() => showToast('Gagal memuat ringkasan pesan.', 'error'));
+  };
+
   useEffect(load, [page]);
+  useEffect(loadAllMessages, []);
 
   const openDetail = async (msg) => {
     try {
@@ -94,8 +104,30 @@ export default function Inbox() {
     return result;
   }, [messages, q, sortBy]);
 
+  const metrics = useMemo(() => {
+    if (!allMessages || allMessages.length === 0) return null;
+
+    const unread = allMessages.filter(m => m.status === 'Belum Dibaca').length;
+    const read = allMessages.filter(m => m.status === 'Sudah Dibaca').length;
+
+    return {
+      total: allMessages.length,
+      unread,
+      read
+    };
+  }, [allMessages]);
+
+  const infoCards = [
+    { label: 'Total Pesan', value: metrics?.total || 0, loading },
+    { label: 'Belum Dibaca', value: metrics?.unread || 0, loading },
+    { label: 'Sudah Dibaca', value: metrics?.read || 0, loading },
+    { label: 'Rata-rata/Bulan', value: metrics?.total ? Math.round(metrics.total / 12) : 0, loading, subtitle: 'Estimasi' },
+  ];
+
   return (
-    <div className="font-dash">
+    <div className="font-dash space-y-5">
+      <InfoCardGrid cards={infoCards} />
+      <div>
       <div className="mb-6 border-b border-gray-200 pb-4">
         <h1 className="text-[20px] font-semibold text-dashNavy">Kotak Masuk</h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -214,6 +246,7 @@ export default function Inbox() {
       />
 
       <Toast toast={toast} />
+      </div>
     </div>
   );
 }
