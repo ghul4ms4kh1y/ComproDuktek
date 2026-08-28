@@ -67,6 +67,9 @@ export default function FormModal({
                     {f.label}
                   </label>
                 )}
+                {f.hint && f.type !== "checkbox" && (
+                  <p className="text-xs text-gray-500 mb-1">{f.hint}</p>
+                )}
 
                 {f.type === "textarea" && (
                   <textarea
@@ -110,7 +113,7 @@ export default function FormModal({
                   />
                 )}
 
-                {["text", "date", "number"].includes(f.type) && (
+                {["text", "date", "number", "password"].includes(f.type) && (
                   <input
                     id={`field-${f.name}`}
                     type={f.type}

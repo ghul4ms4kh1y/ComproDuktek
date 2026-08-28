@@ -15,6 +15,7 @@ import FormModal from "../../components/admin/FormModal";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import Toast from "../../components/admin/Toast";
 import InfoCardGrid from "../../components/admin/InfoCardGrid";
+import PageHeader from "../../components/admin/PageHeader";
 import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
 import { useToast } from "../../hooks/useToast";
 
@@ -138,7 +139,7 @@ const ProgramCard = ({ item, onEdit, onDelete }) => (
       </button>
       <button
         onClick={() => onDelete(item)}
-        className="flex items-center gap-1.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition w-full justify-center"
+        className="flex items-center gap-1.5 bg-red-100 text-red-600 hover:bg-red-600 hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition w-full justify-center"
       >
         <Trash2 className="w-4 h-4" /> Hapus
       </button>
@@ -431,17 +432,14 @@ export default function ProgramKerjaManage() {
   }, [rawItems, q, sortBy, selectedMonth]);
 
   return (
-    <div className="font-dash pb-12 space-y-5">
-      <InfoCardGrid cards={infoCards} />
-      <div>
-      <div className="mb-6 border-b border-gray-200 pb-4">
-        <h1 className="text-[20px] font-semibold text-dashNavy">
-          Manajemen Program Kerja
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Buat program kerja baru, serahkan eksekusi ke PIC, dan verifikasi
-          penyelesaiannya di sini.
-        </p>
+    <div className="font-dash">
+      <PageHeader
+        title="Manajemen Program Kerja"
+        subtitle="Buat program kerja baru, serahkan eksekusi ke PIC, dan verifikasi penyelesaiannya di sini."
+      />
+
+      <div className="mb-5">
+        <InfoCardGrid cards={infoCards} />
       </div>
 
       <div className="flex flex-col xl:flex-row gap-3 mb-5">
@@ -471,33 +469,32 @@ export default function ProgramKerjaManage() {
                 </option>
               ))}
             </select>
-            <ArrowUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
 
           <div className="relative w-full sm:w-auto">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full sm:w-48 pl-4 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+              className="w-full sm:w-56 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
             >
               <option value="deadline_asc">Deadline Terdekat</option>
               <option value="deadline_desc">Deadline Terjauh</option>
               <option value="nama_asc">Nama Program (A - Z)</option>
               <option value="nama_desc">Nama Program (Z - A)</option>
             </select>
-            <ArrowUpDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
         </div>
 
         <button
           onClick={openAdd}
-          className="flex items-center justify-center gap-2 bg-dashAccent text-white hover:bg-dashAccent/90 rounded-lg px-5 py-2.5 text-sm font-semibold transition shrink-0"
+          className="flex items-center justify-center gap-2 bg-dashAccent text-white hover:bg-dashAccent/90 rounded-md px-4 py-2.5 text-sm font-semibold transition shrink-0"
         >
           <Plus className="w-4 h-4" /> Buat Proker
         </button>
       </div>
 
-      <div className="bg-white rounded-xl p-2 sm:p-5 shadow-dashCard border border-gray-100">
+      <div className="bg-white rounded-lg p-4 sm:p-5 shadow-dashCard border border-gray-200">
         {loading && (
           <p className="text-center text-dashNavy/40 py-10">
             Memuat data program kerja...
@@ -575,7 +572,6 @@ export default function ProgramKerjaManage() {
       />
 
       <Toast toast={toast} />
-      </div>
     </div>
   );
 }

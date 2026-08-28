@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import CrudManager from '../../components/admin/CrudManager';
-import InfoCardGrid from '../../components/admin/InfoCardGrid';
 import api from '../../services/api';
 
 const columns = [
@@ -85,16 +84,15 @@ export default function ProductManage() {
   };
 
   return (
-    <div className="font-dash space-y-5">
-      <InfoCardGrid cards={infoCards} />
-      <CrudManager 
-        title="Produk" 
-        endpoint="/products" 
-        columns={columns} 
-        fields={fields} 
-        sortOptions={sortOptions}
-        onDataChange={handleCrudComplete}
-      />
-    </div>
+    <CrudManager
+      title="Produk"
+      subtitle="Kelola produk dan unit pengampunya."
+      endpoint="/products"
+      columns={columns}
+      fields={fields}
+      sortOptions={sortOptions}
+      infoCards={infoCards}
+      onDataChange={handleCrudComplete}
+    />
   );
 }

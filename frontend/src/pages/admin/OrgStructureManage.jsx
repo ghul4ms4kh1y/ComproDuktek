@@ -5,6 +5,7 @@ import FormModal from "../../components/admin/FormModal";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import Toast from "../../components/admin/Toast";
 import InfoCardGrid from "../../components/admin/InfoCardGrid";
+import PageHeader from "../../components/admin/PageHeader";
 import { buildTree } from "../../components/public/orgTreeUtils";
 
 import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
@@ -267,17 +268,14 @@ export default function OrgStructureManage() {
   ];
 
   return (
-    <div className="font-dash pb-12 space-y-5">
-      <InfoCardGrid cards={infoCards} />
-      <div>
-      <div className="mb-6 border-b border-gray-200 pb-4">
-        <h1 className="text-[20px] font-semibold text-dashNavy">
-          Kelola Personel Struktur Organisasi
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Isi nama dan pangkat untuk setiap jabatan yang telah ditetapkan dalam
-          struktur resmi.
-        </p>
+    <div className="font-dash">
+      <PageHeader
+        title="Kelola Personel Struktur Organisasi"
+        subtitle="Isi nama dan pangkat untuk setiap jabatan yang telah ditetapkan dalam struktur resmi."
+      />
+
+      <div className="mb-5">
+        <InfoCardGrid cards={infoCards} />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
@@ -308,7 +306,7 @@ export default function OrgStructureManage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-2 sm:p-5 shadow-dashCard border border-gray-100">
+      <div className="bg-white rounded-lg p-4 sm:p-5 shadow-dashCard border border-gray-200">
         {loading && (
           <p className="text-center text-dashNavy/40 py-10">
             Memuat hierarki...
@@ -370,7 +368,6 @@ export default function OrgStructureManage() {
       />
 
       <Toast toast={toast} />
-      </div>
     </div>
   );
 }

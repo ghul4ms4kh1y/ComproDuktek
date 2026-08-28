@@ -4,6 +4,7 @@ import { useToast } from "../../hooks/useToast";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import InfoCardGrid from "../../components/admin/InfoCardGrid";
+import PageHeader from "../../components/admin/PageHeader";
 import {
   CalendarCheck,
   Search,
@@ -13,7 +14,7 @@ import {
   XCircle,
   AlertCircle,
   Clock,
-  Edit2,
+  ArrowUpDown,
 } from "lucide-react";
 
 // ── helpers ─────────────────────────────────────────────────────────────────
@@ -76,11 +77,10 @@ function StatusBadge({ status }) {
 }
 
 // ── EditModal ────────────────────────────────────────────────────────────────
-function EditModal({ record, onClose, onSaved }) {
+function EditModal({ record, onClose, onSaved, showToast }) {
   const [status, setStatus] = useState(record?.status ?? "belum_diisi");
   const [keterangan, setKeterangan] = useState(record?.keterangan ?? "");
   const [loading, setLoading] = useState(false);
-  const { toast, showToast } = useToast();
 
   useEffect(() => {
     if (record) {
@@ -98,7 +98,7 @@ function EditModal({ record, onClose, onSaved }) {
       onSaved();
       onClose();
     } catch (e) {
-      showToast("error", e.response?.data?.message ?? "Gagal menyimpan.");
+      showToast(e.response?.data?.message ?? "Gagal menyimpan.", "error");
       setLoading(false);
     }
   };
@@ -106,7 +106,7 @@ function EditModal({ record, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4 font-dash">
       <div className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-md p-6">
-        <h3 className="text-[17px] font-semibold text-dashNavy mb-1">
+        <h3 className="text-[18px] font-semibold text-dashNavy mb-1">
           Edit Absensi
         </h3>
         <p className="text-sm text-dashNavy/60 mb-5">
@@ -153,21 +153,19 @@ function EditModal({ record, onClose, onSaved }) {
             id="edit-absensi-save"
             onClick={handleSave}
             disabled={loading}
-            className="px-4 py-2 text-sm rounded-md bg-dashNavy text-white hover:bg-dashNavy/90 disabled:opacity-60 transition"
+            className="bg-dashAccent text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-dashAccent/90 disabled:opacity-60 transition"
           >
             {loading ? "Menyimpan..." : "Simpan"}
           </button>
         </div>
-        <Toast toast={toast} />
       </div>
     </div>
   );
 }
 
 // ── ReviewModal ──────────────────────────────────────────────────────────────
-function ReviewModal({ record, onClose, onSaved }) {
+function ReviewModal({ record, onClose, onSaved, showToast }) {
   const [loading, setLoading] = useState(false);
-  const { toast, showToast } = useToast();
 
   if (!record) return null;
 
@@ -178,7 +176,7 @@ function ReviewModal({ record, onClose, onSaved }) {
       onSaved();
       onClose();
     } catch (e) {
-      showToast("error", e.response?.data?.message ?? "Gagal memproses.");
+      showToast(e.response?.data?.message ?? "Gagal memproses.", "error");
       setLoading(false);
     }
   };
@@ -189,7 +187,7 @@ function ReviewModal({ record, onClose, onSaved }) {
         <div className="w-9 h-9 rounded-md bg-orange-50 flex items-center justify-center mb-3">
           <AlertCircle className="w-[18px] h-[18px] text-orange-500" />
         </div>
-        <h3 className="text-[17px] font-semibold text-dashNavy mb-1">
+        <h3 className="text-[18px] font-semibold text-dashNavy mb-1">
           Tinjau Sanggahan
         </h3>
         <p className="text-sm text-dashNavy/60 mb-4">
@@ -229,7 +227,7 @@ function ReviewModal({ record, onClose, onSaved }) {
             id="review-sanggahan-reject"
             onClick={() => doReview("reject")}
             disabled={loading}
-            className="px-4 py-2 text-sm rounded-md bg-red-500 text-white hover:bg-red-600 disabled:opacity-60 transition"
+            className="px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition"
           >
             {loading ? "..." : "Tolak"}
           </button>
@@ -242,7 +240,6 @@ function ReviewModal({ record, onClose, onSaved }) {
             {loading ? "..." : "Setujui"}
           </button>
         </div>
-        <Toast toast={toast} />
       </div>
     </div>
   );
@@ -267,7 +264,7 @@ export default function AbsensiManage() {
       const res = await api.get("/absensi", { params: { tanggal } });
       setAbsensiList(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
-      showToast("error", "Gagal memuat data absensi.");
+      showToast("Gagal memuat data absensi.", "error");
     } finally {
       setLoading(false);
     }
@@ -292,7 +289,7 @@ export default function AbsensiManage() {
   const handleSaved = () => {
     fetchAbsensi();
     fetchSanggahan();
-    showToast("success", "Berhasil disimpan.");
+    showToast("Berhasil disimpan.");
   };
 
   const metrics = useMemo(() => {
@@ -372,12 +369,15 @@ export default function AbsensiManage() {
   const pendingCount = sanggahanList.length;
 
   return (
-    <div className="font-dash space-y-5">
-      <InfoCardGrid cards={infoCards} />
-      <div>
-      <h1 className="text-[20px] font-semibold text-dashNavy mb-6">
-        Rekap Presensi
-      </h1>
+    <div className="font-dash">
+      <PageHeader
+        title="Rekap Presensi"
+        subtitle="Pantau kehadiran harian dan tinjau sanggahan personel."
+      />
+
+      <div className="mb-5">
+        <InfoCardGrid cards={infoCards} />
+      </div>
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 border-b border-gray-200">
@@ -386,7 +386,7 @@ export default function AbsensiManage() {
           onClick={() => setTab("absensi")}
           className={`px-4 py-2 text-sm font-semibold rounded-t transition ${
             tab === "absensi"
-              ? "text-dashNavy border-b-2 border-dashNavy"
+              ? "text-dashAccent border-b-2 border-dashAccent"
               : "text-dashNavy/50 hover:text-dashNavy"
           }`}
         >
@@ -400,7 +400,7 @@ export default function AbsensiManage() {
           onClick={() => setTab("sanggahan")}
           className={`px-4 py-2 text-sm font-semibold rounded-t transition relative ${
             tab === "sanggahan"
-              ? "text-dashNavy border-b-2 border-dashNavy"
+              ? "text-dashAccent border-b-2 border-dashAccent"
               : "text-dashNavy/50 hover:text-dashNavy"
           }`}
         >
@@ -422,7 +422,7 @@ export default function AbsensiManage() {
           {/* Controls */}
           <div className="flex flex-col sm:flex-row gap-3 mb-5">
             {/* Date navigator */}
-            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-2 shadow-sm">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2.5">
               <button
                 id="prev-day"
                 onClick={prevDay}
@@ -447,15 +447,15 @@ export default function AbsensiManage() {
             </div>
 
             {/* Search */}
-            <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dashNavy/40" />
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 id="search-absensi"
                 type="text"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Cari nama atau jabatan..."
-                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:border-dashAccent"
+                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
               />
             </div>
 
@@ -464,7 +464,7 @@ export default function AbsensiManage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full sm:w-40 px-3 py-2 border border-gray-200 rounded-md text-sm text-dashNavy focus:outline-none focus:border-dashAccent appearance-none cursor-pointer bg-white shadow-sm"
+                className="w-full sm:w-44 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm text-dashNavy bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
               >
                 <option value="all">Semua Status</option>
                 <option value="hadir">Hadir</option>
@@ -485,7 +485,7 @@ export default function AbsensiManage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full sm:w-48 px-3 py-2 border border-gray-200 rounded-md text-sm text-dashNavy focus:outline-none focus:border-dashAccent appearance-none cursor-pointer bg-white shadow-sm"
+                className="w-full sm:w-56 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm text-dashNavy bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
               >
                 <option value="hierarki">Urutan Jabatan (Hierarki)</option>
                 <option value="nama_asc">Nama (A - Z)</option>
@@ -493,12 +493,13 @@ export default function AbsensiManage() {
                 <option value="status_asc">Status (A - Z)</option>
                 <option value="status_desc">Status (Z - A)</option>
               </select>
+              <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
 
             <button
               id="refresh-absensi"
               onClick={fetchAbsensi}
-              className="px-4 py-2 text-sm rounded-md bg-dashNavy text-white hover:bg-dashNavy/90 transition shadow-sm"
+              className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:bg-dashAccent/90 transition"
             >
               Muat Ulang
             </button>
@@ -516,8 +517,8 @@ export default function AbsensiManage() {
               </div>
             ) : (
               <table className="w-full text-sm text-dashNavy">
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-gray-700">
+                <thead className="bg-gray-50 text-dashNavy text-left">
+                  <tr>
                     <th className="text-left px-4 py-3 font-semibold">Nama Anggota</th>
                     <th className="text-left px-4 py-3 font-semibold">Jabatan</th>
                     <th className="text-center px-4 py-3 font-semibold">Status</th>
@@ -555,15 +556,15 @@ export default function AbsensiManage() {
                       <td className="px-4 py-3 text-dashNavy/70 max-w-[180px] truncate">
                         {a.keterangan || "—"}
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-4 py-2 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <button
                             id={`edit-absensi-${a.id}`}
                             onClick={() => setEditRecord(a)}
-                            className="p-1.5 rounded-md hover:bg-dashNavy/10 text-dashNavy transition"
+                            className="flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white"
                             title="Edit status"
                           >
-                            <Edit2 className="w-3.5 h-3.5" />
+                            Edit
                           </button>
                           {a.sanggahan_status === "pending" && (
                             <button
@@ -610,8 +611,8 @@ export default function AbsensiManage() {
             </div>
           ) : (
             <table className="w-full text-sm text-dashNavy">
-              <thead>
-                <tr className="border-b border-gray-100 bg-gray-50 text-xs uppercase text-dashNavy/50">
+              <thead className="bg-gray-50 text-dashNavy text-left">
+                <tr>
                   <th className="text-left px-4 py-3 font-semibold">Anggota</th>
                   <th className="text-left px-4 py-3 font-semibold">Tanggal</th>
                   <th className="text-center px-4 py-3 font-semibold">Status Saat Ini</th>
@@ -639,11 +640,11 @@ export default function AbsensiManage() {
                     <td className="px-4 py-3 text-dashNavy/70 max-w-[200px] truncate">
                       {a.keterangan_sanggahan || "—"}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-2 text-center">
                       <button
                         id={`review-pending-${a.id}`}
                         onClick={() => setReviewRecord(a)}
-                        className="px-3 py-1 rounded-md text-xs bg-dashNavy text-white hover:bg-dashNavy/90 transition font-semibold"
+                        className="flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white"
                       >
                         Tinjau
                       </button>
@@ -661,15 +662,16 @@ export default function AbsensiManage() {
         record={editRecord}
         onClose={() => setEditRecord(null)}
         onSaved={handleSaved}
+        showToast={showToast}
       />
       <ReviewModal
         record={reviewRecord}
         onClose={() => setReviewRecord(null)}
         onSaved={handleSaved}
+        showToast={showToast}
       />
 
       <Toast toast={toast} />
-      </div>
     </div>
   );
 }

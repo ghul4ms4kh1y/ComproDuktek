@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import CrudManager from '../../components/admin/CrudManager';
-import InfoCardGrid from '../../components/admin/InfoCardGrid';
 import { formatDate } from '../../lib/dateUtils';
 import api from '../../services/api';
 
@@ -117,16 +116,15 @@ export default function NewsManage() {
   };
 
   return (
-    <div className="font-dash space-y-5">
-      <InfoCardGrid cards={infoCards} />
-      <CrudManager 
-        title="Berita" 
-        endpoint="/news" 
-        columns={columns} 
-        fields={fields} 
-        sortOptions={sortOptions}
-        onDataChange={handleCrudComplete}
-      />
-    </div>
+    <CrudManager
+      title="Berita"
+      subtitle="Kelola berita dan pengumuman untuk halaman publik website."
+      endpoint="/news"
+      columns={columns}
+      fields={fields}
+      sortOptions={sortOptions}
+      infoCards={infoCards}
+      onDataChange={handleCrudComplete}
+    />
   );
 }

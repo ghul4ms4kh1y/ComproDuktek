@@ -5,6 +5,7 @@ import api from '../../services/api';
 import ConfirmModal from '../../components/admin/ConfirmModal';
 import Toast from '../../components/admin/Toast';
 import InfoCardGrid from '../../components/admin/InfoCardGrid';
+import PageHeader from '../../components/admin/PageHeader';
 import { useToast } from '../../hooks/useToast';
 
 export default function Inbox() {
@@ -125,14 +126,14 @@ export default function Inbox() {
   ];
 
   return (
-    <div className="font-dash space-y-5">
-      <InfoCardGrid cards={infoCards} />
-      <div>
-      <div className="mb-6 border-b border-gray-200 pb-4">
-        <h1 className="text-[20px] font-semibold text-dashNavy">Kotak Masuk</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Lihat dan kelola pesan masuk dari pengunjung website.
-        </p>
+    <div className="font-dash">
+      <PageHeader
+        title="Kotak Masuk"
+        subtitle="Lihat dan kelola pesan masuk dari pengunjung website."
+      />
+
+      <div className="mb-5">
+        <InfoCardGrid cards={infoCards} />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
@@ -182,17 +183,17 @@ export default function Inbox() {
             {filteredAndSortedMessages.map((m) => {
               const unread = m.status === 'Belum Dibaca';
               return (
-                <tr key={m.id} className={unread ? 'font-semibold' : ''}>
+                <tr key={m.id} className={`hover:bg-gray-50/50 transition ${unread ? 'font-semibold' : ''}`}>
                   <td className="px-4 py-3 cursor-pointer text-black" onClick={() => openDetail(m)}>{m.sender_name}</td>
                   <td className="px-4 py-3 cursor-pointer text-black" onClick={() => openDetail(m)}>{m.subject}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${unread ? 'bg-dashAccent/15 text-dashAccent' : 'bg-gray-100 text-dashNavy/60'}`}>
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${unread ? 'bg-dashAccent/15 text-dashAccent' : 'bg-gray-100 text-dashNavy/60'}`}>
                       {m.status}
                     </span>
                   </td>
                   <td className="px-4 py-3 font-normal text-dashNavy/60">{formatDate(m.created_at)}</td>
-                  <td className="px-4 py-3 font-normal">
-                    <button onClick={() => setDeleting(m)} className="text-red-600 hover:text-red-800 underline text-sm">Hapus</button>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    <button onClick={() => setDeleting(m)} className="flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap bg-red-100 text-red-600 hover:bg-red-600 hover:text-white">Hapus</button>
                   </td>
                 </tr>
               );
@@ -246,7 +247,6 @@ export default function Inbox() {
       />
 
       <Toast toast={toast} />
-      </div>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import {
   Users,
 } from "lucide-react";
 import api from "../../services/api";
-import MiniCalendar from "../../components/admin/MiniCalendar";
+import MiniCalendar from "../../components/common/MiniCalendar";
 import DonutChart from "../../components/admin/DonutChart";
 import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
 
