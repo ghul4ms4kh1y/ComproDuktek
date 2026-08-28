@@ -68,7 +68,7 @@ function AddSesiInline({ laporanId, onAdded, showToast }) {
 
   const handleSubmit = async () => {
     if (!aktivitas.trim() || !outputHasil.trim()) {
-      showToast("Aktivitas dan output harus diisi.", "error");
+      showToast("error", "Aktivitas dan output harus diisi.");
       return;
     }
     try {
@@ -78,13 +78,13 @@ function AddSesiInline({ laporanId, onAdded, showToast }) {
         aktivitas,
         output_hasil: outputHasil,
       });
-      showToast("Sesi ditambahkan.");
+      showToast("success", "Sesi ditambahkan.");
       setAktivitas("");
       setOutputHasil("");
       setOpen(false);
       onAdded();
     } catch (e) {
-      showToast(e.response?.data?.message ?? "Gagal menambah sesi.", "error");
+      showToast("error", e.response?.data?.message ?? "Gagal menambah sesi.");
     } finally {
       setLoading(false);
     }
@@ -242,11 +242,13 @@ export default function SoldierDashboard() {
         status_usulan: sanggahanForm.status_usulan,
         keterangan_sanggahan: sanggahanForm.keterangan_sanggahan,
       });
-      showToast("Sanggahan berhasil diajukan.");
+      showToast("success", "Sanggahan berhasil diajukan.");
       setSanggahanForm(null);
       fetchAbsensi();
     } catch (e) {
-      showToast(e.response?.data?.message ?? "Gagal mengajukan sanggahan.",
+      showToast(
+        "error",
+        e.response?.data?.message ?? "Gagal mengajukan sanggahan.",
       );
     } finally {
       setSanggahanLoading(false);
@@ -290,18 +292,20 @@ export default function SoldierDashboard() {
       (r) => r.aktivitas.trim() && r.output_hasil.trim(),
     );
     if (!valid) {
-      showToast("Semua baris sesi harus diisi.", "error");
+      showToast("error", "Semua baris sesi harus diisi.");
       return;
     }
     try {
       setLaporanSubmitting(true);
       await api.post("/laporan-harian", { sesi: laporanSesiRows });
-      showToast("Laporan berhasil disimpan.");
+      showToast("success", "Laporan berhasil disimpan.");
       setShowLaporanForm(false);
       setLaporanSesiRows([{ aktivitas: "", output_hasil: "" }]);
       fetchLaporan();
     } catch (e) {
-      showToast(e.response?.data?.message ?? "Gagal menyimpan laporan.",
+      showToast(
+        "error",
+        e.response?.data?.message ?? "Gagal menyimpan laporan.",
       );
     } finally {
       setLaporanSubmitting(false);
@@ -321,10 +325,10 @@ export default function SoldierDashboard() {
         aktivitas,
         output_hasil,
       });
-      showToast("Sesi ditambahkan.");
+      showToast("success", "Sesi ditambahkan.");
       fetchLaporan();
     } catch (e) {
-      showToast(e.response?.data?.message ?? "Gagal menambah sesi.", "error");
+      showToast("error", e.response?.data?.message ?? "Gagal menambah sesi.");
     }
   };
 
@@ -336,11 +340,13 @@ export default function SoldierDashboard() {
         aktivitas: editSesi.aktivitas,
         output_hasil: editSesi.output_hasil,
       });
-      showToast("Sesi diperbarui.");
+      showToast("success", "Sesi diperbarui.");
       setEditSesi(null);
       fetchLaporan();
     } catch (e) {
-      showToast(e.response?.data?.message ?? "Gagal memperbarui sesi.",
+      showToast(
+        "error",
+        e.response?.data?.message ?? "Gagal memperbarui sesi.",
       );
     } finally {
       setEditSesiLoading(false);
@@ -351,10 +357,10 @@ export default function SoldierDashboard() {
     if (!window.confirm("Hapus sesi ini?")) return;
     try {
       await api.delete(`/laporan-harian/sesi/${sesiId}`);
-      showToast("Sesi dihapus.");
+      showToast("success", "Sesi dihapus.");
       fetchLaporan();
     } catch (e) {
-      showToast(e.response?.data?.message ?? "Gagal menghapus sesi.", "error");
+      showToast("error", e.response?.data?.message ?? "Gagal menghapus sesi.");
     }
   };
   // Helper untuk mendapatkan URL gambar dari Backend
@@ -412,7 +418,9 @@ export default function SoldierDashboard() {
       });
       loadProkers();
     } catch (err) {
-      showToast(err.response?.data?.message || "Gagal memperbarui status tugas.",
+      showToast(
+        "error",
+        err.response?.data?.message || "Gagal memperbarui status tugas.",
       );
     }
   };
@@ -436,9 +444,11 @@ export default function SoldierDashboard() {
       setActiveModal(null);
       setSelectedPhoto(null);
       await refreshUser(); // Update foto di context tanpa reload halaman
-      showToast("Foto profil berhasil diperbarui!");
+      showToast("success", "Foto profil berhasil diperbarui!");
     } catch (err) {
-      showToast(err.response?.data?.message || "Gagal mengupload foto.",
+      showToast(
+        "error",
+        err.response?.data?.message || "Gagal mengupload foto.",
       );
     } finally {
       setLoadingPhoto(false);
@@ -457,7 +467,7 @@ export default function SoldierDashboard() {
       });
       setActiveModal(null);
       await refreshUser();
-      showToast("Profil berhasil diperbarui.");
+      showToast("success", "Profil berhasil diperbarui.");
     } catch (err) {
       setMessageEdit({
         type: "error",
