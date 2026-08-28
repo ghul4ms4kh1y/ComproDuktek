@@ -1,44 +1,71 @@
 import { useState, useEffect, useMemo } from "react";
 import api from "../../services/api";
 import InfoCardGrid from "../../components/admin/InfoCardGrid";
-import {
-  Pencil,
-  KeyRound,
-  ShieldAlert,
-  Search,
-  ArrowUpDown,
-} from "lucide-react";
+import PageHeader from "../../components/admin/PageHeader";
+import FormModal from "../../components/admin/FormModal";
+import Toast from "../../components/admin/Toast";
+import { useToast } from "../../hooks/useToast";
+import { Search, ArrowUpDown } from "lucide-react";
+
+const columns = [
+  { key: "full_name", label: "Nama Lengkap" },
+  { key: "username", label: "Username" },
+  { key: "position", label: "Jabatan" },
+];
+
+const fields = [
+  {
+    name: "full_name",
+    label: "Nama Lengkap",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "username",
+    label: "Username",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "password",
+    label: "Reset Password (Opsional)",
+    type: "password",
+    colSpan: 2,
+    hint: "Kosongkan jika tidak ingin diubah. Mengisi kolom ini akan me-reset password anggota.",
+  },
+];
+
+const sortOptions = [
+  { value: "hierarki", label: "Urutan Jabatan (Hierarki)" },
+  { value: "nama_asc", label: "Nama Lengkap (A - Z)" },
+  { value: "nama_desc", label: "Nama Lengkap (Z - A)" },
+  { value: "uname_asc", label: "Username (A - Z)" },
+  { value: "uname_desc", label: "Username (Z - A)" },
+];
+
+const ITEMS_PER_PAGE = 12;
+
 export default function SoldierManage() {
   const [soldiers, setSoldiers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedSoldier, setSelectedSoldier] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editForm, setEditForm] = useState({
-    username: "",
-    full_name: "",
-    password: "",
-  });
-  const [message, setMessage] = useState({ type: "", text: "" });
-
-  // Sorting & Searching State
   const [q, setQ] = useState("");
   const [sortBy, setSortBy] = useState("hierarki");
   const [page, setPage] = useState(1);
 
+  const [editing, setEditing] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const { toast, showToast } = useToast();
+
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [soldiersRes] = await Promise.all([api.get(`/soldiers`)]);
-
-      if (Array.isArray(soldiersRes.data)) {
-        setSoldiers(soldiersRes.data);
-      } else {
-        console.error("API did not return an array:", soldiersRes.data);
-        setSoldiers([]);
-      }
+      const res = await api.get("/soldiers");
+      setSoldiers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
+      showToast("Gagal memuat data personel.", "error");
     } finally {
       setLoading(false);
     }
@@ -48,39 +75,9 @@ export default function SoldierManage() {
     fetchData();
   }, []);
 
-  const handleEditClick = (soldier) => {
-    setSelectedSoldier(soldier);
-    setEditForm({
-      username: soldier.username,
-      full_name: soldier.full_name || "",
-      password: "",
-    });
-    setIsEditModalOpen(true);
-    setMessage({ type: "", text: "" });
-  };
-
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await api.put(`/soldiers/${selectedSoldier.id}`, editForm);
-      setMessage({
-        type: "success",
-        text: "Data anggota berhasil diperbarui.",
-      });
-      fetchData(); // Reload data
-      setTimeout(() => setIsEditModalOpen(false), 1500);
-    } catch (err) {
-      setMessage({
-        type: "error",
-        text: err.response?.data?.message || "Gagal memperbarui data anggota.",
-      });
-    }
-  };
-
   const filteredAndSortedSoldiers = useMemo(() => {
     let result = [...soldiers];
 
-    // 1. Filter (Searching)
     if (q.trim()) {
       const lowerQ = q.toLowerCase();
       result = result.filter(
@@ -91,7 +88,6 @@ export default function SoldierManage() {
       );
     }
 
-    // 2. Sort
     result.sort((a, b) => {
       const nameA = (a.full_name || "").toLowerCase();
       const nameB = (b.full_name || "").toLowerCase();
@@ -119,7 +115,10 @@ export default function SoldierManage() {
     return result;
   }, [soldiers, q, sortBy]);
 
-  const ITEMS_PER_PAGE = 12;
+  useEffect(() => {
+    setPage(1);
+  }, [q, sortBy]);
+
   const totalPages = Math.ceil(
     filteredAndSortedSoldiers.length / ITEMS_PER_PAGE,
   );
@@ -128,46 +127,55 @@ export default function SoldierManage() {
     page * ITEMS_PER_PAGE,
   );
 
-  useEffect(() => {
-    setPage(1);
-  }, [q, sortBy]);
-
   const metrics = useMemo(() => {
-    const withFullName = soldiers.filter(s => s.full_name && s.full_name.trim()).length;
-    const withoutFullName = soldiers.length - withFullName;
-    const withOrg = soldiers.filter(s => s.OrgStructure).length;
-    const withoutOrg = soldiers.length - withOrg;
-    
+    const withFullName = soldiers.filter(
+      (s) => s.full_name && s.full_name.trim(),
+    ).length;
+    const withOrg = soldiers.filter((s) => s.OrgStructure).length;
+
     return {
       total: soldiers.length,
       withFullName,
-      withoutFullName,
-      withOrg
+      withoutFullName: soldiers.length - withFullName,
+      withOrg,
     };
   }, [soldiers]);
 
   const infoCards = [
-    { label: 'Total Personel', value: metrics.total, loading },
-    { label: 'Nama Lengkap', value: metrics.withFullName, loading },
-    { label: 'Tanpa Nama', value: metrics.withoutFullName, loading },
-    { label: 'Jabatan Terisi', value: metrics.withOrg, loading },
+    { label: "Total Personel", value: metrics.total, loading },
+    { label: "Nama Lengkap", value: metrics.withFullName, loading },
+    { label: "Tanpa Nama", value: metrics.withoutFullName, loading },
+    { label: "Jabatan Terisi", value: metrics.withOrg, loading },
   ];
 
-  if (loading) return <div className="p-8">Memuat data...</div>;
+  const handleSubmit = async (values) => {
+    setSubmitting(true);
+    try {
+      const payload = { ...values };
+      if (!payload.password) delete payload.password;
+      await api.put(`/soldiers/${editing.id}`, payload);
+      showToast("Data anggota berhasil diperbarui.");
+      setEditing(null);
+      fetchData();
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Gagal memperbarui data anggota.",
+        "error",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="space-y-6 pb-12 font-dash">
-      <InfoCardGrid cards={infoCards} />
-      <div>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
-        <div>
-          <h1 className="text-[20px] font-semibold text-dashNavy">
-            Kelola Personel Struktur Organisasi
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Kelola nama akun, profil, dan reset kata sandi anggota.
-          </p>
-        </div>
+    <div className="font-dash">
+      <PageHeader
+        title="Kelola Personel Struktur Organisasi"
+        subtitle="Kelola nama akun, profil, dan reset kata sandi anggota."
+      />
+
+      <div className="mb-5">
+        <InfoCardGrid cards={infoCards} />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
@@ -188,81 +196,86 @@ export default function SoldierManage() {
             onChange={(e) => setSortBy(e.target.value)}
             className="w-full sm:w-64 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
           >
-            <option value="hierarki">Urutan Jabatan (Hierarki)</option>
-            <option value="nama_asc">Nama Lengkap (A - Z)</option>
-            <option value="nama_desc">Nama Lengkap (Z - A)</option>
-            <option value="uname_asc">Username (A - Z)</option>
-            <option value="uname_desc">Username (Z - A)</option>
+            {sortOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
           <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-dashCard border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50 text-gray-700 font-medium border-b border-gray-100">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-dashCard overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 text-dashNavy text-left">
+            <tr>
+              <th scope="col" className="px-4 py-3 font-semibold">
+                Nama Lengkap
+              </th>
+              <th scope="col" className="px-4 py-3 font-semibold">
+                Username
+              </th>
+              <th scope="col" className="px-4 py-3 font-semibold">
+                Jabatan
+              </th>
+              <th scope="col" className="px-4 py-3 font-semibold">
+                Aksi
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {loading && (
               <tr>
-                <th scope="col" className="px-6 py-4">
-                  Nama Lengkap
-                </th>
-                <th scope="col" className="px-6 py-4">
-                  Username
-                </th>
-                <th scope="col" className="px-6 py-4">
-                  Jabatan
-                </th>
-                <th scope="col" className="px-6 py-4 text-center">
-                  Aksi
-                </th>
+                <td
+                  colSpan={4}
+                  className="px-4 py-6 text-center text-dashNavy/50"
+                >
+                  Memuat data...
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {paginatedData.map((soldier) => (
-                <tr key={soldier.id} className="hover:bg-gray-50/50 transition">
-                  <td className="px-6 py-4 font-medium text-gray-900">
+            )}
+            {!loading && paginatedData.length === 0 && (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="px-4 py-6 text-center text-dashNavy/50"
+                >
+                  {q.trim() !== ""
+                    ? "Pencarian tidak menemukan hasil."
+                    : "Belum ada data anggota."}
+                </td>
+              </tr>
+            )}
+            {!loading &&
+              paginatedData.map((soldier) => (
+                <tr
+                  key={soldier.id}
+                  className="hover:bg-gray-50/50 transition"
+                >
+                  <td className="px-4 py-3 font-medium text-dashNavy">
                     {soldier.full_name || "-"}
                   </td>
-                  <td className="px-6 py-4">{soldier.username}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3">{soldier.username}</td>
+                  <td className="px-4 py-3 text-dashNavy/60">
                     {soldier.OrgStructure?.position || "-"}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex justify-center">
-                      <button
-                        onClick={() => handleEditClick(soldier)}
-                        className="flex items-center gap-1.5 p-1.5 text-dashAccent bg-dashAccent/10 rounded hover:bg-dashAccent/20 transition"
-                        title="Edit Akun"
-                      >
-                        <Pencil className="w-4 h-4" />
-                        <span>Edit Akun</span>
-                      </button>
-                    </div>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    <button
+                      onClick={() => setEditing(soldier)}
+                      className="flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white"
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
-              {filteredAndSortedSoldiers.length === 0 && (
-                <tr>
-                  <td colSpan="4" className="text-center py-8 text-gray-500">
-                    {q.trim() !== ""
-                      ? "Pencarian tidak menemukan hasil."
-                      : "Belum ada data anggota."}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        {filteredAndSortedSoldiers.length > 0 && (
-          <div className="p-4 border-t border-gray-100 text-xs text-gray-500 text-right">
-            Menampilkan {paginatedData.length} dari{" "}
-            {filteredAndSortedSoldiers.length} data anggota
-          </div>
-        )}
+          </tbody>
+        </table>
       </div>
 
       {totalPages > 1 && (
-        <div className="flex gap-2 justify-center mt-2">
+        <div className="flex gap-2 justify-center mt-6">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
@@ -275,107 +288,21 @@ export default function SoldierManage() {
         </div>
       )}
 
-      </div>
+      <FormModal
+        open={!!editing}
+        title={`Edit Akun: ${editing?.username || ""}`}
+        fields={fields}
+        initialValues={
+          editing
+            ? { full_name: editing.full_name || "", username: editing.username || "", password: "" }
+            : {}
+        }
+        submitting={submitting}
+        onCancel={() => setEditing(null)}
+        onSubmit={handleSubmit}
+      />
 
-      {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="edit-soldier-title"
-            className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden"
-          >
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h3
-                id="edit-soldier-title"
-                className="text-lg font-semibold text-dashNavy"
-              >
-                Edit Akun Anggota
-              </h3>
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                &times;
-              </button>
-            </div>
-
-            <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nama Lengkap
-                </label>
-                <input
-                  type="text"
-                  value={editForm.full_name}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, full_name: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  value={editForm.username}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, username: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
-                  required
-                />
-              </div>
-
-              <div className="pt-4 border-t border-gray-100">
-                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                  <KeyRound className="w-4 h-4" /> Reset Password (Opsional)
-                </label>
-                <input
-                  type="password"
-                  placeholder="Kosongkan jika tidak ingin diubah"
-                  value={editForm.password}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, password: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
-                />
-                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                  <ShieldAlert className="w-3 h-3" /> Mengisi kolom ini akan
-                  me-reset password anggota.
-                </p>
-              </div>
-
-              {message.text && (
-                <div
-                  className={`p-3 rounded-lg text-sm ${message.type === "error" ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"}`}
-                >
-                  {message.text}
-                </div>
-              )}
-
-              <div className="flex justify-end gap-2 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-dashNavy hover:bg-dashNavy/90 rounded-lg transition"
-                >
-                  Simpan Perubahan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <Toast toast={toast} />
     </div>
   );
 }

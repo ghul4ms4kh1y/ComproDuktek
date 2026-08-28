@@ -4,12 +4,13 @@ import { useToast } from "../../hooks/useToast";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import InfoCardGrid from "../../components/admin/InfoCardGrid";
+import PageHeader from "../../components/admin/PageHeader";
 import {
   FileText,
   Search,
   ChevronDown,
   ChevronRight,
-  Trash2,
+  ArrowUpDown,
   Users,
   Calendar,
 } from "lucide-react";
@@ -32,7 +33,7 @@ export default function LaporanManage() {
       const res = await api.get("/laporan-harian", { params });
       setLaporan(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
-      showToast("error", "Gagal memuat laporan harian.");
+      showToast("Gagal memuat laporan harian.", "error");
     } finally {
       setLoading(false);
     }
@@ -50,11 +51,11 @@ export default function LaporanManage() {
     try {
       setDeleteLoading(true);
       await api.delete(`/laporan-harian/${deleteTarget.id}`);
-      showToast("success", "Laporan berhasil dihapus.");
+      showToast("Laporan berhasil dihapus.");
       setDeleteTarget(null);
       fetchLaporan();
     } catch (e) {
-      showToast("error", e.response?.data?.message ?? "Gagal menghapus.");
+      showToast(e.response?.data?.message ?? "Gagal menghapus.", "error");
     } finally {
       setDeleteLoading(false);
     }
@@ -134,28 +135,31 @@ export default function LaporanManage() {
   }, [q, tanggal, sortBy]);
 
   return (
-    <div className="font-dash space-y-5">
-      <InfoCardGrid cards={infoCards} />
-      <div>
-      <h1 className="text-[20px] font-semibold text-dashNavy mb-6">
-        Laporan Aktivitas Harian
-      </h1>
+    <div className="font-dash">
+      <PageHeader
+        title="Laporan Aktivitas Harian"
+        subtitle="Rekap laporan kegiatan harian seluruh personel."
+      />
+
+      <div className="mb-5">
+        <InfoCardGrid cards={infoCards} />
+      </div>
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
-        <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dashNavy/40" />
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             id="search-laporan"
             type="text"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Cari nama atau jabatan..."
-            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:border-dashAccent"
+            className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
           />
         </div>
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-2 shadow-sm">
-          <Calendar className="w-4 h-4 text-dashNavy/50" />
+        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2.5">
+          <Calendar className="w-4 h-4 text-gray-400" />
           <input
             id="tanggal-filter-laporan"
             type="date"
@@ -178,7 +182,7 @@ export default function LaporanManage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full sm:w-48 px-3 py-2 border border-gray-200 rounded-md text-sm text-dashNavy focus:outline-none focus:border-dashAccent appearance-none cursor-pointer bg-white shadow-sm"
+            className="w-full sm:w-64 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm text-dashNavy bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
           >
             <option value="hierarki">Urutan Jabatan (Hierarki)</option>
             <option value="nama_asc">Nama (A - Z)</option>
@@ -186,12 +190,13 @@ export default function LaporanManage() {
             <option value="tanggal_desc">Terbaru</option>
             <option value="tanggal_asc">Terlama</option>
           </select>
+          <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
         </div>
 
         <button
           id="refresh-laporan"
           onClick={fetchLaporan}
-          className="px-4 py-2 text-sm rounded-md bg-dashNavy text-white hover:bg-dashNavy/90 transition shadow-sm"
+          className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:bg-dashAccent/90 transition"
         >
           Muat Ulang
         </button>
@@ -250,10 +255,9 @@ export default function LaporanManage() {
                 <button
                   id={`delete-laporan-${l.id}`}
                   onClick={() => setDeleteTarget(l)}
-                  className="p-1.5 rounded-md text-red-400 hover:bg-red-50 hover:text-red-600 transition ml-3"
-                  title="Hapus laporan ini"
+                  className="flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap bg-red-100 text-red-600 hover:bg-red-600 hover:text-white ml-3"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  Hapus
                 </button>
               </div>
 
@@ -317,7 +321,6 @@ export default function LaporanManage() {
       />
 
       <Toast toast={toast} />
-      </div>
     </div>
   );
 }

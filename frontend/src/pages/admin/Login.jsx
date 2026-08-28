@@ -34,7 +34,7 @@ export default function Login() {
 
   return (
     <main className="min-h-screen bg-white font-dash flex items-center justify-center px-4">
-      <div className="bg-white rounded-xl shadow-dashCard border border-gray-200 w-full max-w-sm p-8">
+      <div className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-sm p-8">
         <div className="w-11 h-11 rounded-lg bg-dashNavy flex items-center justify-center mx-auto mb-4">
           <ShieldCheck className="w-6 h-6 text-white" />
         </div>
@@ -90,7 +90,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-navy text-white rounded-md py-2.5 text-sm font-semibold hover:brightness-95 disabled:opacity-60 transition"
+            className="w-full bg-dashAccent text-white rounded-md py-2.5 text-sm font-semibold hover:bg-dashAccent/90 disabled:opacity-60 transition"
           >
             {loading ? "Memproses..." : "Masuk"}
           </button>

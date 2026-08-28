@@ -9,6 +9,8 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
 import { formatDate } from "../../lib/dateUtils";
+import MiniCalendar from "../../components/common/MiniCalendar";
+import PiketUpdateModal from "../../components/soldier/PiketUpdateModal";
 import {
   User,
   Lock,
@@ -32,25 +34,25 @@ const StatusBadge = ({ status }) => {
   switch (status) {
     case "hijau":
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-600 border border-green-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-500 border border-green-200">
           Beres
         </span>
       );
     case "merah":
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-50 text-cyan-600 border border-cyan-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-50 text-cyan-500 border border-cyan-200">
           Terlambat
         </span>
       );
     case "biru":
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-500 border border-blue-200">
           Dalam Pengerjaan
         </span>
       );
     default:
       return (
-        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200">
+        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-500 border border-gray-200">
           {status}
         </span>
       );
@@ -66,7 +68,7 @@ function AddSesiInline({ laporanId, onAdded, showToast }) {
 
   const handleSubmit = async () => {
     if (!aktivitas.trim() || !outputHasil.trim()) {
-      showToast("error", "Aktivitas dan output harus diisi.");
+      showToast("Aktivitas dan output harus diisi.", "error");
       return;
     }
     try {
@@ -76,13 +78,13 @@ function AddSesiInline({ laporanId, onAdded, showToast }) {
         aktivitas,
         output_hasil: outputHasil,
       });
-      showToast("success", "Sesi ditambahkan.");
+      showToast("Sesi ditambahkan.");
       setAktivitas("");
       setOutputHasil("");
       setOpen(false);
       onAdded();
     } catch (e) {
-      showToast("error", e.response?.data?.message ?? "Gagal menambah sesi.");
+      showToast(e.response?.data?.message ?? "Gagal menambah sesi.", "error");
     } finally {
       setLoading(false);
     }
@@ -121,7 +123,7 @@ function AddSesiInline({ laporanId, onAdded, showToast }) {
       <div className="flex gap-2">
         <button
           onClick={() => setOpen(false)}
-          className="text-xs text-gray-400 hover:text-gray-600"
+          className="text-xs text-gray-400 hover:text-gray-500"
         >
           Batal
         </button>
@@ -189,6 +191,10 @@ export default function SoldierDashboard() {
   const [prokers, setProkers] = useState([]);
   const [prokerLoading, setProkerLoading] = useState(false);
 
+  // State Piket Calendar
+  const [piketRefreshTrigger, setPiketRefreshTrigger] = useState(0);
+  const [piketModalSchedule, setPiketModalSchedule] = useState(null);
+
   // ── STATE ABSENSI ────────────────────────────────────────────────────────
   const toLocalToday = () => {
     const d = new Date();
@@ -236,13 +242,11 @@ export default function SoldierDashboard() {
         status_usulan: sanggahanForm.status_usulan,
         keterangan_sanggahan: sanggahanForm.keterangan_sanggahan,
       });
-      showToast("success", "Sanggahan berhasil diajukan.");
+      showToast("Sanggahan berhasil diajukan.");
       setSanggahanForm(null);
       fetchAbsensi();
     } catch (e) {
-      showToast(
-        "error",
-        e.response?.data?.message ?? "Gagal mengajukan sanggahan.",
+      showToast(e.response?.data?.message ?? "Gagal mengajukan sanggahan.",
       );
     } finally {
       setSanggahanLoading(false);
@@ -286,20 +290,18 @@ export default function SoldierDashboard() {
       (r) => r.aktivitas.trim() && r.output_hasil.trim(),
     );
     if (!valid) {
-      showToast("error", "Semua baris sesi harus diisi.");
+      showToast("Semua baris sesi harus diisi.", "error");
       return;
     }
     try {
       setLaporanSubmitting(true);
       await api.post("/laporan-harian", { sesi: laporanSesiRows });
-      showToast("success", "Laporan berhasil disimpan.");
+      showToast("Laporan berhasil disimpan.");
       setShowLaporanForm(false);
       setLaporanSesiRows([{ aktivitas: "", output_hasil: "" }]);
       fetchLaporan();
     } catch (e) {
-      showToast(
-        "error",
-        e.response?.data?.message ?? "Gagal menyimpan laporan.",
+      showToast(e.response?.data?.message ?? "Gagal menyimpan laporan.",
       );
     } finally {
       setLaporanSubmitting(false);
@@ -319,10 +321,10 @@ export default function SoldierDashboard() {
         aktivitas,
         output_hasil,
       });
-      showToast("success", "Sesi ditambahkan.");
+      showToast("Sesi ditambahkan.");
       fetchLaporan();
     } catch (e) {
-      showToast("error", e.response?.data?.message ?? "Gagal menambah sesi.");
+      showToast(e.response?.data?.message ?? "Gagal menambah sesi.", "error");
     }
   };
 
@@ -334,13 +336,11 @@ export default function SoldierDashboard() {
         aktivitas: editSesi.aktivitas,
         output_hasil: editSesi.output_hasil,
       });
-      showToast("success", "Sesi diperbarui.");
+      showToast("Sesi diperbarui.");
       setEditSesi(null);
       fetchLaporan();
     } catch (e) {
-      showToast(
-        "error",
-        e.response?.data?.message ?? "Gagal memperbarui sesi.",
+      showToast(e.response?.data?.message ?? "Gagal memperbarui sesi.",
       );
     } finally {
       setEditSesiLoading(false);
@@ -351,10 +351,10 @@ export default function SoldierDashboard() {
     if (!window.confirm("Hapus sesi ini?")) return;
     try {
       await api.delete(`/laporan-harian/sesi/${sesiId}`);
-      showToast("success", "Sesi dihapus.");
+      showToast("Sesi dihapus.");
       fetchLaporan();
     } catch (e) {
-      showToast("error", e.response?.data?.message ?? "Gagal menghapus sesi.");
+      showToast(e.response?.data?.message ?? "Gagal menghapus sesi.", "error");
     }
   };
   // Helper untuk mendapatkan URL gambar dari Backend
@@ -412,9 +412,7 @@ export default function SoldierDashboard() {
       });
       loadProkers();
     } catch (err) {
-      showToast(
-        "error",
-        err.response?.data?.message || "Gagal memperbarui status tugas.",
+      showToast(err.response?.data?.message || "Gagal memperbarui status tugas.",
       );
     }
   };
@@ -438,11 +436,9 @@ export default function SoldierDashboard() {
       setActiveModal(null);
       setSelectedPhoto(null);
       await refreshUser(); // Update foto di context tanpa reload halaman
-      showToast("success", "Foto profil berhasil diperbarui!");
+      showToast("Foto profil berhasil diperbarui!");
     } catch (err) {
-      showToast(
-        "error",
-        err.response?.data?.message || "Gagal mengupload foto.",
+      showToast(err.response?.data?.message || "Gagal mengupload foto.",
       );
     } finally {
       setLoadingPhoto(false);
@@ -461,7 +457,7 @@ export default function SoldierDashboard() {
       });
       setActiveModal(null);
       await refreshUser();
-      showToast("success", "Profil berhasil diperbarui.");
+      showToast("Profil berhasil diperbarui.");
     } catch (err) {
       setMessageEdit({
         type: "error",
@@ -532,7 +528,7 @@ export default function SoldierDashboard() {
           <span>{toast.text}</span>
           <button
             onClick={() => setToast(null)}
-            className="ml-2 text-gray-400 hover:text-gray-600"
+            className="ml-2 text-gray-400 hover:text-gray-500"
           >
             ×
           </button>
@@ -549,7 +545,7 @@ export default function SoldierDashboard() {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-dashNavy transition py-1 px-2 rounded-lg hover:bg-gray-50"
+            className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-dashNavy transition py-1 px-2 rounded-lg hover:bg-gray-50"
           >
             <span>{user?.full_name || user?.username || "Prajurit"}</span>
             <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-300">
@@ -560,7 +556,7 @@ export default function SoldierDashboard() {
                   className="w-full h-full object-cover object-[50%_10%]"
                 />
               ) : (
-                <User className="w-4 h-4 text-gray-600" />
+                <User className="w-4 h-4 text-gray-500" />
               )}
             </div>
             <ChevronDown
@@ -578,7 +574,7 @@ export default function SoldierDashboard() {
                   setEditUsername(user?.username || "");
                   setActiveModal("profile");
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-gray-50 transition"
               >
                 <User className="w-4 h-4 text-gray-500" /> Edit Profil
               </button>
@@ -587,7 +583,7 @@ export default function SoldierDashboard() {
                   setDropdownOpen(false);
                   setActiveModal("photo");
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-gray-50 transition"
               >
                 <Camera className="w-4 h-4 text-gray-500" /> Ganti Foto Profil
               </button>
@@ -596,14 +592,14 @@ export default function SoldierDashboard() {
                   setDropdownOpen(false);
                   setActiveModal("password");
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-gray-50 transition"
               >
                 <Lock className="w-4 h-4 text-gray-500" /> Ganti Password
               </button>
               <div className="border-t border-gray-50 my-1"></div>
               <button
                 onClick={logout}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition"
               >
                 <LogOut className="w-4 h-4" /> Log Out
               </button>
@@ -690,7 +686,7 @@ export default function SoldierDashboard() {
 
                   <div className="space-y-4 flex-1">
                     <div>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-500">
                         {proker.keterangan}
                       </p>
                     </div>
@@ -698,19 +694,19 @@ export default function SoldierDashboard() {
                     <div className="text-[13px] text-gray-500 space-y-1 mt-auto pt-2">
                       <div className="flex justify-between">
                         <span>Penanggung Jawab:</span>
-                        <span className="text-gray-600 font-medium">
+                        <span className="text-gray-500 font-medium">
                           {proker.pic?.position || "Belum ditentukan"}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Mulai:</span>
-                        <span className="text-gray-600">
+                        <span className="text-gray-500">
                           {formatDate(proker.tanggal_mulai)}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Deadline:</span>
-                        <span className="text-gray-600">
+                        <span className="text-gray-500">
                           {formatDate(proker.deadline)}
                         </span>
                       </div>
@@ -728,7 +724,7 @@ export default function SoldierDashboard() {
                       >
                         {proker.is_selesai ? (
                           <>
-                            <CheckCircle2 className="w-4 h-4 text-green-600" />{" "}
+                            <CheckCircle2 className="w-4 h-4 text-green-500" />{" "}
                             Selesai
                           </>
                         ) : (
@@ -743,7 +739,25 @@ export default function SoldierDashboard() {
           )}
         </div>
 
-        {/* ── 5. REKAP ABSENSI SAYA ── */}
+        {/* ── 5. KALENDER PIKET SAYA ── */}
+        <div className="px-2 pt-6">
+          <div className="mb-4">
+            <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+              Kalender Piket Saya
+            </h2>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-[12px] p-5 shadow-sm">
+            <MiniCalendar
+              isSoldier={true}
+              currentUser={user}
+              onUpdateClick={(schedule) => setPiketModalSchedule(schedule)}
+              refreshTrigger={piketRefreshTrigger}
+            />
+          </div>
+        </div>
+
+        {/* ── 6. REKAP ABSENSI SAYA ── */}
         <div className="px-2 pt-6">
           <div className="flex items-center justify-between mb-[14px]">
             <h2 className="text-[14.5px] font-bold tracking-[0.02em] uppercase text-[#3C4453] flex items-center gap-2">
@@ -759,7 +773,7 @@ export default function SoldierDashboard() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="rounded-[14px] p-5 relative overflow-hidden border border-green-50 bg-green-50">
-              <div className="text-[34px] font-extrabold text-green-600 leading-none mb-1">
+              <div className="text-[34px] font-extrabold text-green-500 leading-none mb-1">
                 {absensiStats.hadir ?? 0}
               </div>
               <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
@@ -767,7 +781,7 @@ export default function SoldierDashboard() {
               </div>
             </div>
             <div className="rounded-[14px] p-5 relative overflow-hidden border border-yellow-50 bg-yellow-50">
-              <div className="text-[34px] font-extrabold text-yellow-600 leading-none mb-1">
+              <div className="text-[34px] font-extrabold text-yellow-500 leading-none mb-1">
                 {absensiStats.sakit ?? 0}
               </div>
               <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
@@ -775,7 +789,7 @@ export default function SoldierDashboard() {
               </div>
             </div>
             <div className="rounded-[14px] p-5 relative overflow-hidden border border-blue-50 bg-blue-50">
-              <div className="text-[34px] font-extrabold text-blue-600 leading-none mb-1">
+              <div className="text-[34px] font-extrabold text-blue-500 leading-none mb-1">
                 {absensiStats.izin ?? 0}
               </div>
               <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
@@ -783,7 +797,7 @@ export default function SoldierDashboard() {
               </div>
             </div>
             <div className="rounded-[14px] p-5 relative overflow-hidden border border-red-50 bg-red-50">
-              <div className="text-[34px] font-extrabold text-red-600 leading-none mb-1">
+              <div className="text-[34px] font-extrabold text-red-500 leading-none mb-1">
                 {absensiStats.tk ?? 0}
               </div>
               <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
@@ -807,10 +821,10 @@ export default function SoldierDashboard() {
                 key={s.key}
                 className="bg-white border border-[#E5E8EF] rounded-[10px] p-[14px_10px] text-center"
               >
-                <div className="font-bold text-[18px] text-gray-600 leading-none">
+                <div className="font-bold text-[18px] text-gray-500 leading-none">
                   {absensiStats[s.key] ?? 0}
                 </div>
-                <div className="text-[12px] text-gray-600 mt-1 leading-[1.3]">
+                <div className="text-[12px] text-gray-500 mt-1 leading-[1.3]">
                   {s.label}
                 </div>
               </div>
@@ -824,7 +838,7 @@ export default function SoldierDashboard() {
             <p className="text-sm text-gray-400">Belum ada data absensi.</p>
           ) : (
             <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-sm">
-              <table className="w-full text-sm text-gray-600">
+              <table className="w-full text-sm text-gray-500">
                 <thead>
                   <tr className="bg-gray-50 text-xs text-gray-400 uppercase border-b border-gray-50">
                     <th className="text-left px-4 py-3 font-semibold">
@@ -847,15 +861,15 @@ export default function SoldierDashboard() {
                 <tbody>
                   {absensiList.map((a) => {
                     const statusColors = {
-                      hadir: "bg-green-50 text-green-600",
-                      sakit: "bg-yellow-50 text-yellow-600",
-                      izin: "bg-blue-50 text-blue-600",
-                      dd: "bg-purple-50 text-purple-600",
-                      bp: "bg-pink-50 text-pink-600",
-                      dl: "bg-indigo-50 text-indigo-600",
-                      dik: "bg-teal-50 text-teal-600",
-                      satgas: "bg-cyan-50 text-cyan-600",
-                      tk: "bg-red-50 text-red-600",
+                      hadir: "bg-green-50 text-green-500",
+                      sakit: "bg-yellow-50 text-yellow-500",
+                      izin: "bg-blue-50 text-blue-500",
+                      dd: "bg-purple-50 text-purple-500",
+                      bp: "bg-pink-50 text-pink-500",
+                      dl: "bg-indigo-50 text-indigo-500",
+                      dik: "bg-teal-50 text-teal-500",
+                      satgas: "bg-cyan-50 text-cyan-500",
+                      tk: "bg-red-50 text-red-500",
                       belum_diisi: "bg-gray-50 text-gray-500",
                     };
                     const statusLabels = {
@@ -872,9 +886,9 @@ export default function SoldierDashboard() {
                     };
                     const sanggahanColors = {
                       none: "",
-                      pending: "bg-orange-50 text-orange-600",
-                      approved: "bg-green-50 text-green-600",
-                      rejected: "bg-cyan-50 text-cyan-600",
+                      pending: "bg-orange-50 text-orange-500",
+                      approved: "bg-green-50 text-green-500",
+                      rejected: "bg-cyan-50 text-cyan-500",
                     };
                     const sanggahanLabels = {
                       none: "—",
@@ -947,7 +961,7 @@ export default function SoldierDashboard() {
                               className="px-4 pb-3 pt-0 bg-orange-50/50"
                             >
                               <div className="border border-orange-200 rounded-xl p-4 space-y-3">
-                                <p className="text-xs font-semibold text-orange-600">
+                                <p className="text-xs font-semibold text-orange-500">
                                   Ajukan Sanggahan
                                 </p>
                                 <div>
@@ -1007,7 +1021,7 @@ export default function SoldierDashboard() {
                                   id="sanggahan-submit"
                                   onClick={submitSanggahan}
                                   disabled={sanggahanLoading}
-                                  className="px-4 py-2 text-xs font-semibold rounded-lg bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-60 transition"
+                                  className="px-4 py-2 text-xs font-semibold rounded-lg bg-orange-500 text-white hover:bg-orange-500 disabled:opacity-60 transition"
                                 >
                                   {sanggahanLoading
                                     ? "Mengajukan..."
@@ -1026,7 +1040,7 @@ export default function SoldierDashboard() {
           )}
         </div>
 
-        {/* ── 6. LAPORAN AKTIVITAS HARIAN ── */}
+        {/* ── 7. LAPORAN AKTIVITAS HARIAN ── */}
         <div className="px-2 pt-6 pb-4">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
@@ -1107,7 +1121,7 @@ export default function SoldierDashboard() {
                             prev.filter((_, idx) => idx !== i),
                           )
                         }
-                        className="text-xs text-cyan-400 hover:text-cyan-600"
+                        className="text-xs text-cyan-400 hover:text-cyan-500"
                       >
                         Hapus sesi ini
                       </button>
@@ -1134,7 +1148,7 @@ export default function SoldierDashboard() {
                       setShowLaporanForm(false);
                       setLaporanSesiRows([{ aktivitas: "", output_hasil: "" }]);
                     }}
-                    className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50"
+                    className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50"
                   >
                     Batal
                   </button>
@@ -1226,7 +1240,7 @@ export default function SoldierDashboard() {
                                 <div className="flex gap-2">
                                   <button
                                     onClick={() => setEditSesi(null)}
-                                    className="text-xs text-gray-400 hover:text-gray-600"
+                                    className="text-xs text-gray-400 hover:text-gray-500"
                                   >
                                     Batal
                                   </button>
@@ -1273,7 +1287,7 @@ export default function SoldierDashboard() {
                                     <button
                                       id={`delete-sesi-${s.id}`}
                                       onClick={() => deleteSesi(s.id)}
-                                      className="p-1 rounded hover:bg-cyan-50 text-cyan-400 hover:text-cyan-600 transition"
+                                      className="p-1 rounded hover:bg-cyan-50 text-cyan-400 hover:text-cyan-500 transition"
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
                                     </button>
@@ -1300,6 +1314,16 @@ export default function SoldierDashboard() {
           )}
         </div>
       </div>
+
+      {/* PIKET UPDATE MODAL */}
+      {piketModalSchedule && (
+        <PiketUpdateModal
+          schedule={piketModalSchedule}
+          onClose={() => setPiketModalSchedule(null)}
+          onSuccess={() => setPiketRefreshTrigger((prev) => prev + 1)}
+          showToast={showToast}
+        />
+      )}
 
       {/* --- MODAL POP-UP GANTI FOTO PROFIL --- */}
       {activeModal === "photo" && (
@@ -1347,7 +1371,7 @@ export default function SoldierDashboard() {
                 <button
                   type="button"
                   onClick={() => setActiveModal(null)}
-                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"
                 >
                   Batal
                 </button>
@@ -1381,24 +1405,24 @@ export default function SoldierDashboard() {
             </h3>
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+                <label className="block text-xs font-semibold uppercase text-gray-500 mb-1">
                   Nama Lengkap
                 </label>
                 <input
                   type="text"
-                  requicyan
+                  required
                   value={editFullName}
                   onChange={(e) => setEditFullName(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+                <label className="block text-xs font-semibold uppercase text-gray-500 mb-1">
                   Username
                 </label>
                 <input
                   type="text"
-                  requicyan
+                  required
                   value={editUsername}
                   onChange={(e) => setEditUsername(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
@@ -1407,7 +1431,7 @@ export default function SoldierDashboard() {
 
               {messageEdit.text && (
                 <div
-                  className={`p-3 rounded-lg text-xs ${messageEdit.type === "error" ? "bg-cyan-50 text-cyan-600" : "bg-green-50 text-green-600"}`}
+                  className={`p-3 rounded-lg text-xs ${messageEdit.type === "error" ? "bg-cyan-50 text-cyan-500" : "bg-green-50 text-green-500"}`}
                 >
                   {messageEdit.text}
                 </div>
@@ -1417,7 +1441,7 @@ export default function SoldierDashboard() {
                 <button
                   type="button"
                   onClick={() => setActiveModal(null)}
-                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"
                 >
                   Batal
                 </button>
@@ -1451,36 +1475,36 @@ export default function SoldierDashboard() {
             </h3>
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+                <label className="block text-xs font-semibold uppercase text-gray-500 mb-1">
                   Password Lama
                 </label>
                 <input
                   type="password"
-                  requicyan
+                  required
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+                <label className="block text-xs font-semibold uppercase text-gray-500 mb-1">
                   Password Baru
                 </label>
                 <input
                   type="password"
-                  requicyan
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+                <label className="block text-xs font-semibold uppercase text-gray-500 mb-1">
                   Konfirmasi Password Baru
                 </label>
                 <input
                   type="password"
-                  requicyan
+                  required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/20 focus:border-dashAccent"
@@ -1489,7 +1513,7 @@ export default function SoldierDashboard() {
 
               {messagePass.text && (
                 <div
-                  className={`p-3 rounded-lg text-xs ${messagePass.type === "error" ? "bg-cyan-50 text-cyan-600" : "bg-green-50 text-green-600"}`}
+                  className={`p-3 rounded-lg text-xs ${messagePass.type === "error" ? "bg-cyan-50 text-cyan-500" : "bg-green-50 text-green-500"}`}
                 >
                   {messagePass.text}
                 </div>
@@ -1499,7 +1523,7 @@ export default function SoldierDashboard() {
                 <button
                   type="button"
                   onClick={() => setActiveModal(null)}
-                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2 text-xs font-semibold rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"
                 >
                   Batal
                 </button>

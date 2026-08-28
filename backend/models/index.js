@@ -56,6 +56,8 @@ LaporanHarianSesi.belongsTo(LaporanHarian, { foreignKey: 'laporan_harian_id' });
 // Relasi Jadwal Piket
 Admin.hasMany(JadwalPiket, { foreignKey: 'admin_id' });
 JadwalPiket.belongsTo(Admin, { foreignKey: 'admin_id' });
+Admin.hasMany(JadwalPiket, { as: 'reviewedPikets', foreignKey: 'reviewed_by_admin_id' });
+JadwalPiket.belongsTo(Admin, { as: 'reviewer', foreignKey: 'reviewed_by_admin_id' });
 Soldier.hasMany(JadwalPiket, { foreignKey: 'soldier_id' });
 JadwalPiket.belongsTo(Soldier, { foreignKey: 'soldier_id' });
 

@@ -36,9 +36,25 @@ const JadwalPiket = sequelize.define('JadwalPiket', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  status_usulan: {
+    type: DataTypes.ENUM('completed', 'absent'),
+    allowNull: true,
+  },
+  keterangan_usulan: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  approval_status: {
+    type: DataTypes.ENUM('none', 'pending', 'approved', 'rejected'),
+    defaultValue: 'none',
+  },
   admin_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  reviewed_by_admin_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
 }, {
   tableName: 'jadwal_pikets',

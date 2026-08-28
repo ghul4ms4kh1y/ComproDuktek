@@ -43,7 +43,7 @@ export default function OrgNodeCard({ node, onEdit, onEmpty, childrenNodes }) {
           <button
             onClick={() => onEmpty(node)}
             title="Kosongkan Jabatan (Orang Keluar)"
-            className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
+            className="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white rounded-md px-4 py-2 text-sm font-semibold transition"
           >
             Kosongkan
           </button>

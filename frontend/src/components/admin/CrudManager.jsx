@@ -4,19 +4,25 @@ import api from "../../services/api";
 import FormModal from "./FormModal";
 import ConfirmModal from "./ConfirmModal";
 import Toast from "./Toast";
+import PageHeader from "./PageHeader";
+import InfoCardGrid from "./InfoCardGrid";
 import { useToast } from "../../hooks/useToast";
 
 /**
  * columns: [{ key, label, render? }]
  * fields: field config for FormModal (used for both create & edit)
  * sortOptions: [{ value, label, sortKey? }] - optional sorting configuration
+ * subtitle: optional page subtitle
+ * infoCards: optional stat cards rendered below the page header
  */
 export default function CrudManager({
   title,
+  subtitle,
   endpoint,
   columns,
   fields,
   sortOptions = [],
+  infoCards,
   onDataChange,
 }) {
   const [items, setItems] = useState([]);
@@ -159,15 +165,20 @@ export default function CrudManager({
 
   return (
     <div className="font-dash">
-      <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h1 className="text-[20px] font-semibold text-dashNavy">{title}</h1>
-        <button
-          onClick={openCreate}
-          className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:brightness-95 transition"
-        >
-          + Tambah
-        </button>
-      </div>
+      <PageHeader
+        title={title}
+        subtitle={subtitle}
+        action={
+          <button
+            onClick={openCreate}
+            className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:bg-dashAccent/90 transition"
+          >
+            + Tambah
+          </button>
+        }
+      />
+
+      {infoCards && <div className="mb-5"><InfoCardGrid cards={infoCards} /></div>}
 
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="relative flex-1">
@@ -246,7 +257,7 @@ export default function CrudManager({
                 "flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap";
 
               return (
-                <tr key={item.id}>
+                <tr key={item.id} className="hover:bg-gray-50/50 transition">
                   {columns.map((c) => (
                     <td key={c.key} className="px-4 py-3">
                       {c.render ? c.render(item) : item[c.key]}

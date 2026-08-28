@@ -116,21 +116,30 @@ exports.generate = async (req, res) => {
 
 exports.index = async (req, res) => {
   try {
-    const { bulan, tahun, page = 1, limit = 100 } = req.query;
+    const { bulan, tahun, page = 1, limit = 100, approval_status } = req.query;
 
-    if (!bulan || !tahun) {
-      return res.status(400).json({
-        message: "Bulan dan tahun wajib diisi.",
-      });
+    const where = {};
+    
+    if (approval_status) {
+      where.approval_status = approval_status;
+    } else {
+      if (!bulan || !tahun) {
+        return res.status(400).json({
+          message: "Bulan dan tahun wajib diisi.",
+        });
+      }
+      where.bulan = parseInt(bulan);
+      where.tahun = parseInt(tahun);
     }
 
     const offset = (page - 1) * limit;
 
     const { rows, count } = await JadwalPiket.findAndCountAll({
-      where: { bulan: parseInt(bulan), tahun: parseInt(tahun) },
+      where,
       include: [
         { model: Soldier, attributes: ["id", "full_name", "username"] },
         { model: Admin, attributes: ["id", "full_name"] },
+        { model: Admin, as: "reviewer", attributes: ["id", "full_name"] },
       ],
       order: [["tanggal_piket", "ASC"]],
       limit: parseInt(limit),
@@ -320,6 +329,149 @@ exports.reset = async (req, res) => {
     console.error("Error reset jadwal piket:", error);
     res.status(500).json({
       message: "Gagal mereset jadwal piket.",
+      error: error.message,
+    });
+  }
+};
+
+exports.calendar = async (req, res) => {
+  try {
+    const { bulan, tahun } = req.query;
+
+    if (!bulan || !tahun) {
+      return res.status(400).json({
+        message: "Bulan dan tahun wajib diisi.",
+      });
+    }
+
+    const jadwals = await JadwalPiket.findAll({
+      where: {
+        bulan: parseInt(bulan),
+        tahun: parseInt(tahun),
+      },
+      include: [
+        { model: Soldier, attributes: ["id", "full_name", "username"] },
+        { model: Admin, attributes: ["id", "full_name"] },
+        { model: Admin, as: "reviewer", attributes: ["id", "full_name"] },
+      ],
+      order: [["tanggal_piket", "ASC"]],
+    });
+
+    res.json({
+      data: jadwals,
+    });
+  } catch (error) {
+    console.error("Error fetch calendar jadwal piket:", error);
+    res.status(500).json({
+      message: "Gagal memuat kalender jadwal piket.",
+      error: error.message,
+    });
+  }
+};
+
+exports.ajukanUsulanStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, keterangan } = req.body;
+    const soldierIdFromToken = req.user.id;
+
+    const jadwal = await JadwalPiket.findByPk(id, {
+      include: [{ model: Soldier, attributes: ["id"] }],
+    });
+
+    if (!jadwal) {
+      return res.status(404).json({
+        message: "Jadwal piket tidak ditemukan.",
+      });
+    }
+
+    if (jadwal.soldier_id !== soldierIdFromToken) {
+      return res.status(403).json({
+        message: "Anda tidak berhak mengajukan usulan untuk jadwal ini.",
+      });
+    }
+
+    if (!status || !['completed', 'absent'].includes(status)) {
+      return res.status(400).json({
+        message: "Status harus 'completed' atau 'absent'.",
+      });
+    }
+
+    if (status === 'absent' && !keterangan) {
+      return res.status(400).json({
+        message: "Keterangan wajib diisi jika status 'absent'.",
+      });
+    }
+
+    if (jadwal.approval_status === 'pending') {
+      return res.status(409).json({
+        message: "Sudah ada usulan yang menunggu persetujuan admin.",
+      });
+    }
+
+    jadwal.status_usulan = status;
+    jadwal.keterangan_usulan = keterangan || null;
+    jadwal.approval_status = 'pending';
+    await jadwal.save();
+
+    res.json({
+      message: "Usulan status jadwal piket berhasil diajukan.",
+      data: jadwal,
+    });
+  } catch (error) {
+    console.error("Error ajukan usulan status:", error);
+    res.status(500).json({
+      message: "Gagal mengajukan usulan status.",
+      error: error.message,
+    });
+  }
+};
+
+exports.reviewUsulanStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body;
+    const adminIdFromToken = req.user.id;
+
+    if (!action || !['approve', 'reject'].includes(action)) {
+      return res.status(400).json({
+        message: "Action harus 'approve' atau 'reject'.",
+      });
+    }
+
+    const jadwal = await JadwalPiket.findByPk(id);
+
+    if (!jadwal) {
+      return res.status(404).json({
+        message: "Jadwal piket tidak ditemukan.",
+      });
+    }
+
+    if (jadwal.approval_status !== 'pending') {
+      return res.status(409).json({
+        message: "Tidak ada usulan yang menunggu persetujuan.",
+      });
+    }
+
+    if (action === 'approve') {
+      jadwal.status = jadwal.status_usulan;
+      jadwal.keterangan = jadwal.keterangan_usulan;
+      jadwal.approval_status = 'approved';
+    } else {
+      jadwal.approval_status = 'rejected';
+    }
+
+    jadwal.reviewed_by_admin_id = adminIdFromToken;
+    await jadwal.save();
+
+    res.json({
+      message: `Usulan jadwal piket berhasil di${action === 'approve' ? 'setujui' : 'tolak'}.`,
+      data: jadwal,
+    });
+  } catch (error) {
+    console.error("Error review usulan status:", error);
+    res.status(500).json({
+      message: "Gagal mereview usulan status.",
       error: error.message,
     });
   }
