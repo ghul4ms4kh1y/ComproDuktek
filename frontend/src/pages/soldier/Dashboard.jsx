@@ -19,6 +19,7 @@ import {
   Check,
   Camera,
   ChevronDown,
+  ChevronLeft,
   XCircle,
   CalendarCheck,
   FileText,
@@ -28,7 +29,15 @@ import {
   AlertCircle,
   ChevronRight,
   Save,
+  ShieldCheck,
+  Building2,
+  Plane,
+  GraduationCap,
+  Users,
+  CornerDownRight,
 } from "lucide-react";
+
+const PROKER_PAGE_SIZE = 6;
 
 const StatusBadge = ({ status }) => {
   switch (status) {
@@ -190,6 +199,7 @@ export default function SoldierDashboard() {
   // State Program Kerja
   const [prokers, setProkers] = useState([]);
   const [prokerLoading, setProkerLoading] = useState(false);
+  const [prokerPage, setProkerPage] = useState(1);
 
   // State Piket Calendar
   const [piketRefreshTrigger, setPiketRefreshTrigger] = useState(0);
@@ -409,6 +419,19 @@ export default function SoldierDashboard() {
     fetchLaporan();
   }, [fetchAbsensi, fetchLaporan]);
 
+  // Reset halaman pagination program kerja saat data berubah
+  useEffect(() => {
+    setProkerPage(1);
+  }, [prokers.length]);
+
+  const totalProkerPages = Math.ceil(prokers.length / PROKER_PAGE_SIZE);
+  const prokerPageStart = (prokerPage - 1) * PROKER_PAGE_SIZE + 1;
+  const prokerPageEnd = Math.min(prokerPage * PROKER_PAGE_SIZE, prokers.length);
+  const visibleProkers = prokers.slice(
+    (prokerPage - 1) * PROKER_PAGE_SIZE,
+    prokerPage * PROKER_PAGE_SIZE,
+  );
+
   // Handle Toggle Selesai Proker oleh Soldier
   const handleToggleSelesai = async (proker) => {
     try {
@@ -546,9 +569,14 @@ export default function SoldierDashboard() {
       )}
 
       {/* 1. NAVBAR / HEADER ATAS DENGAN DROPDOWN PROFIL */}
-      <div className="bg-white px-8 py-4 flex justify-between items-center sticky top-0 z-30">
-        <div className="flex items-center gap-2">
-          {/* Bagian kiri kosong atau logo kecil jika diperlukan, di gambar tidak ada logo di kiri, tapi biarkan kosong atau sama */}
+      <div className="bg-white px-4 md:px-6 lg:px-8 py-2.5 flex justify-between items-center sticky top-0 z-30 lg:fixed lg:top-0 lg:left-0 lg:right-0 lg:z-40 border-b border-gray-100">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-dashAccent/10 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-[18px] h-[18px] text-dashAccent" />
+          </div>
+          <span className="text-sm font-medium text-dashNavy">
+            Satlak Dukteksi PUSSIBERAD
+          </span>
         </div>
 
         {/* Dropdown Profil Kanan Atas */}
@@ -618,60 +646,125 @@ export default function SoldierDashboard() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 md:px-6 mt-6 space-y-6">
-        {/* 2. BANNER UTAMA (LOGO TENGAH) */}
-        <div className="bg-[#f4f5fa] rounded-[20px] p-10 text-center relative overflow-hidden">
-          <div className="relative z-10 flex flex-col items-center">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="w-20 h-20 object-contain mb-4"
-            />
-            <h2 className="text-3xl font-bold text-[#353460] tracking-tight mb-2">
-              Satuan Pelaksana Dukungan Teknologi Siber
-            </h2>
-            <div className="flex items-center gap-1.5 text-sm font-medium text-gray-500 mb-2">
-              <span>Portal Manajemen & Penugasan Personel</span>
+      <div className="w-full">
+        {/* ── SIDEBAR KIRI — FIXED PANEL (desktop) ── */}
+        <aside className="mt-5 flex flex-col gap-4 w-full px-4 md:px-6 lg:mt-0 lg:fixed lg:top-[53px] lg:left-0 lg:z-20 lg:h-[calc(100vh-53px)] lg:w-[380px] lg:overflow-y-auto lg:border-r lg:border-gray-100 lg:bg-gray-50/50 lg:px-6 lg:pt-6 lg:pb-5">
+          {/* 2a. Card Profil Ringkas */}
+          <div className="w-full shrink-0 bg-white border border-gray-200 rounded-xl p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
+                {user?.photo ? (
+                  <img
+                    src={getPhotoUrl(user.photo)}
+                    alt="Avatar"
+                    className="w-full h-full object-cover object-[50%_10%]"
+                  />
+                ) : (
+                  <User className="w-6 h-6 text-gray-400" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-base font-semibold text-gray-800 uppercase truncate">
+                  {user?.full_name || user?.username}
+                </h3>
+                <p className="text-sm text-gray-500 mt-0.5 truncate">
+                  {user?.OrgStructure?.rank || user?.OrgStructure?.position
+                    ? `${user?.OrgStructure?.rank || "Pangkat"} | ${user?.OrgStructure?.position || "Jabatan"}`
+                    : "Pangkat belum diisi"}
+                </p>
+              </div>
             </div>
-            <div className="text-[13px] text-gray-400">
-              {todayFormatted} | Sistem Informasi Satlak Dukteksi PUSSIBERAD
-            </div>
-          </div>
-        </div>
-
-        {/* 3. KARTU PROFIL RINGKAS DI BAWAH BANNER */}
-        <div className="flex flex-row items-center gap-5 pt-4 pb-2 px-2">
-          <div className="w-[72px] h-[72px] rounded-full border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
-            {user?.photo ? (
-              <img
-                src={getPhotoUrl(user.photo)}
-                alt="Avatar"
-                className="w-full h-full object-cover object-[50%_10%]"
-              />
-            ) : (
-              <User className="w-8 h-8 text-gray-400" />
-            )}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-gray-800 mb-1 uppercase">
-              {user?.full_name || user?.username}
-            </h3>
-            <p className="text-[13px] text-gray-500 mb-0.5">
-              {user?.OrgStructure?.rank || "Pangkat"} |{" "}
-              {user?.OrgStructure?.position || "Jabatan"}
-            </p>
-            <p className="text-[13px] text-gray-500">
-              Satuan Pelaksana Dukungan Teknologi Siber
+            <p className="text-sm text-gray-400 mt-3">
+              Sat. Dukungan Teknologi Siber
             </p>
           </div>
-        </div>
 
-        {/* 4. BAGIAN UTAMA: PROGRAM KERJA SAYA (JURNAL SAYA) */}
-        <div className="px-2 pt-6">
-          <div className="mb-4">
+          {/* 2b. Card Rekap Absensi Ringkas */}
+          <div className="w-full shrink-0 bg-white border border-gray-200 rounded-xl p-5">
+            <p className="text-sm text-gray-500 font-medium mb-3">
+              Rekap Absensi —{" "}
+              {new Date().toLocaleDateString("id-ID", { month: "long" })}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                {
+                  label: "Hadir",
+                  value: absensiStats.hadir,
+                  bg: "bg-green-50",
+                  text: "text-green-600",
+                },
+                {
+                  label: "Sakit",
+                  value: absensiStats.sakit,
+                  bg: "bg-yellow-50",
+                  text: "text-yellow-600",
+                },
+                {
+                  label: "Izin",
+                  value: absensiStats.izin,
+                  bg: "bg-blue-50",
+                  text: "text-blue-600",
+                },
+                {
+                  label: "Alpa",
+                  value: absensiStats.tk,
+                  bg: "bg-red-50",
+                  text: "text-red-600",
+                },
+              ].map((s) => (
+                <div key={s.label} className={`${s.bg} rounded-lg p-3 text-center`}>
+                  <div className={`text-xl font-bold leading-none ${s.text}`}>
+                    {s.value ?? 0}
+                  </div>
+                  <div className={`text-xs mt-1 ${s.text}`}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 2c. Card Kategori Penugasan Lain */}
+          <div className="w-full flex-1 bg-white border border-gray-200 rounded-xl p-5">
+            <p className="text-sm text-gray-500 font-medium mb-2.5">
+              Kategori Penugasan Lain
+            </p>
+            <div className="space-y-2">
+              {[
+                { label: "Dinas Dalam", key: "dd", icon: Building2 },
+                { label: "Dinas Luar", key: "dl", icon: Plane },
+                { label: "Pendidikan", key: "dik", icon: GraduationCap },
+                { label: "Satgas", key: "satgas", icon: Users },
+                { label: "Bawah Perintah", key: "bp", icon: CornerDownRight },
+              ].map((s) => (
+                <div
+                  key={s.key}
+                  className="flex items-center justify-between gap-2 py-1"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <s.icon className="w-5 h-5 text-gray-400 shrink-0" />
+                    <span className="text-sm text-gray-500 truncate">
+                      {s.label}
+                    </span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-600">
+                    {absensiStats[s.key] ?? 0}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        {/* ── KONTEN UTAMA (KOLOM KANAN) ── */}
+        <main className="mt-4 lg:mt-[53px] lg:pt-6 space-y-6 min-w-0 px-4 md:px-6 lg:ml-[380px] lg:px-6 lg:max-w-[1400px]">
+        {/* 3. BAGIAN UTAMA: PROGRAM KERJA SAYA (JURNAL SAYA) */}
+        <div>
+          <div className="mb-4 flex items-center gap-2">
             <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
               Daftar Program Kerja
             </h2>
+            <span className="text-xs text-gray-400">
+              — {prokers.length} total
+            </span>
           </div>
 
           {prokerLoading ? (
@@ -681,8 +774,9 @@ export default function SoldierDashboard() {
               <p className="text-sm text-gray-500">Belum ada program kerja.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {prokers.map((proker) => (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {visibleProkers.map((proker) => (
                 <div
                   key={proker.id}
                   className="bg-white border border-gray-200 rounded-[12px] p-5 shadow-sm flex flex-col"
@@ -745,12 +839,55 @@ export default function SoldierDashboard() {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+
+              {totalProkerPages > 1 && (
+                <div className="flex items-center justify-between mt-4">
+                  <span className="text-xs text-gray-400">
+                    Menampilkan {prokerPageStart}–{prokerPageEnd} dari{" "}
+                    {prokers.length}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setProkerPage((p) => Math.max(1, p - 1))}
+                      disabled={prokerPage === 1}
+                      className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    {Array.from({ length: totalProkerPages }, (_, i) => i + 1).map(
+                      (p) => (
+                        <button
+                          key={p}
+                          onClick={() => setProkerPage(p)}
+                          className={`w-7 h-7 text-xs font-semibold rounded-lg transition ${
+                            p === prokerPage
+                              ? "bg-dashNavy text-white"
+                              : "border border-gray-200 text-gray-500 hover:bg-gray-50"
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      ),
+                    )}
+                    <button
+                      onClick={() =>
+                        setProkerPage((p) => Math.min(totalProkerPages, p + 1))
+                      }
+                      disabled={prokerPage === totalProkerPages}
+                      className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 
-        {/* ── 5. KALENDER PIKET SAYA ── */}
-        <div className="px-2 pt-6">
+        {/* ── 4. KALENDER PIKET SAYA ── */}
+        <div>
           <div className="mb-4">
             <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
               Kalender Piket Saya
@@ -767,11 +904,11 @@ export default function SoldierDashboard() {
           </div>
         </div>
 
-        {/* ── 6. REKAP ABSENSI SAYA ── */}
-        <div className="px-2 pt-6">
+        {/* ── 5. REKAP ABSENSI — DETAIL ── */}
+        <div>
           <div className="flex items-center justify-between mb-[14px]">
             <h2 className="text-[14.5px] font-bold tracking-[0.02em] uppercase text-[#3C4453] flex items-center gap-2">
-              <CalendarCheck className="w-4 h-4" /> Rekap Absensi Saya
+              <CalendarCheck className="w-4 h-4" /> Rekap Absensi — Detail
             </h2>
             <span className="text-[12px] text-[#767E8C] border border-[#E5E8EF] px-[10px] py-[4px] rounded-full">
               {new Date().toLocaleDateString("id-ID", {
@@ -779,66 +916,6 @@ export default function SoldierDashboard() {
                 year: "numeric",
               })}
             </span>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-green-50 bg-green-50">
-              <div className="text-[34px] font-extrabold text-green-500 leading-none mb-1">
-                {absensiStats.hadir ?? 0}
-              </div>
-              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
-                Hadir
-              </div>
-            </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-yellow-50 bg-yellow-50">
-              <div className="text-[34px] font-extrabold text-yellow-500 leading-none mb-1">
-                {absensiStats.sakit ?? 0}
-              </div>
-              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
-                Sakit
-              </div>
-            </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-blue-50 bg-blue-50">
-              <div className="text-[34px] font-extrabold text-blue-500 leading-none mb-1">
-                {absensiStats.izin ?? 0}
-              </div>
-              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
-                Izin
-              </div>
-            </div>
-            <div className="rounded-[14px] p-5 relative overflow-hidden border border-red-50 bg-red-50">
-              <div className="text-[34px] font-extrabold text-red-500 leading-none mb-1">
-                {absensiStats.tk ?? 0}
-              </div>
-              <div className="text-[13px] font-semibold text-[#4C5261] mt-1">
-                Tanpa Keterangan
-              </div>
-            </div>
-          </div>
-
-          <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-gray-800 mt-[22px] mb-[10px]">
-            Kategori Penugasan Lainnya
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 mb-5">
-            {[
-              { label: "Dinas Dalam", key: "dd" },
-              { label: "Dinas Luar", key: "dl" },
-              { label: "Pendidikan", key: "dik" },
-              { label: "Satgas", key: "satgas" },
-              { label: "Bawah Perintah", key: "bp" },
-            ].map((s) => (
-              <div
-                key={s.key}
-                className="bg-white border border-[#E5E8EF] rounded-[10px] p-[14px_10px] text-center"
-              >
-                <div className="font-bold text-[18px] text-gray-500 leading-none">
-                  {absensiStats[s.key] ?? 0}
-                </div>
-                <div className="text-[12px] text-gray-500 mt-1 leading-[1.3]">
-                  {s.label}
-                </div>
-              </div>
-            ))}
           </div>
 
           {/* Table */}
@@ -914,10 +991,12 @@ export default function SoldierDashboard() {
                           key={a.id}
                           className="border-b border-gray-50 hover:bg-gray-50/50 transition"
                         >
-                          <td className="px-4 py-3 font-medium">{a.tanggal}</td>
+                          <td className="px-4 py-3 font-medium font-mono text-xs text-dashNavy">
+                            {a.tanggal}
+                          </td>
                           <td className="px-4 py-3 text-center">
                             <span
-                              className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusColors[a.status] ?? "bg-gray-50 text-gray-500"}`}
+                              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${statusColors[a.status] ?? "bg-gray-50 text-gray-500"}`}
                             >
                               {statusLabels[a.status] ?? a.status}
                             </span>
@@ -925,7 +1004,7 @@ export default function SoldierDashboard() {
                           <td className="px-4 py-3 text-center">
                             {a.sanggahan_status !== "none" ? (
                               <span
-                                className={`px-2 py-0.5 rounded-full text-xs font-semibold ${sanggahanColors[a.sanggahan_status]}`}
+                                className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${sanggahanColors[a.sanggahan_status]}`}
                               >
                                 {sanggahanLabels[a.sanggahan_status]}
                               </span>
@@ -1050,8 +1129,8 @@ export default function SoldierDashboard() {
           )}
         </div>
 
-        {/* ── 7. LAPORAN AKTIVITAS HARIAN ── */}
-        <div className="px-2 pt-6 pb-4">
+        {/* ── 6. LAPORAN AKTIVITAS HARIAN ── */}
+        <div>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
               <FileText className="w-4 h-4" /> Laporan Aktivitas Harian
@@ -1323,6 +1402,7 @@ export default function SoldierDashboard() {
             </div>
           )}
         </div>
+        </main>
       </div>
 
       {/* PIKET UPDATE MODAL */}

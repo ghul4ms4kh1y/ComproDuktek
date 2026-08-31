@@ -31,6 +31,19 @@ const isWeekend = (date) => {
   return day === 0 || day === 6;
 };
 
+const RING_STATUS_CLASS = {
+  scheduled: 'ring-blue-500',
+  completed: 'ring-green-500',
+  absent: 'ring-red-500',
+};
+
+const getMyPiketRingColor = (schedule, isSoldier, currentUser) => {
+  if (!isSoldier || !currentUser || !schedule) return '';
+  if (schedule.soldier_id !== currentUser.id) return '';
+  if (schedule.approval_status === 'pending') return 'ring-orange-500';
+  return RING_STATUS_CLASS[schedule.status] || '';
+};
+
 export default function MiniCalendar({ isSoldier = false, currentUser = null, onUpdateClick = null, refreshTrigger = 0 }) {
   const today = new Date();
   const year = today.getFullYear();
@@ -122,24 +135,35 @@ export default function MiniCalendar({ isSoldier = false, currentUser = null, on
 
           const hasSchedule = d && schedules[dateStr];
           const isSelected = d && selectedDate === dateStr;
+          const myRingColor = getMyPiketRingColor(schedules[dateStr], isSoldier, currentUser);
+
+          const baseTextClass = isWeekendDay
+            ? 'text-dashAccent/70 hover:bg-dashAccent/10'
+            : 'text-dashNavy/75 hover:bg-dashNavy/5';
+
+          let dayClasses;
+          if (isToday) {
+            dayClasses = 'bg-dashAccent text-white font-semibold';
+            if (myRingColor) {
+              dayClasses += ` ring-2 ring-offset-2 ${myRingColor}`;
+            }
+          } else if (myRingColor) {
+            dayClasses = `ring-2 ${myRingColor} ${isSelected ? 'bg-dashAccent/20' : baseTextClass}`;
+          } else if (isSelected) {
+            dayClasses = 'ring-2 ring-dashAccent bg-dashAccent/20';
+          } else {
+            dayClasses = baseTextClass;
+          }
 
           return (
             <div key={i} className="flex items-center justify-center py-1">
               {d && (
                 <button
                   onClick={() => handleDateClick(d)}
-                  className={`w-7 h-7 flex items-center justify-center rounded-full text-[13px] transition-colors relative ${
-                    isToday
-                      ? 'bg-dashAccent text-white font-semibold'
-                      : isSelected
-                      ? 'ring-2 ring-dashAccent bg-dashAccent/20'
-                      : isWeekendDay
-                      ? 'text-dashAccent/70 hover:bg-dashAccent/10'
-                      : 'text-dashNavy/75 hover:bg-dashNavy/5'
-                  }`}
+                  className={`w-7 h-7 flex items-center justify-center rounded-full text-[13px] transition-colors relative ${dayClasses}`}
                 >
                   {d}
-                  {hasSchedule && !isToday && (
+                  {hasSchedule && !isToday && !myRingColor && (
                     <span className="absolute bottom-0.5 w-1 h-1 bg-dashAccent rounded-full"></span>
                   )}
                 </button>
@@ -148,6 +172,22 @@ export default function MiniCalendar({ isSoldier = false, currentUser = null, on
           );
         })}
       </div>
+
+      {isSoldier && (
+        <div className="mt-3 pt-3 border-t border-dashNavy/10 space-y-1">
+          {[
+            { label: 'Terjadwal', color: 'ring-blue-500' },
+            { label: 'Menunggu Persetujuan', color: 'ring-orange-500' },
+            { label: 'Selesai', color: 'ring-green-500' },
+            { label: 'Tidak Hadir', color: 'ring-red-500' },
+          ].map((item) => (
+            <div key={item.label} className="flex items-center gap-1.5">
+              <span className={`w-2 h-2 rounded-full ring-2 ${item.color} shrink-0`}></span>
+              <span className="text-[10px] text-dashNavy/60">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {selectedInfo && (
         <div className="mt-4 p-3 bg-dashAccent/5 border border-dashAccent/20 rounded-lg text-sm">
