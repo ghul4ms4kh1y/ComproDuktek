@@ -16,7 +16,7 @@ export default function OrgNodeCard({ node, onEdit, onEmpty, childrenNodes }) {
             </div>
           )}
           <div>
-            <h3 className="text-[15px] font-bold text-dashNavy uppercase">
+            <h3 className="text-sm font-bold text-dashNavy uppercase">
               {node.position}
             </h3>
             <p className="text-sm text-gray-600 mt-0.5">

@@ -35,7 +35,6 @@ const widgets = [
   },
 ];
 
-// Kelas warna per tint — hanya memakai 4 warna palette dashboard.
 const TINT_CLASSES = {
   navy: { chip: "bg-dashNavy/5", icon: "text-dashNavy" },
   accent: { chip: "bg-dashAccent/10", icon: "text-dashAccent" },
@@ -43,11 +42,16 @@ const TINT_CLASSES = {
   mint: { chip: "bg-dashMint/60", icon: "text-dashNavy" },
 };
 
-// merah = pucuk pimpinan, oranye = pemimpin unit, teal = staf
+const CHART_COLORS = {
+  dashNavy: "#293681",
+  dashAccent: "#4274D9",
+  dashSky: "#95CCDD",
+};
+
 const MEMBER_CATEGORIES = [
-  { key: "merah", label: "Pucuk Pimpinan", color: "#293681" },
-  { key: "oranye", label: "Pemimpin Unit", color: "#4274D9" },
-  { key: "teal", label: "Staf", color: "#95CCDD" },
+  { key: "merah", label: "Pucuk Pimpinan", color: CHART_COLORS.dashNavy },
+  { key: "oranye", label: "Pemimpin Unit", color: CHART_COLORS.dashAccent },
+  { key: "teal", label: "Staf", color: CHART_COLORS.dashSky },
 ];
 
 export default function Dashboard() {
@@ -86,7 +90,7 @@ export default function Dashboard() {
 
   return (
     <div className="font-dash">
-      <h1 className="text-[20px] font-semibold text-dashNavy mb-6">
+      <h1 className="text-xl font-semibold text-dashNavy mb-6">
         Ringkasan Dashboard
       </h1>
 

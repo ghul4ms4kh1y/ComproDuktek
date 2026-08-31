@@ -14,7 +14,7 @@ export default function ConfirmModal({ open, title, onCancel, onConfirm, loading
         <div className="w-9 h-9 rounded-md bg-red-50 flex items-center justify-center mb-3">
           <AlertTriangle className="w-[18px] h-[18px] text-red-600" />
         </div>
-        <h3 id="confirm-modal-title" className="text-[18px] font-semibold text-dashNavy mb-2">{headerTitle}</h3>
+        <h3 id="confirm-modal-title" className="text-lg font-semibold text-dashNavy mb-2">{headerTitle}</h3>
         <p id="confirm-modal-desc" className="text-sm text-dashNavy/70 mb-6">{title}</p>
         <div className="flex justify-end gap-3">
           <button onClick={onCancel} className="px-4 py-2 text-sm rounded-md border border-gray-200 text-dashNavy hover:bg-gray-50 transition">

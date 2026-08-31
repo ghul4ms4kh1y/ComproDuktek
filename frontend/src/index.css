@@ -11,6 +11,15 @@ body {
   font-family: 'Manrope', sans-serif !important;
 }
 
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #4274D9;
+  outline-offset: 2px;
+}
+
 .btn-primary {
   @apply bg-navy text-white px-5 py-2.5 rounded shadow-md font-medium hover:bg-steel hover:shadow-lg transition-all duration-300;
 }

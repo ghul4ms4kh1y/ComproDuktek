@@ -28,8 +28,7 @@ export default {
       },
       fontFamily: {
         sans: ['Manrope', 'sans-serif'],
-        // Font khusus Dashboard Admin (design.md pakai Inter)
-        dash: ['Inter', 'sans-serif'],
+        dash: ['Manrope', 'sans-serif'],
       },
       boxShadow: {
         // Shadow khusus Dashboard Admin, nilai persis dari design.md

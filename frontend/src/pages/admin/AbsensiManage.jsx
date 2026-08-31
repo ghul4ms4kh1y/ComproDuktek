@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import api from "../../services/api";
+import { formatDate } from "../../lib/dateUtils";
 import { useToast } from "../../hooks/useToast";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
@@ -106,12 +107,12 @@ function EditModal({ record, onClose, onSaved, showToast }) {
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4 font-dash">
       <div className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-md p-6">
-        <h3 className="text-[18px] font-semibold text-dashNavy mb-1">
+        <h3 className="text-lg font-semibold text-dashNavy mb-1">
           Edit Absensi
         </h3>
         <p className="text-sm text-dashNavy/60 mb-5">
           {record.Soldier?.full_name ?? record.Soldier?.username} —{" "}
-          {record.tanggal}
+          {formatDate(record.tanggal)}
         </p>
 
         <label className="block text-xs font-semibold text-dashNavy/70 uppercase mb-1">
@@ -187,12 +188,12 @@ function ReviewModal({ record, onClose, onSaved, showToast }) {
         <div className="w-9 h-9 rounded-md bg-orange-50 flex items-center justify-center mb-3">
           <AlertCircle className="w-[18px] h-[18px] text-orange-500" />
         </div>
-        <h3 className="text-[18px] font-semibold text-dashNavy mb-1">
+        <h3 className="text-lg font-semibold text-dashNavy mb-1">
           Tinjau Sanggahan
         </h3>
         <p className="text-sm text-dashNavy/60 mb-4">
           {record.Soldier?.full_name ?? record.Soldier?.username} —{" "}
-          {record.tanggal}
+          {formatDate(record.tanggal)}
         </p>
 
         <div className="bg-gray-50 border border-gray-100 rounded-md p-3 mb-2 text-sm space-y-1">
@@ -630,7 +631,7 @@ export default function AbsensiManage() {
                     <td className="px-4 py-3 font-medium">
                       {a.Soldier?.full_name ?? a.Soldier?.username ?? "—"}
                     </td>
-                    <td className="px-4 py-3 text-dashNavy/70">{a.tanggal}</td>
+                    <td className="px-4 py-3 text-dashNavy/70 tabular-nums">{formatDate(a.tanggal)}</td>
                     <td className="px-4 py-3 text-center">
                       <StatusBadge status={a.status} />
                     </td>

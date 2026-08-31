@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CalendarCheck, RefreshCw, RotateCcw } from "lucide-react";
 import api from "../../services/api";
+import { formatDate } from "../../lib/dateUtils";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import FormModal from "../../components/admin/FormModal";
 import Toast from "../../components/admin/Toast";
@@ -21,7 +22,6 @@ const getToday = () => {
   const today = new Date();
   return { bulan: today.getMonth() + 1, tahun: today.getFullYear(), tanggal: formatLocalDate(today) };
 };
-const formatDate = (date) => new Date(`${date}T00:00:00`).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
 const getDayName = (date) => HARI[new Date(`${date}T00:00:00`).getDay()];
 const getWorkdaysCount = (bulan, tahun) => {
   const totalDays = new Date(tahun, bulan, 0).getDate();

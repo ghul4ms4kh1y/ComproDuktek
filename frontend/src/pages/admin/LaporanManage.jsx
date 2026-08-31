@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import api from "../../services/api";
+import { formatDate } from "../../lib/dateUtils";
 import { useToast } from "../../hooks/useToast";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
@@ -239,7 +240,7 @@ export default function LaporanManage() {
                     </p>
                     <p className="text-xs text-dashNavy/50 flex items-center gap-1 mt-0.5">
                       <Calendar className="w-3 h-3" />
-                      {l.tanggal}
+                      {formatDate(l.tanggal)}
                       <span className="mx-1">·</span>
                       <Users className="w-3 h-3" />
                       {l.LaporanHarianSesis?.length ?? 0} sesi
@@ -313,7 +314,7 @@ export default function LaporanManage() {
       <ConfirmModal
         open={!!deleteTarget}
         headerTitle="Hapus Laporan"
-        title={`Hapus seluruh laporan milik "${deleteTarget?.Soldier?.full_name ?? deleteTarget?.Soldier?.username}" pada ${deleteTarget?.tanggal}? Semua sesi akan ikut terhapus.`}
+        title={`Hapus seluruh laporan milik "${deleteTarget?.Soldier?.full_name ?? deleteTarget?.Soldier?.username}" pada ${formatDate(deleteTarget?.tanggal)}? Semua sesi akan ikut terhapus.`}
         confirmText="Hapus Permanen"
         loading={deleteLoading}
         onCancel={() => setDeleteTarget(null)}
