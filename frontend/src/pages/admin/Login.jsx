@@ -35,10 +35,19 @@ export default function Login() {
   return (
     <main className="min-h-screen bg-white font-dash flex items-center justify-center px-4">
       <div className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-sm p-8">
-        <div className="w-11 h-11 rounded-lg bg-dashNavy flex items-center justify-center mx-auto mb-4">
-          <ShieldCheck className="w-6 h-6 text-white" />
+        <div className="w-11 h-11 flex items-center justify-center mx-auto mb-4">
+          <img
+            src="/logo.png"
+            alt="Logo Dukteksi"
+            width="40"
+            height="40"
+            className="w-10 h-10 rounded-md object-contain shrink-0"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
         </div>
-        <h1 className="text-[20px] font-semibold text-dashNavy text-center mb-1">
+        <h1 className="text-xl font-semibold text-dashNavy text-center mb-1">
           Login Portal
         </h1>
         <p className="text-xs text-dashNavy/60 text-center mb-6">

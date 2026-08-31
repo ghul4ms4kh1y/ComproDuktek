@@ -70,7 +70,7 @@ const ProgramCard = ({ item, onEdit, onDelete }) => (
   >
     <div className="flex-1">
       <div className="flex items-center gap-3 mb-2">
-        <h3 className="text-[16px] font-bold text-dashNavy uppercase flex items-center gap-2">
+        <h3 className="text-base font-bold text-dashNavy uppercase flex items-center gap-2">
           {item.program}
           {item.is_selesai && (
             <CheckCircle2

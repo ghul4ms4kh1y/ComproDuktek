@@ -221,7 +221,7 @@ export default function Inbox() {
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4" onClick={() => setDetail(null)}>
           <div role="dialog" aria-modal="true" aria-labelledby="inbox-detail-title" className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 id="inbox-detail-title" className="text-[18px] font-semibold text-dashNavy">Detail Pesan</h3>
+              <h3 id="inbox-detail-title" className="text-lg font-semibold text-dashNavy">Detail Pesan</h3>
               <button onClick={() => setDetail(null)} className="text-dashNavy/50 hover:text-dashNavy transition">
                 <X className="w-5 h-5" />
               </button>

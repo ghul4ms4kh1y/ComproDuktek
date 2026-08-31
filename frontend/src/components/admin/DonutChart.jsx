@@ -55,7 +55,7 @@ export default function DonutChart({ segments, total, centerLabel = 'Anggota' })
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-2xl font-bold text-dashNavy">{total}</span>
-          <span className="text-[11px] text-dashNavy/50">{centerLabel}</span>
+          <span className="text-xs text-dashNavy/50">{centerLabel}</span>
         </div>
       </div>
 

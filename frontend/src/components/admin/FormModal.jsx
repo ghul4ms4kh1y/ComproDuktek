@@ -46,7 +46,7 @@ export default function FormModal({
         aria-labelledby="form-modal-title"
         className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-3xl p-6"
       >
-        <h3 id="form-modal-title" className="text-[18px] font-semibold text-dashNavy mb-5">
+        <h3 id="form-modal-title" className="text-lg font-semibold text-dashNavy mb-5">
           {title}
         </h3>
 
