@@ -87,20 +87,24 @@ function EditModal({ record, onClose, onSaved, showToast }) {
     if (record) {
       setStatus(record.status);
       setKeterangan(record.keterangan ?? "");
+      setLoading(false);
     }
   }, [record]);
 
   if (!record) return null;
 
   const handleSave = async () => {
+    const optimisticRecord = { ...record, status, keterangan };
+    setLoading(true);
+    onSaved(optimisticRecord);
+    onClose();
+
     try {
-      setLoading(true);
-      await api.put(`/absensi/${record.id}`, { status, keterangan });
-      onSaved();
-      onClose();
+      const res = await api.put(`/absensi/${record.id}`, { status, keterangan });
+      onSaved(res.data?.absensi ?? optimisticRecord, false);
     } catch (e) {
+      onSaved(record, false);
       showToast(e.response?.data?.message ?? "Gagal menyimpan.", "error");
-      setLoading(false);
     }
   };
 
@@ -167,6 +171,10 @@ function EditModal({ record, onClose, onSaved, showToast }) {
 // ── ReviewModal ──────────────────────────────────────────────────────────────
 function ReviewModal({ record, onClose, onSaved, showToast }) {
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (record) setLoading(false);
+  }, [record]);
 
   if (!record) return null;
 
@@ -287,10 +295,20 @@ export default function AbsensiManage() {
     fetchSanggahan();
   }, [fetchAbsensi, fetchSanggahan]);
 
-  const handleSaved = () => {
-    fetchAbsensi();
+  const handleSaved = (savedAbsensi, notify = true) => {
+    if (savedAbsensi) {
+      setAbsensiList((list) =>
+        list.map((item) =>
+          item.id === savedAbsensi.id
+            ? { ...item, ...savedAbsensi, Soldier: item.Soldier, Admin: item.Admin }
+            : item,
+        ),
+      );
+    } else {
+      fetchAbsensi();
+    }
     fetchSanggahan();
-    showToast("Berhasil disimpan.");
+    if (notify) showToast("Berhasil disimpan.");
   };
 
   const metrics = useMemo(() => {
