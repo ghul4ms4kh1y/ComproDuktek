@@ -6,6 +6,9 @@ const { requireAuth, requireRole } = require('../middleware/auth');
 // Get all attendance for a date (lazy-generates if not exist). Admin sees all, Soldier sees own.
 router.get('/', requireAuth, requireRole('admin', 'soldier'), absensiController.getAbsensiList);
 
+// Soldier: get own attendance for a full month (lazy-generates 'belum_diisi' for self only)
+router.get('/monthly', requireAuth, requireRole('soldier'), absensiController.getAbsensiMonthly);
+
 // Get attendance stats for dashboard
 router.get('/stats/:soldierId?', requireAuth, requireRole('admin', 'soldier'), absensiController.getAbsensiStats);
 

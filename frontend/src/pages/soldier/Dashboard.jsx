@@ -14,6 +14,7 @@ import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import MiniCalendar from "../../components/common/MiniCalendar";
 import PiketUpdateModal from "../../components/soldier/PiketUpdateModal";
+import RincianAbsensiModal from "../../components/soldier/RincianAbsensiModal";
 import {
   User,
   Lock,
@@ -35,6 +36,7 @@ import {
   GraduationCap,
   Users,
   CornerDownRight,
+  ClipboardList,
 } from "lucide-react";
 
 const PROKER_PAGE_SIZE = 6;
@@ -272,6 +274,7 @@ export default function SoldierDashboard() {
   const [absensiLoading, setAbsensiLoading] = useState(false);
   const [sanggahanForm, setSanggahanForm] = useState(null); // { id, status_usulan, keterangan_sanggahan }
   const [sanggahanLoading, setSanggahanLoading] = useState(false);
+  const [showRincianAbsensiModal, setShowRincianAbsensiModal] = useState(false);
   const fetchAbsensi = useCallback(async () => {
     try {
       setAbsensiLoading(true);
@@ -763,6 +766,19 @@ export default function SoldierDashboard() {
                   </span>
                 </div>
               ))}
+            </div>
+            <div className="mt-2.5 pt-2.5 border-t border-gray-100">
+              <button
+                id="lihat-rincian-absensi"
+                onClick={() => setShowRincianAbsensiModal(true)}
+                className="w-full flex items-center justify-between gap-2 border border-dashNavy/20 text-dashNavy text-xs font-semibold rounded-lg py-2 px-3 hover:bg-dashNavy/5 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <ClipboardList className="w-4 h-4" />
+                  Lihat Rincian Absensi
+                </span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </aside>
@@ -1606,6 +1622,15 @@ export default function SoldierDashboard() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* --- MODAL RINCIAN ABSENSI BULANAN --- */}
+      {showRincianAbsensiModal && (
+        <RincianAbsensiModal
+          onClose={() => setShowRincianAbsensiModal(false)}
+          showToast={showToast}
+          onSanggahanSubmitted={fetchAbsensi}
+        />
       )}
     </div>
   );
