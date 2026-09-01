@@ -90,6 +90,94 @@ const absensiController = {
     }
   },
 
+  // Get soldier's own attendance for a full month (lazy-generates 'belum_diisi' for self only)
+  getAbsensiMonthly: async (req, res) => {
+    try {
+      // Endpoint ini khusus soldier (view personal)
+      if (!req.user || req.user.role !== "soldier") {
+        return res
+          .status(403)
+          .json({ message: "Akses ditolak. Endpoint ini khusus untuk prajurit." });
+      }
+
+      const now = moment.tz("Asia/Jakarta");
+      const bulan = parseInt(req.query.bulan, 10) || now.month() + 1;
+      const tahun = parseInt(req.query.tahun, 10) || now.year();
+
+      // Validasi masa depan: tidak ada gunanya menampilkan absensi masa depan
+      if (
+        tahun > now.year() ||
+        (tahun === now.year() && bulan > now.month() + 1)
+      ) {
+        return res
+          .status(400)
+          .json({
+            message:
+              "Tidak dapat menampilkan absensi untuk bulan di masa depan.",
+          });
+      }
+
+      // Awal bulan yang diminta (Asia/Jakarta)
+      const startOfMonth = moment.tz(
+        `${tahun}-${String(bulan).padStart(2, "0")}-01`,
+        "Asia/Jakarta",
+      );
+      const todayStr = getLocalDateString();
+
+      // Akhir rentang: hari terakhir bulan jika bulan lampau, hari ini jika bulan berjalan
+      const isCurrentMonth =
+        tahun === now.year() && bulan === now.month() + 1;
+      const endStr = isCurrentMonth
+        ? todayStr
+        : startOfMonth.clone().endOf("month").format("YYYY-MM-DD");
+      const startStr = startOfMonth.format("YYYY-MM-DD");
+
+      // Lazy-generation: hanya untuk soldier yang request ini sendiri,
+      // dan jangan pernah generate tanggal masa depan
+      const absensiData = [];
+      let cursor = startOfMonth.clone();
+      while (cursor.format("YYYY-MM-DD") <= endStr) {
+        absensiData.push({
+          soldier_id: req.user.id,
+          tanggal: cursor.format("YYYY-MM-DD"),
+          status: "belum_diisi",
+        });
+        cursor.add(1, "days");
+      }
+
+      if (absensiData.length > 0) {
+        await Absensi.bulkCreate(absensiData, { ignoreDuplicates: true });
+      }
+
+      const absensiList = await Absensi.findAll({
+        where: {
+          soldier_id: req.user.id,
+          tanggal: { [Op.between]: [startStr, endStr] },
+        },
+        attributes: [
+          "id",
+          "tanggal",
+          "status",
+          "keterangan",
+          "sanggahan_status",
+          "status_usulan",
+          "keterangan_sanggahan",
+        ],
+        order: [["tanggal", "ASC"]],
+      });
+
+      res.status(200).json(absensiList);
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({
+          message: "Terjadi kesalahan pada server",
+          error: error.message,
+        });
+    }
+  },
+
   // Admin directly updates an attendance record
   updateAbsensi: async (req, res) => {
     try {
