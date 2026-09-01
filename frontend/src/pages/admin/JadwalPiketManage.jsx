@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarCheck, RefreshCw, RotateCcw } from "lucide-react";
+import { CalendarCheck, RefreshCw, RotateCcw, AlertCircle } from "lucide-react";
 import api from "../../services/api";
 import { formatDate } from "../../lib/dateUtils";
 import ConfirmModal from "../../components/admin/ConfirmModal";
@@ -79,20 +79,22 @@ export default function JadwalPiketManage() {
   };
 
   const fetchPendingItems = async () => {
-    setLoading(true);
     try {
       const res = await api.get("/jadwal-piket", { params: { approval_status: "pending", limit: 100 } });
       setPendingItems(res.data.data || []);
     } catch (error) {
-      showToast(error.response?.data?.message || "Gagal memuat usulan pending.", "error");
-    } finally {
-      setLoading(false);
+      // silent
     }
   };
 
   useEffect(() => {
-    activeTab === "jadwal" ? fetchData() : fetchPendingItems();
+    if (activeTab === "jadwal") fetchData();
+    else fetchPendingItems();
   }, [bulan, tahun, activeTab]);
+
+  useEffect(() => {
+    fetchPendingItems();
+  }, []);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -167,9 +169,22 @@ export default function JadwalPiketManage() {
         subtitle="Kelola jadwal piket hari kerja Satlak Duktek."
       />
 
-      <div className="flex gap-2 border-b border-gray-200">
-        {[{ key: "jadwal", label: "Jadwal Piket" }, { key: "usulan", label: "Usulan Piket Pending" }].map((tab) => (
-          <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`px-4 py-2 text-sm font-semibold border-b-2 transition ${activeTab === tab.key ? "border-dashAccent text-dashAccent" : "border-transparent text-dashNavy/50 hover:text-dashNavy"}`}>{tab.label}</button>
+      <div className="flex gap-1 mb-6 border-b border-gray-200">
+        {[
+          { key: "jadwal", label: "Jadwal Piket", icon: CalendarCheck },
+          { key: "usulan", label: "Usulan Piket Pending", icon: AlertCircle },
+        ].map((tab) => (
+          <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`px-4 py-2 text-sm font-semibold rounded-t transition ${activeTab === tab.key ? "text-dashAccent border-b-2 border-dashAccent" : "text-dashNavy/50 hover:text-dashNavy"}`}>
+            <span className="flex items-center gap-2">
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+              {tab.key === "usulan" && pendingItems.length > 0 && (
+                <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                  {pendingItems.length}
+                </span>
+              )}
+            </span>
+          </button>
         ))}
       </div>
 

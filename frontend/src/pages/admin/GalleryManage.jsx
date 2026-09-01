@@ -16,7 +16,7 @@ const columns = [
     ),
   },
   { key: 'description', label: 'Deskripsi' },
-  { key: 'gallery_date', label: 'Tanggal' },
+  { key: 'gallery_date', label: 'Tanggal', render: (item) => formatDate(item.gallery_date) },
 ];
 
 const fields = [

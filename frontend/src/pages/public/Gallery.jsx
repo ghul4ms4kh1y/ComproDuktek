@@ -13,6 +13,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import RevealSection from "../../components/common/RevealSection";
+import { formatDate } from "../../lib/dateUtils";
 
 const getResponsiveGridClass = (index, totalItems) => {
   if (totalItems < 3) return "col-span-1 row-span-1";
@@ -46,7 +47,7 @@ export default function Gallery() {
           id: item.id || index + 1,
           image: item.image,
           description: item.description || "Dokumentasi Kegiatan Satuan",
-          gallery_date: item.gallery_date || "",
+          gallery_date: item.gallery_date ? formatDate(item.gallery_date) : "",
         }));
 
         setPhotos(mappedData);
