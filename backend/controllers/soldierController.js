@@ -1,9 +1,9 @@
 const bcrypt = require("bcryptjs");
 const { Soldier, OrgStructure } = require("../models");
+const { isEligibleRank } = require("../utils/getEligibleSoldiers");
 
 // === UNTUK SOLDIER (USER BIASA) ===
 
-// Di soldierController.js (fungsi updateProfile)
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -63,11 +63,25 @@ exports.updateProfile = async (req, res) => {
 // Mendapatkan semua anggota (Soldier) beserta jabatannya
 exports.getAllSoldiers = async (req, res) => {
   try {
+    const { eligible } = req.query;
     const soldiers = await Soldier.findAll({
-      include: [{ model: OrgStructure, attributes: ["position", "display_order"] }],
-      attributes: { exclude: ["password"] }, // Jangan kirim password
+      include: [
+        {
+          model: OrgStructure,
+          attributes: ["position", "rank", "display_order"],
+        },
+      ],
+      attributes: { exclude: ["password"] },
     });
-    res.json(soldiers);
+    const data =
+      eligible === "piket"
+        ? soldiers.filter(
+            (soldier) =>
+              soldier.status === "aktif" &&
+              isEligibleRank(soldier.OrgStructure?.rank),
+          )
+        : soldiers;
+    res.json(data);
   } catch (err) {
     res
       .status(500)
@@ -79,7 +93,7 @@ exports.getAllSoldiers = async (req, res) => {
 exports.getSoldierById = async (req, res) => {
   try {
     const soldier = await Soldier.findByPk(req.params.id, {
-      include: [{ model: OrgStructure, attributes: ["position"] }],
+      include: [{ model: OrgStructure, attributes: ["position", "rank"] }],
       attributes: { exclude: ["password"] },
     });
     if (!soldier)
@@ -96,7 +110,7 @@ exports.getSoldierById = async (req, res) => {
 exports.updateSoldier = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, full_name, password } = req.body;
+    const { username, full_name, password, status } = req.body;
 
     const soldier = await Soldier.findByPk(id);
     if (!soldier) {
@@ -116,6 +130,12 @@ exports.updateSoldier = async (req, res) => {
     }
     if (password) {
       soldier.password = await bcrypt.hash(password, 10);
+    }
+    if (status) {
+      if (!["aktif", "nonaktif"].includes(status)) {
+        return res.status(400).json({ message: "Status anggota tidak valid" });
+      }
+      soldier.status = status;
     }
 
     await soldier.save();

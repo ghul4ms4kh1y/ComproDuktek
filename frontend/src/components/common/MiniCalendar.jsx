@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../services/api';
+import { formatDate } from '../../lib/dateUtils';
 
 const HARI = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 const BULAN = [
@@ -40,6 +41,7 @@ const RING_STATUS_CLASS = {
 const getMyPiketRingColor = (schedule, isSoldier, currentUser) => {
   if (!isSoldier || !currentUser || !schedule) return '';
   if (schedule.soldier_id !== currentUser.id) return '';
+  if (schedule.swap_approval_status === 'pending') return 'ring-amber-500';
   if (schedule.approval_status === 'pending') return 'ring-amber-500';
   return RING_STATUS_CLASS[schedule.status] || '';
 };
@@ -94,7 +96,8 @@ export default function MiniCalendar({ isSoldier = false, currentUser = null, on
     const schedule = schedules[dateStr];
 
     setSelectedDate(dateStr);
-    if (weekend) {
+
+    if (weekend && !schedule) {
       setSelectedInfo({ type: 'weekend', message: 'Weekend - Tidak Ada Piket' });
     } else if (schedule) {
       setSelectedInfo({
@@ -102,6 +105,9 @@ export default function MiniCalendar({ isSoldier = false, currentUser = null, on
         soldier: schedule.Soldier?.full_name || schedule.Soldier?.username || 'Tidak diketahui',
         status: schedule.status,
         approval_status: schedule.approval_status,
+        swap_approval_status: schedule.swap_approval_status,
+        swap_with: schedule.SwapWithSchedule,
+        swap_reason: schedule.swap_reason,
         schedule,
       });
     } else {
@@ -111,7 +117,7 @@ export default function MiniCalendar({ isSoldier = false, currentUser = null, on
 
   const getApprovalBadge = (approvalStatus) => {
     const badges = {
-      pending: { text: 'Menunggu', color: 'bg-amber-50 text-amber-600 border-amber-200' },
+      pending: { text: 'Menunggu Persetujuan', color: 'bg-amber-50 text-amber-600 border-amber-200' },
       approved: { text: 'Disetujui', color: 'bg-green-50 text-green-600 border-green-200' },
       rejected: { text: 'Ditolak', color: 'bg-red-50 text-red-600 border-red-200' },
       none: { text: '', color: '' },
@@ -234,24 +240,48 @@ export default function MiniCalendar({ isSoldier = false, currentUser = null, on
               <p className="text-xs text-dashNavy/60 mt-1">
                 Status: {selectedInfo.status === 'scheduled' ? 'Terjadwal' : selectedInfo.status === 'completed' ? 'Selesai' : 'Tidak Hadir'}
               </p>
-              {selectedInfo.approval_status && selectedInfo.approval_status !== 'none' && (
+
+              {/* Detail Usulan Tukar Jadwal jika ada */}
+              {selectedInfo.swap_approval_status === 'pending' ? (
+                <div className="mt-2.5 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-xs">
+                  <div className="flex items-center gap-1.5 font-semibold text-amber-800">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                    <span>Usulan Tukar Menunggu Persetujuan Admin</span>
+                  </div>
+                  <p className="text-amber-700 mt-1">
+                    Ditukar dengan: <span className="font-semibold">{selectedInfo.swap_with?.Soldier?.full_name || selectedInfo.swap_with?.Soldier?.username || 'Anggota lain'}</span>
+                    {selectedInfo.swap_with?.tanggal_piket && (
+                      <span className="font-medium text-amber-800"> (Piket: {formatDate(selectedInfo.swap_with.tanggal_piket)})</span>
+                    )}
+                  </p>
+                  {selectedInfo.swap_reason && (
+                    <p className="text-amber-600 mt-1 italic">
+                      Alasan: &ldquo;{selectedInfo.swap_reason}&rdquo;
+                    </p>
+                  )}
+                </div>
+              ) : selectedInfo.approval_status && selectedInfo.approval_status !== 'none' ? (
                 <div className="mt-2">
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${getApprovalBadge(selectedInfo.approval_status).color}`}>
                     {getApprovalBadge(selectedInfo.approval_status).text}
                   </span>
                 </div>
-              )}
+              ) : null}
+
+              {/* Tombol Update Status (hanya jika milik prajurit login & tidak ada pending usulan status atau pending tukar) */}
               {isSoldier && currentUser && selectedInfo.schedule &&
                 selectedInfo.schedule.soldier_id === currentUser.id &&
-                selectedInfo.approval_status !== 'pending' && onUpdateClick && (
-                <button
-                  type="button"
-                  onClick={() => onUpdateClick(selectedInfo.schedule)}
-                  className="mt-3 w-full px-3 py-2 text-xs font-semibold bg-dashNavy text-white rounded-lg hover:bg-dashNavy/90 transition"
-                >
-                  Update Status
-                </button>
-              )}
+                selectedInfo.approval_status !== 'pending' &&
+                selectedInfo.schedule.swap_approval_status !== 'pending' &&
+                onUpdateClick && (
+                  <button
+                    type="button"
+                    onClick={() => onUpdateClick(selectedInfo.schedule)}
+                    className="mt-3 w-full px-3 py-2 text-xs font-semibold bg-dashNavy text-white rounded-lg hover:bg-dashNavy/90 transition"
+                  >
+                    Update Status / Tukar Jadwal
+                  </button>
+                )}
             </div>
           )}
           {selectedInfo.type === 'empty' && (

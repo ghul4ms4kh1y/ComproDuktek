@@ -104,7 +104,9 @@ const ProgramCard = ({ item, onEdit, onDelete }) => (
           <div className="text-xs space-y-1 mt-1.5">
             <div className="flex justify-between max-w-[200px]">
               <span className="text-gray-500">Mulai:</span>
-              <span className="font-medium">{formatDate(item.tanggal_mulai)}</span>
+              <span className="font-medium">
+                {formatDate(item.tanggal_mulai)}
+              </span>
             </div>
             <div className="flex justify-between max-w-[200px]">
               <span className="text-gray-500">Deadline:</span>
@@ -183,10 +185,7 @@ export default function ProgramKerjaManage() {
       .get("/org-structures", { params: { limit: 100 } })
       .then((res) => {
         const options = res.data.data
-          .filter(
-            (item) =>
-              !isHiddenNode(item.position),
-          )
+          .filter((item) => !isHiddenNode(item.position))
           .map((item) => ({
             value: item.id,
             label: `${item.position} — ${item.name || "Belum ada nama"}`,
@@ -206,78 +205,81 @@ export default function ProgramKerjaManage() {
     loadOrgStructures();
   }, []);
 
-  const fields = useMemo(() => [
-    {
-      name: "program",
-      label: "Nama Program / Tugas",
-      type: "text",
-      required: true,
-      colSpan: 2,
-    },
-    {
-      name: "pic_org_structure_id",
-      label: "Penanggung Jawab (PIC)",
-      type: "select",
-      options: orgStructures,
-      colSpan: 2,
-    },
-    {
-      name: "keterangan",
-      label: "Keterangan",
-      type: "textarea",
-      required: true,
-      colSpan: 2,
-    },
-    {
-      name: "tanggal_mulai",
-      label: "Tanggal Mulai",
-      type: "date",
-      required: true,
-      colSpan: 1,
-    },
-    {
-      name: "deadline",
-      label: "Deadline Target",
-      type: "date",
-      required: true,
-      colSpan: 1,
-    },
-    {
-      name: "tanggal_selesai",
-      label: "Tanggal Selesai Aktual (Opsional)",
-      type: "date",
-      required: false,
-      colSpan: 1,
-    },
-    {
-      name: "is_selesai",
-      label: "Konfirmasi Telah Selesai",
-      type: "checkbox",
-      colSpan: 1,
-    },
-    {
-      name: "alasan_keterlambatan",
-      label: "Alasan Keterlambatan (Wajib jika Terlambat)",
-      type: "textarea",
-      colSpan: 2,
-      required: true, // Pastikan ada koma di sini
-      showIf: (values) => {
-        // Jika sudah selesai, tidak perlu alasan
-        if (values.is_selesai) return false;
-        // Jika belum ada deadline (baru buat), tidak perlu alasan
-        if (!values.deadline) return false;
-
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-
-        const deadlineDate = new Date(values.deadline);
-        deadlineDate.setHours(0, 0, 0, 0);
-
-        // Munculkan form jika hari ini sudah melewati deadline
-        return now > deadlineDate;
+  const fields = useMemo(
+    () => [
+      {
+        name: "program",
+        label: "Nama Program / Tugas",
+        type: "text",
+        required: true,
+        colSpan: 2,
       },
-    },
-  ], [orgStructures]);
+      {
+        name: "pic_org_structure_id",
+        label: "Penanggung Jawab (PIC)",
+        type: "select",
+        options: orgStructures,
+        colSpan: 2,
+      },
+      {
+        name: "keterangan",
+        label: "Keterangan",
+        type: "textarea",
+        required: true,
+        colSpan: 2,
+      },
+      {
+        name: "tanggal_mulai",
+        label: "Tanggal Mulai",
+        type: "date",
+        required: true,
+        colSpan: 1,
+      },
+      {
+        name: "deadline",
+        label: "Deadline Target",
+        type: "date",
+        required: true,
+        colSpan: 1,
+      },
+      {
+        name: "tanggal_selesai",
+        label: "Tanggal Selesai Aktual (Opsional)",
+        type: "date",
+        required: false,
+        colSpan: 1,
+      },
+      {
+        name: "is_selesai",
+        label: "Konfirmasi Telah Selesai",
+        type: "checkbox",
+        colSpan: 1,
+      },
+      {
+        name: "alasan_keterlambatan",
+        label: "Alasan Keterlambatan (Wajib jika Terlambat)",
+        type: "textarea",
+        colSpan: 2,
+        required: true, // Pastikan ada koma di sini
+        showIf: (values) => {
+          // Jika sudah selesai, tidak perlu alasan
+          if (values.is_selesai) return false;
+          // Jika belum ada deadline (baru buat), tidak perlu alasan
+          if (!values.deadline) return false;
+
+          const now = new Date();
+          now.setHours(0, 0, 0, 0);
+
+          const deadlineDate = new Date(values.deadline);
+          deadlineDate.setHours(0, 0, 0, 0);
+
+          // Munculkan form jika hari ini sudah melewati deadline
+          return now > deadlineDate;
+        },
+      },
+    ],
+    [orgStructures],
+  );
 
   const openAdd = () => {
     setEditing(null);
@@ -362,10 +364,10 @@ export default function ProgramKerjaManage() {
 
   const metrics = useMemo(() => {
     if (!rawItems || rawItems.length === 0) return null;
-    
-    const selesai = rawItems.filter(p => p.is_selesai).length;
-    const belum = rawItems.filter(p => !p.is_selesai).length;
-    const terlambat = rawItems.filter(p => {
+
+    const selesai = rawItems.filter((p) => p.is_selesai).length;
+    const belum = rawItems.filter((p) => !p.is_selesai).length;
+    const terlambat = rawItems.filter((p) => {
       if (p.is_selesai) return false;
       const now = new Date();
       now.setHours(0, 0, 0, 0);
@@ -378,15 +380,15 @@ export default function ProgramKerjaManage() {
       total: rawItems.length,
       selesai,
       belum,
-      terlambat
+      terlambat,
     };
   }, [rawItems]);
 
   const infoCards = [
-    { label: 'Total Program', value: metrics?.total || 0, loading },
-    { label: 'Selesai', value: metrics?.selesai || 0, loading },
-    { label: 'Dalam Pengerjaan', value: metrics?.belum || 0, loading },
-    { label: 'Terlambat', value: metrics?.terlambat || 0, loading },
+    { label: "Total Program", value: metrics?.total || 0, loading },
+    { label: "Selesai", value: metrics?.selesai || 0, loading },
+    { label: "Dalam Pengerjaan", value: metrics?.belum || 0, loading },
+    { label: "Terlambat", value: metrics?.terlambat || 0, loading },
   ];
 
   const filteredAndSortedItems = useMemo(() => {

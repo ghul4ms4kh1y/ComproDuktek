@@ -68,21 +68,31 @@ const AdminOrgNode = ({ node, onEdit, onEmpty }) => {
     return (
       <>
         {sortedChildren.map((child) => (
-          <AdminOrgNode key={child.id} node={child} onEdit={onEdit} onEmpty={onEmpty} />
+          <AdminOrgNode
+            key={child.id}
+            node={child}
+            onEdit={onEdit}
+            onEmpty={onEmpty}
+          />
         ))}
       </>
     );
   }
 
   return (
-    <OrgNodeCard 
-      node={node} 
-      onEdit={onEdit} 
-      onEmpty={onEmpty} 
+    <OrgNodeCard
+      node={node}
+      onEdit={onEdit}
+      onEmpty={onEmpty}
       childrenNodes={
         sortedChildren.length > 0
           ? sortedChildren.map((child) => (
-              <AdminOrgNode key={child.id} node={child} onEdit={onEdit} onEmpty={onEmpty} />
+              <AdminOrgNode
+                key={child.id}
+                node={child}
+                onEdit={onEdit}
+                onEmpty={onEmpty}
+              />
             ))
           : null
       }
@@ -123,8 +133,6 @@ export default function OrgStructureManage() {
   };
 
   useEffect(load, []);
-
-
 
   const openEdit = (item) => {
     setEditing(item);
@@ -198,7 +206,10 @@ export default function OrgStructureManage() {
       setItemToEmpty(null);
       load();
     } catch (err) {
-      showToast(err.response?.data?.message || "Gagal mengosongkan data.", "error");
+      showToast(
+        err.response?.data?.message || "Gagal mengosongkan data.",
+        "error",
+      );
     } finally {
       setEmptying(false);
     }
@@ -209,9 +220,7 @@ export default function OrgStructureManage() {
   const filteredAndSortedItems = useMemo(() => {
     if (!isSearchingOrSorting) return [];
 
-    let result = rawItems.filter(
-      (item) => !isHiddenNode(item.position),
-    );
+    let result = rawItems.filter((item) => !isHiddenNode(item.position));
 
     if (q.trim()) {
       const lowerQ = q.toLowerCase();
@@ -247,24 +256,28 @@ export default function OrgStructureManage() {
   }, [rawItems, q, sortBy]);
 
   const metrics = useMemo(() => {
-    const visibleItems = rawItems.filter(item => !isHiddenNode(item.position));
-    const filled = visibleItems.filter(item => item.name && item.name.trim()).length;
+    const visibleItems = rawItems.filter(
+      (item) => !isHiddenNode(item.position),
+    );
+    const filled = visibleItems.filter(
+      (item) => item.name && item.name.trim(),
+    ).length;
     const empty = visibleItems.length - filled;
-    const withPhoto = visibleItems.filter(item => item.photo).length;
-    
+    const withPhoto = visibleItems.filter((item) => item.photo).length;
+
     return {
       total: visibleItems.length,
       filled,
       empty,
-      withPhoto
+      withPhoto,
     };
   }, [rawItems]);
 
   const infoCards = [
-    { label: 'Total Jabatan', value: metrics.total, loading },
-    { label: 'Terisi', value: metrics.filled, loading },
-    { label: 'Kosong', value: metrics.empty, loading },
-    { label: 'Dengan Foto', value: metrics.withPhoto, loading },
+    { label: "Total Jabatan", value: metrics.total, loading },
+    { label: "Terisi", value: metrics.filled, loading },
+    { label: "Kosong", value: metrics.empty, loading },
+    { label: "Dengan Foto", value: metrics.withPhoto, loading },
   ];
 
   return (
@@ -322,7 +335,12 @@ export default function OrgStructureManage() {
           rawItems.length > 0 &&
           !isSearchingOrSorting &&
           roots.map((rootNode) => (
-            <AdminOrgNode key={rootNode.id} node={rootNode} onEdit={openEdit} onEmpty={openEmptyConfirm} />
+            <AdminOrgNode
+              key={rootNode.id}
+              node={rootNode}
+              onEdit={openEdit}
+              onEmpty={openEmptyConfirm}
+            />
           ))}
 
         {!loading &&
@@ -341,7 +359,12 @@ export default function OrgStructureManage() {
                 Menampilkan {filteredAndSortedItems.length} hasil
               </p>
               {filteredAndSortedItems.map((item) => (
-                <OrgNodeCard key={item.id} node={item} onEdit={openEdit} onEmpty={openEmptyConfirm} />
+                <OrgNodeCard
+                  key={item.id}
+                  node={item}
+                  onEdit={openEdit}
+                  onEmpty={openEmptyConfirm}
+                />
               ))}
             </div>
           )}

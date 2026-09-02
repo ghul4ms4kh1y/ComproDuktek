@@ -64,23 +64,34 @@ export default function LaporanManage() {
 
   const metrics = useMemo(() => {
     if (!laporan || laporan.length === 0) return null;
-    
-    const uniqueSoldiers = new Set(laporan.map(l => l.soldier_id)).size;
-    const totalSesi = laporan.reduce((sum, l) => sum + (l.LaporanHarianSesis?.length || 0), 0);
+
+    const uniqueSoldiers = new Set(laporan.map((l) => l.soldier_id)).size;
+    const totalSesi = laporan.reduce(
+      (sum, l) => sum + (l.LaporanHarianSesis?.length || 0),
+      0,
+    );
 
     return {
       total: laporan.length,
       uniqueSoldiers,
       totalSesi,
-      avgSesiPerLaporan: laporan.length > 0 ? Math.round(totalSesi / laporan.length * 10) / 10 : 0
+      avgSesiPerLaporan:
+        laporan.length > 0
+          ? Math.round((totalSesi / laporan.length) * 10) / 10
+          : 0,
     };
   }, [laporan]);
 
   const infoCards = [
-    { label: 'Total Laporan', value: metrics?.total || 0, loading },
-    { label: 'Personel Unik', value: metrics?.uniqueSoldiers || 0, loading },
-    { label: 'Total Sesi', value: metrics?.totalSesi || 0, loading },
-    { label: 'Rata-rata/Laporan', value: metrics?.avgSesiPerLaporan || 0, loading, subtitle: 'sesi' },
+    { label: "Total Laporan", value: metrics?.total || 0, loading },
+    { label: "Personel Unik", value: metrics?.uniqueSoldiers || 0, loading },
+    { label: "Total Sesi", value: metrics?.totalSesi || 0, loading },
+    {
+      label: "Rata-rata/Laporan",
+      value: metrics?.avgSesiPerLaporan || 0,
+      loading,
+      subtitle: "sesi",
+    },
   ];
 
   const [page, setPage] = useState(1);
