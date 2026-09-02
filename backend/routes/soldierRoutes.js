@@ -7,6 +7,7 @@ const { requireAuth, isAdmin, isSoldier } = require("../middleware/auth");
 // CATATAN: upload/parsing multipart sudah ditangani oleh global middleware
 // di server.js (upload.any()). Jangan tambahkan upload.single() di sini
 // karena akan menyebabkan "Unexpected end of form" (stream body sudah dipakai).
+
 router.put(
   "/profile",
   requireAuth,

@@ -48,6 +48,22 @@ const JadwalPiket = sequelize.define('JadwalPiket', {
     type: DataTypes.ENUM('none', 'pending', 'approved', 'rejected'),
     defaultValue: 'none',
   },
+  swap_with_schedule_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  swap_reason: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  swap_approval_status: {
+    type: DataTypes.ENUM('none', 'pending', 'approved', 'rejected'),
+    defaultValue: 'none',
+  },
+  swap_reviewed_by_admin_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   admin_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

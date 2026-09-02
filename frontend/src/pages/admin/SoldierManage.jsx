@@ -7,10 +7,9 @@ import Toast from "../../components/admin/Toast";
 import { useToast } from "../../hooks/useToast";
 import { Search, ArrowUpDown } from "lucide-react";
 
-const columns = [
-  { key: "full_name", label: "Nama Lengkap" },
-  { key: "username", label: "Username" },
-  { key: "position", label: "Jabatan" },
+const statusOptions = [
+  { value: "aktif", label: "Aktif" },
+  { value: "nonaktif", label: "Nonaktif" },
 ];
 
 const fields = [
@@ -25,6 +24,13 @@ const fields = [
     label: "Username",
     type: "text",
     required: true,
+  },
+  {
+    name: "status",
+    label: "Status Anggota",
+    type: "select",
+    required: true,
+    options: statusOptions,
   },
   {
     name: "password",
@@ -131,13 +137,15 @@ export default function SoldierManage() {
     const withFullName = soldiers.filter(
       (s) => s.full_name && s.full_name.trim(),
     ).length;
-    const withOrg = soldiers.filter((s) => s.OrgStructure).length;
+    const active = soldiers.filter(
+      (s) => (s.status || "aktif") === "aktif",
+    ).length;
 
     return {
       total: soldiers.length,
       withFullName,
       withoutFullName: soldiers.length - withFullName,
-      withOrg,
+      active,
     };
   }, [soldiers]);
 
@@ -145,7 +153,7 @@ export default function SoldierManage() {
     { label: "Total Personel", value: metrics.total, loading },
     { label: "Nama Lengkap", value: metrics.withFullName, loading },
     { label: "Tanpa Nama", value: metrics.withoutFullName, loading },
-    { label: "Jabatan Terisi", value: metrics.withOrg, loading },
+    { label: "Aktif", value: metrics.active, loading },
   ];
 
   const handleSubmit = async (values) => {
@@ -220,6 +228,9 @@ export default function SoldierManage() {
                 Jabatan
               </th>
               <th scope="col" className="px-4 py-3 font-semibold">
+                Status
+              </th>
+              <th scope="col" className="px-4 py-3 font-semibold">
                 Aksi
               </th>
             </tr>
@@ -228,7 +239,7 @@ export default function SoldierManage() {
             {loading && (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="px-4 py-6 text-center text-dashNavy/50"
                 >
                   Memuat data...
@@ -238,7 +249,7 @@ export default function SoldierManage() {
             {!loading && paginatedData.length === 0 && (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="px-4 py-6 text-center text-dashNavy/50"
                 >
                   {q.trim() !== ""
@@ -249,16 +260,22 @@ export default function SoldierManage() {
             )}
             {!loading &&
               paginatedData.map((soldier) => (
-                <tr
-                  key={soldier.id}
-                  className="hover:bg-gray-50/50 transition"
-                >
+                <tr key={soldier.id} className="hover:bg-gray-50/50 transition">
                   <td className="px-4 py-3 font-medium text-dashNavy">
                     {soldier.full_name || "-"}
                   </td>
                   <td className="px-4 py-3">{soldier.username}</td>
                   <td className="px-4 py-3 text-dashNavy/60">
                     {soldier.OrgStructure?.position || "-"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${(soldier.status || "aktif") === "aktif" ? "bg-green-100 text-green-700 border-green-200" : "bg-red-100 text-red-700 border-red-200"}`}
+                    >
+                      {(soldier.status || "aktif") === "aktif"
+                        ? "Aktif"
+                        : "Nonaktif"}
+                    </span>
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     <button
@@ -294,7 +311,12 @@ export default function SoldierManage() {
         fields={fields}
         initialValues={
           editing
-            ? { full_name: editing.full_name || "", username: editing.username || "", password: "" }
+            ? {
+                full_name: editing.full_name || "",
+                username: editing.username || "",
+                status: editing.status || "aktif",
+                password: "",
+              }
             : {}
         }
         submitting={submitting}
