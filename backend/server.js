@@ -52,6 +52,12 @@ app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', cred
  */
 app.use((req, res, next) => {
   if (req.is('multipart/form-data')) {
+    // BYPASS: multipart untuk /api/program-kerja ditangani multer khusus
+    // (uploadDocument: pdf/doc/docx) di route-nya masing-masing. FileFilter
+    // gambar di upload.any() di bawah akan menolak dokumen tersebut.
+    if (req.originalUrl.startsWith('/api/program-kerja')) {
+      return next();
+    }
     upload.any()(req, res, (err) => {
       if (err) {
         // "Unexpected end of form" terjadi saat klien mengirim form multipart

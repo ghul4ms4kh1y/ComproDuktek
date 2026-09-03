@@ -9,9 +9,12 @@ import {
   Clock,
   Calendar,
   CheckCircle2,
+  Users,
+  FileText,
+  Download,
 } from "lucide-react";
 import api from "../../services/api";
-import FormModal from "../../components/admin/FormModal";
+import ProgramKerjaFormModal from "../../components/admin/ProgramKerjaFormModal";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import Toast from "../../components/admin/Toast";
 import InfoCardGrid from "../../components/admin/InfoCardGrid";
@@ -64,7 +67,7 @@ const StatusBadge = ({ status }) => {
   }
 };
 
-const ProgramCard = ({ item, onEdit, onDelete }) => (
+const ProgramCard = ({ item, onEdit, onDelete, onHapusPerencanaan }) => (
   <div
     className={`flex flex-col md:flex-row md:items-center justify-between bg-white border ${item.is_selesai ? "border-green-200 bg-green-50/30" : "border-gray-200"} rounded-lg p-4 shadow-sm hover:border-dashAccent/40 transition gap-4`}
   >
@@ -129,6 +132,75 @@ const ProgramCard = ({ item, onEdit, onDelete }) => (
           </div>
         </div>
       </div>
+
+      <div className="text-xs text-gray-600 mt-3">
+        <p className="font-semibold text-gray-700 flex items-center gap-1.5">
+          <Users className="w-4 h-4 text-gray-400" /> Tim:{" "}
+          {item.tim?.length || 0} Orang
+        </p>
+        {item.tim?.length > 0 && (
+          <p className="text-gray-500 mt-0.5">
+            {item.tim.map((t) => t.full_name || t.username).join(", ")}
+          </p>
+        )}
+      </div>
+
+      {/* Section dokumen */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-100 text-xs">
+        <div>
+          <p className="font-semibold text-gray-700 flex items-center gap-1.5">
+            <FileText className="w-3.5 h-3.5 text-gray-400" /> Dokumen
+            Perencanaan:
+          </p>
+          {item.file_perencanaan ? (
+            <div className="flex flex-wrap items-center gap-1.5 mt-1">
+              <button
+                onClick={() => onEdit(item)}
+                className="text-dashAccent font-semibold hover:underline"
+              >
+                Ganti File
+              </button>
+              <span className="text-gray-300">|</span>
+              <button
+                onClick={() => onHapusPerencanaan(item)}
+                className="text-red-500 font-semibold hover:underline"
+              >
+                Hapus
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => onEdit(item)}
+              className="text-dashAccent font-semibold hover:underline mt-1"
+            >
+              + Upload File
+            </button>
+          )}
+        </div>
+
+        <div>
+          <p className="font-semibold text-gray-700 flex items-center gap-1.5">
+            <FileText className="w-3.5 h-3.5 text-gray-400" /> Dokumen Hasil:
+          </p>
+          {item.file_hasil ? (
+            <button
+              onClick={() =>
+                window.open(
+                  `/api/program-kerja/${item.id}/download/hasil`,
+                  "_blank",
+                )
+              }
+              className="text-dashAccent font-semibold hover:underline mt-1 flex items-center gap-1"
+            >
+              <Download className="w-3.5 h-3.5" /> Download / Lihat File
+            </button>
+          ) : (
+            <span className="text-gray-400 italic mt-1 block">
+              Belum diunggah oleh PJ/tim
+            </span>
+          )}
+        </div>
+      </div>
     </div>
 
     <div className="flex items-center gap-2 md:flex-col lg:flex-row shrink-0">
@@ -152,6 +224,7 @@ const ProgramCard = ({ item, onEdit, onDelete }) => (
 export default function ProgramKerjaManage() {
   const [rawItems, setRawItems] = useState([]);
   const [orgStructures, setOrgStructures] = useState([]);
+  const [soldierOptions, setSoldierOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // Filter State
@@ -168,6 +241,11 @@ export default function ProgramKerjaManage() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  // State Modal Confirm Hapus Dokumen Perencanaan
+  const [hapusPerencanaanOpen, setHapusPerencanaanOpen] = useState(false);
+  const [itemHapusPerencanaan, setItemHapusPerencanaan] = useState(null);
+  const [deletingPerencanaan, setDeletingPerencanaan] = useState(false);
 
   const { toast, showToast } = useToast();
 
@@ -200,86 +278,23 @@ export default function ProgramKerjaManage() {
       );
   };
 
+  const loadSoldiers = () => {
+    api
+      .get("/soldiers")
+      .then((res) => {
+        const data = res.data.data || res.data || [];
+        setSoldierOptions(data);
+      })
+      .catch((err) =>
+        console.error("Gagal memuat daftar soldier untuk picker tim", err),
+      );
+  };
+
   useEffect(() => {
     loadData();
     loadOrgStructures();
+    loadSoldiers();
   }, []);
-
-  const fields = useMemo(
-    () => [
-      {
-        name: "program",
-        label: "Nama Program / Tugas",
-        type: "text",
-        required: true,
-        colSpan: 2,
-      },
-      {
-        name: "pic_org_structure_id",
-        label: "Penanggung Jawab (PIC)",
-        type: "select",
-        options: orgStructures,
-        colSpan: 2,
-      },
-      {
-        name: "keterangan",
-        label: "Keterangan",
-        type: "textarea",
-        required: true,
-        colSpan: 2,
-      },
-      {
-        name: "tanggal_mulai",
-        label: "Tanggal Mulai",
-        type: "date",
-        required: true,
-        colSpan: 1,
-      },
-      {
-        name: "deadline",
-        label: "Deadline Target",
-        type: "date",
-        required: true,
-        colSpan: 1,
-      },
-      {
-        name: "tanggal_selesai",
-        label: "Tanggal Selesai Aktual (Opsional)",
-        type: "date",
-        required: false,
-        colSpan: 1,
-      },
-      {
-        name: "is_selesai",
-        label: "Konfirmasi Telah Selesai",
-        type: "checkbox",
-        colSpan: 1,
-      },
-      {
-        name: "alasan_keterlambatan",
-        label: "Alasan Keterlambatan (Wajib jika Terlambat)",
-        type: "textarea",
-        colSpan: 2,
-        required: true, // Pastikan ada koma di sini
-        showIf: (values) => {
-          // Jika sudah selesai, tidak perlu alasan
-          if (values.is_selesai) return false;
-          // Jika belum ada deadline (baru buat), tidak perlu alasan
-          if (!values.deadline) return false;
-
-          const now = new Date();
-          now.setHours(0, 0, 0, 0);
-
-          const deadlineDate = new Date(values.deadline);
-          deadlineDate.setHours(0, 0, 0, 0);
-
-          // Munculkan form jika hari ini sudah melewati deadline
-          return now > deadlineDate;
-        },
-      },
-    ],
-    [orgStructures],
-  );
 
   const openAdd = () => {
     setEditing(null);
@@ -290,23 +305,40 @@ export default function ProgramKerjaManage() {
     setEditing(item);
     setFormOpen(true);
   };
-  const handleSubmit = async (values) => {
+
+  const handleSubmit = async (values, timIds, filePerencanaan) => {
     setSubmitting(true);
     try {
-      // Normalisasi payload dengan mengirim null secara eksplisit
-      const payload = {
-        ...values,
-        is_selesai: !!values.is_selesai,
-        tanggal_selesai: values.tanggal_selesai || null,
-        alasan_keterlambatan: values.alasan_keterlambatan || null,
-        pic_org_structure_id: values.pic_org_structure_id || null,
-      };
+      // Kirim sebagai FormData (bukan JSON) karena ada file + array tim_ids.
+      // Axios otomatis set header multipart saat payload adalah FormData.
+      const formData = new FormData();
+      formData.append("program", values.program || "");
+      formData.append("keterangan", values.keterangan || "");
+      formData.append("tanggal_mulai", values.tanggal_mulai || "");
+      formData.append("deadline", values.deadline || "");
+      formData.append(
+        "tanggal_selesai",
+        values.tanggal_selesai || "",
+      );
+      formData.append("is_selesai", values.is_selesai ? "true" : "false");
+      formData.append(
+        "alasan_keterlambatan",
+        values.alasan_keterlambatan || "",
+      );
+      formData.append(
+        "pic_org_structure_id",
+        values.pic_org_structure_id || "",
+      );
+      formData.append("tim_ids", JSON.stringify(timIds || []));
+      if (filePerencanaan) {
+        formData.append("file_perencanaan", filePerencanaan);
+      }
 
       if (editing && editing.id) {
-        await api.put(`/program-kerja/${editing.id}`, payload);
+        await api.put(`/program-kerja/${editing.id}`, formData);
         showToast("Program kerja berhasil diperbarui / diverifikasi.");
       } else {
-        await api.post("/program-kerja", payload);
+        await api.post("/program-kerja", formData);
         showToast("Program kerja baru berhasil ditambahkan.");
       }
 
@@ -346,6 +378,32 @@ export default function ProgramKerjaManage() {
       );
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const openHapusPerencanaan = (item) => {
+    setItemHapusPerencanaan(item);
+    setHapusPerencanaanOpen(true);
+  };
+
+  const executeHapusPerencanaan = async () => {
+    if (!itemHapusPerencanaan) return;
+    setDeletingPerencanaan(true);
+    try {
+      await api.delete(
+        `/program-kerja/${itemHapusPerencanaan.id}/file-perencanaan`,
+      );
+      showToast("Dokumen perencanaan berhasil dihapus.");
+      setHapusPerencanaanOpen(false);
+      setItemHapusPerencanaan(null);
+      loadData();
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Gagal menghapus dokumen perencanaan.",
+        "error",
+      );
+    } finally {
+      setDeletingPerencanaan(false);
     }
   };
 
@@ -543,20 +601,22 @@ export default function ProgramKerjaManage() {
                 item={item}
                 onEdit={openEdit}
                 onDelete={openDeleteConfirm}
+                onHapusPerencanaan={openHapusPerencanaan}
               />
             ))}
           </div>
         )}
       </div>
 
-      <FormModal
+      <ProgramKerjaFormModal
         open={formOpen}
         title={
           editing
             ? "Verifikasi / Edit Program Kerja"
             : "Buat Program Kerja Baru"
         }
-        fields={fields}
+        soldiers={soldierOptions}
+        orgStructures={orgStructures}
         initialValues={editing || {}}
         submitting={submitting}
         onCancel={() => setFormOpen(false)}
@@ -571,6 +631,16 @@ export default function ProgramKerjaManage() {
         loading={deleting}
         onCancel={() => setDeleteConfirmOpen(false)}
         onConfirm={executeDelete}
+      />
+
+      <ConfirmModal
+        open={hapusPerencanaanOpen}
+        headerTitle="Hapus Dokumen Perencanaan"
+        title={`Yakin ingin menghapus dokumen perencanaan untuk program "${itemHapusPerencanaan?.program}"? File tidak dapat dikembalikan.`}
+        confirmText="Hapus"
+        loading={deletingPerencanaan}
+        onCancel={() => setHapusPerencanaanOpen(false)}
+        onConfirm={executeHapusPerencanaan}
       />
 
       <Toast toast={toast} />

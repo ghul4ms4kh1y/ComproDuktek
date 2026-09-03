@@ -35,6 +35,7 @@ import {
   Plane,
   GraduationCap,
   Users,
+  Download,
   CornerDownRight,
   ClipboardList,
   ArrowRightLeft,
@@ -249,6 +250,8 @@ export default function SoldierDashboard() {
   const [prokers, setProkers] = useState([]);
   const [prokerLoading, setProkerLoading] = useState(false);
   const [prokerPage, setProkerPage] = useState(1);
+  const [hasilFiles, setHasilFiles] = useState({}); // { [prokerId]: File }
+  const [uploadingHasilId, setUploadingHasilId] = useState(null);
 
   // State Piket Calendar & Usulan Tukar
   const [piketRefreshTrigger, setPiketRefreshTrigger] = useState(0);
@@ -495,9 +498,39 @@ export default function SoldierDashboard() {
       loadProkers();
     } catch (err) {
       showToast(
-        "error",
         err.response?.data?.message || "Gagal memperbarui status tugas.",
+        "error",
       );
+    }
+  };
+
+  // Soldier adalah PIC (org structure match) ATAU anggota tim proker?
+  const isPJatauTim = (proker) =>
+    user?.org_structure_id === proker.pic_org_structure_id ||
+    proker.tim?.some((t) => t.id === user?.id);
+
+  // Handle Upload Dokumen Hasil oleh PJ / anggota tim
+  const handleUploadHasil = async (proker) => {
+    const file = hasilFiles[proker.id];
+    if (!file) {
+      showToast("Pilih file dokumen hasil terlebih dahulu.", "error");
+      return;
+    }
+    setUploadingHasilId(proker.id);
+    try {
+      const formData = new FormData();
+      formData.append("file_hasil", file);
+      await api.put(`/program-kerja/${proker.id}/hasil`, formData);
+      showToast("Dokumen hasil berhasil diunggah.", "success");
+      setHasilFiles((f) => ({ ...f, [proker.id]: null }));
+      loadProkers();
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Gagal mengunggah dokumen hasil.",
+        "error",
+      );
+    } finally {
+      setUploadingHasilId(null);
     }
   };
 
@@ -864,15 +897,85 @@ export default function SoldierDashboard() {
                               {formatDate(proker.deadline)}
                             </span>
                           </div>
+                          <div className="flex justify-between">
+                            <span>Tim:</span>
+                            <span className="text-gray-500 font-medium">
+                              {proker.tim?.length || 0} Orang
+                            </span>
+                          </div>
+                          {proker.tim?.length > 0 && (
+                            <div className="text-gray-400 pt-0.5">
+                              {proker.tim
+                                .map((t) => t.full_name || t.username)
+                                .join(", ")}
+                            </div>
+                          )}
                         </div>
                       </div>
+
+                      {/* Dokumen: hanya PIC / anggota tim yang bisa aksi */}
+                      {isPJatauTim(proker) && (
+                        <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                          {proker.file_perencanaan ? (
+                            <button
+                              onClick={() =>
+                                window.open(
+                                  `/api/program-kerja/${proker.id}/download/perencanaan`,
+                                  "_blank",
+                                )
+                              }
+                              className="text-xs text-dashAccent font-semibold hover:underline flex items-center gap-1"
+                            >
+                              <Download className="w-3.5 h-3.5" /> Download
+                              Instruksi
+                            </button>
+                          ) : (
+                            <p className="text-xs text-gray-400 italic">
+                              Dokumen instruksi belum diunggah.
+                            </p>
+                          )}
+
+                          <div>
+                            <p className="text-xs text-gray-600 font-semibold mb-1">
+                              Dokumen Hasil:
+                              {proker.file_hasil && (
+                                <span className="font-normal text-gray-400">
+                                  {" "}
+                                  (terupload: {proker.file_hasil})
+                                </span>
+                              )}
+                            </p>
+                            <input
+                              type="file"
+                              accept=".pdf,.doc,.docx"
+                              onChange={(e) =>
+                                setHasilFiles((f) => ({
+                                  ...f,
+                                  [proker.id]: e.target.files[0] || null,
+                                }))
+                              }
+                              className="w-full text-xs border border-gray-200 rounded-md px-2 py-1 file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-dashNavy cursor-pointer"
+                            />
+                            <button
+                              onClick={() => handleUploadHasil(proker)}
+                              disabled={uploadingHasilId === proker.id || !hasilFiles[proker.id]}
+                              className="mt-1.5 text-xs bg-dashAccent text-white rounded-md px-3 py-1.5 font-semibold hover:brightness-95 disabled:opacity-50 transition"
+                            >
+                              {uploadingHasilId === proker.id
+                                ? "Mengunggah..."
+                                : proker.file_hasil
+                                  ? "Ganti File Hasil"
+                                  : "Upload Dokumen Hasil"}
+                            </button>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="w-full h-px bg-gray-50 my-4"></div>
 
                       <div className="flex justify-between items-center mt-auto">
                         <StatusBadge status={proker.status} />
-                        {user?.org_structure_id ===
-                          proker.pic_org_structure_id && (
+                        {isPJatauTim(proker) && (
                           <button
                             onClick={() => handleToggleSelesai(proker)}
                             className="text-xs text-dashAccent font-semibold hover:underline flex items-center gap-1"
