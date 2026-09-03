@@ -1,6 +1,9 @@
+const fs = require("fs");
+const path = require("path");
 const { ProgramKerja, OrgStructure, Soldier } = require("../models");
 const { Op } = require("sequelize");
 const computeProkerStatus = require("../utils/computeProkerStatus");
+const { deleteDocumentFromDisk } = require("../utils/fileHelper");
 
 exports.index = async (req, res) => {
   try {
@@ -32,6 +35,12 @@ exports.index = async (req, res) => {
           model: OrgStructure,
           as: "pic",
           attributes: ["id", "name", "position", "rank"],
+        },
+        {
+          model: Soldier,
+          as: "tim",
+          attributes: ["id", "username", "full_name"],
+          through: { attributes: [] },
         },
       ],
     });
@@ -79,6 +88,12 @@ exports.show = async (req, res) => {
           as: "pic",
           attributes: ["id", "name", "position", "rank"],
         },
+        {
+          model: Soldier,
+          as: "tim",
+          attributes: ["id", "username", "full_name"],
+          through: { attributes: [] },
+        },
       ],
     });
 
@@ -110,7 +125,27 @@ exports.create = async (req, res) => {
     if (!payload.tanggal_selesai) payload.tanggal_selesai = null;
     if (!payload.alasan_keterlambatan) payload.alasan_keterlambatan = null;
 
+    // tim_ids dikirim sebagai JSON string dari frontend (multipart/form-data)
+    let timIds = [];
+    try {
+      timIds = JSON.parse(req.body.tim_ids || "[]");
+    } catch (e) {
+      timIds = [];
+    }
+    delete payload.tim_ids;
+
+    // Dokumen perencanaan (disimpan sebagai NAMA FILE di folder private)
+    if (req.files && req.files.file_perencanaan && req.files.file_perencanaan[0]) {
+      payload.file_perencanaan = req.files.file_perencanaan[0].filename;
+    }
+
     const newItem = await ProgramKerja.create(payload);
+
+    // Assign anggota tim (method otomatis dari belongsToMany Sequelize)
+    if (Array.isArray(timIds) && timIds.length > 0) {
+      await newItem.setTim(timIds);
+    }
+
     res.status(201).json({ message: "Data berhasil dibuat.", data: newItem });
   } catch (error) {
     console.error("Error saat create proker:", error);
@@ -129,6 +164,26 @@ exports.update = async (req, res) => {
       return res.status(404).json({ message: "Data tidak ditemukan." });
 
     const payload = { ...req.body };
+
+    // tim_ids dikirim sebagai JSON string dari frontend (multipart/form-data).
+    // Jika tidak dikirim, JANGAN ubah tim yang sudah ada.
+    let timIds;
+    if (req.body.tim_ids !== undefined) {
+      try {
+        timIds = JSON.parse(req.body.tim_ids || "[]");
+      } catch (e) {
+        timIds = [];
+      }
+    }
+    delete payload.tim_ids;
+
+    // Dokumen perencanaan baru: hapus file lama dari disk dulu, baru simpan nama baru
+    if (req.files && req.files.file_perencanaan && req.files.file_perencanaan[0]) {
+      if (item.file_perencanaan) {
+        deleteDocumentFromDisk(item.file_perencanaan);
+      }
+      payload.file_perencanaan = req.files.file_perencanaan[0].filename;
+    }
 
     // Convert is_selesai to boolean
     payload.is_selesai = payload.is_selesai === "true" || payload.is_selesai === true;
@@ -173,6 +228,11 @@ exports.update = async (req, res) => {
     }
 
     await item.update(payload);
+
+    if (timIds !== undefined && Array.isArray(timIds)) {
+      await item.setTim(timIds);
+    }
+
     res.json({ message: "Data berhasil diperbarui.", data: item });
   } catch (error) {
     console.error("Error updating program kerja:", error);
@@ -187,6 +247,10 @@ exports.remove = async (req, res) => {
     if (!item)
       return res.status(404).json({ message: "Data tidak ditemukan." });
 
+    // Hapus dokumen terkait dari disk sebelum data dihapus
+    if (item.file_perencanaan) deleteDocumentFromDisk(item.file_perencanaan);
+    if (item.file_hasil) deleteDocumentFromDisk(item.file_hasil);
+
     await item.destroy();
     res.json({ message: "Data berhasil dihapus." });
   } catch (error) {
@@ -199,15 +263,27 @@ exports.soldierUpdate = async (req, res) => {
     const { id } = req.params;
     const soldier = await Soldier.findByPk(req.user.id);
 
-    const item = await ProgramKerja.findOne({
-      where: { id, pic_org_structure_id: soldier.org_structure_id },
-    });
+    // Fetch by id dulu, LALU cek otorisasi manual:
+    // PIC (org structure match) ATAU anggota tim proker
+    const item = await ProgramKerja.findByPk(id);
 
     if (!item) {
       return res
         .status(404)
         .json({
-          message: "Program kerja tidak ditemukan atau bukan milik Anda.",
+          message: "Program kerja tidak ditemukan.",
+        });
+    }
+
+    const isPic = item.pic_org_structure_id === soldier.org_structure_id;
+    const isTimMember = await item.hasTim(req.user.id);
+
+    if (!isPic && !isTimMember) {
+      return res
+        .status(403)
+        .json({
+          message:
+            "Anda bukan penanggung jawab atau anggota tim proker ini.",
         });
     }
 
@@ -230,5 +306,154 @@ exports.soldierUpdate = async (req, res) => {
     res
       .status(500)
       .json({ message: "Gagal memperbarui status.", error: error.message });
+  }
+};
+
+// DELETE /:id/file-perencanaan (admin only) — hapus dokumen perencanaan
+exports.removeFilePerencanaan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await ProgramKerja.findByPk(id);
+    if (!item)
+      return res.status(404).json({ message: "Data tidak ditemukan." });
+
+    if (!item.file_perencanaan) {
+      return res
+        .status(404)
+        .json({ message: "Dokumen perencanaan belum diunggah." });
+    }
+
+    deleteDocumentFromDisk(item.file_perencanaan);
+    item.file_perencanaan = null;
+    await item.save();
+
+    res.json({
+      message: "Dokumen perencanaan berhasil dihapus.",
+      data: item,
+    });
+  } catch (error) {
+    console.error("Error removeFilePerencanaan:", error);
+    res.status(500).json({ message: "Gagal menghapus dokumen perencanaan." });
+  }
+};
+
+// PUT /:id/hasil (soldier: PJ atau anggota tim) — upload dokumen hasil
+exports.uploadHasil = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const item = await ProgramKerja.findByPk(id);
+    if (!item)
+      return res.status(404).json({ message: "Program kerja tidak ditemukan." });
+
+    const soldier = await Soldier.findByPk(req.user.id);
+    const isPic = soldier && item.pic_org_structure_id === soldier.org_structure_id;
+    const isTimMember = await item.hasTim(req.user.id);
+
+    if (!isPic && !isTimMember) {
+      // Multer sudah menyimpan file ke disk sebelum cek otorisasi —
+      // hapus supaya tidak menumpuk file yatim dari user tanpa hak akses
+      if (req.file) fs.unlink(req.file.path, () => {});
+      return res
+        .status(403)
+        .json({
+          message: "Anda bukan penanggung jawab atau anggota tim proker ini.",
+        });
+    }
+
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "File dokumen hasil wajib diunggah." });
+    }
+
+    // Timpa file lama jika ada
+    if (item.file_hasil) {
+      deleteDocumentFromDisk(item.file_hasil);
+    }
+
+    item.file_hasil = file.filename;
+    await item.save();
+
+    res.json({
+      message: "Dokumen hasil berhasil diunggah.",
+      data: item,
+    });
+  } catch (error) {
+    console.error("Error uploadHasil:", error);
+    res.status(500).json({ message: "Gagal mengunggah dokumen hasil." });
+  }
+};
+
+// Helper: cek apakah user (admin/soldier) berhak mengakses dokumen proker
+async function canAccessDocuments(item, req) {
+  if (req.user.role === "admin") return true;
+  const soldier = await Soldier.findByPk(req.user.id);
+  if (!soldier) return false;
+  const isPic = item.pic_org_structure_id === soldier.org_structure_id;
+  const isTimMember = await item.hasTim(req.user.id);
+  return isPic || isTimMember;
+}
+
+// GET /:id/download/perencanaan — admin selalu boleh; soldier hanya PIC/tim
+exports.downloadPerencanaan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await ProgramKerja.findByPk(id);
+    if (!item)
+      return res.status(404).json({ message: "Program kerja tidak ditemukan." });
+
+    if (!(await canAccessDocuments(item, req))) {
+      return res
+        .status(403)
+        .json({ message: "Anda tidak memiliki akses ke dokumen ini." });
+    }
+
+    if (!item.file_perencanaan) {
+      return res.status(404).json({ message: "Dokumen belum diunggah." });
+    }
+
+    const filePath = path.join(
+      __dirname,
+      "..",
+      "private-uploads",
+      "proker-documents",
+      item.file_perencanaan,
+    );
+    res.download(filePath, item.file_perencanaan);
+  } catch (error) {
+    console.error("Error downloadPerencanaan:", error);
+    res.status(500).json({ message: "Gagal mengunduh dokumen." });
+  }
+};
+
+// GET /:id/download/hasil — admin selalu boleh; soldier hanya PIC/tim
+exports.downloadHasil = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await ProgramKerja.findByPk(id);
+    if (!item)
+      return res.status(404).json({ message: "Program kerja tidak ditemukan." });
+
+    if (!(await canAccessDocuments(item, req))) {
+      return res
+        .status(403)
+        .json({ message: "Anda tidak memiliki akses ke dokumen ini." });
+    }
+
+    if (!item.file_hasil) {
+      return res.status(404).json({ message: "Dokumen belum diunggah." });
+    }
+
+    const filePath = path.join(
+      __dirname,
+      "..",
+      "private-uploads",
+      "proker-documents",
+      item.file_hasil,
+    );
+    res.download(filePath, item.file_hasil);
+  } catch (error) {
+    console.error("Error downloadHasil:", error);
+    res.status(500).json({ message: "Gagal mengunduh dokumen." });
   }
 };

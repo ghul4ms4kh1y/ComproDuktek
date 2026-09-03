@@ -43,6 +43,14 @@ const ProgramKerja = sequelize.define('ProgramKerja', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  file_perencanaan: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  file_hasil: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   tableName: 'program_kerjas',
   underscored: true,

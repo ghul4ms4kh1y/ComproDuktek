@@ -8,6 +8,7 @@ const OrgStructure = require('./OrgStructure');
 
 const Soldier = require('./Soldier');
 const ProgramKerja = require('./ProgramKerja');
+const ProgramKerjaTim = require('./ProgramKerjaTim');
 const Absensi = require('./Absensi');
 const LaporanHarian = require('./LaporanHarian');
 const LaporanHarianSesi = require('./LaporanHarianSesi');
@@ -41,6 +42,10 @@ Soldier.belongsTo(OrgStructure, { foreignKey: 'org_structure_id' });
 OrgStructure.hasMany(ProgramKerja, { foreignKey: 'pic_org_structure_id' });
 ProgramKerja.belongsTo(OrgStructure, { as: 'pic', foreignKey: 'pic_org_structure_id' });
 
+// Relasi many-to-many: tim anggota program kerja
+ProgramKerja.belongsToMany(Soldier, { through: ProgramKerjaTim, as: 'tim', foreignKey: 'proker_id', otherKey: 'soldier_id' });
+Soldier.belongsToMany(ProgramKerja, { through: ProgramKerjaTim, as: 'programKerjaTim', foreignKey: 'soldier_id', otherKey: 'proker_id' });
+
 // Relasi Absensi
 Soldier.hasMany(Absensi, { foreignKey: 'soldier_id' });
 Absensi.belongsTo(Soldier, { foreignKey: 'soldier_id' });
@@ -62,4 +67,4 @@ Soldier.hasMany(JadwalPiket, { foreignKey: 'soldier_id' });
 JadwalPiket.belongsTo(Soldier, { foreignKey: 'soldier_id' });
 JadwalPiket.belongsTo(JadwalPiket, { as: 'SwapWithSchedule', foreignKey: 'swap_with_schedule_id' });
 
-module.exports = { sequelize, Admin, News, Product, Gallery, Message, OrgStructure, Soldier, ProgramKerja, Absensi, LaporanHarian, LaporanHarianSesi, JadwalPiket };
+module.exports = { sequelize, Admin, News, Product, Gallery, Message, OrgStructure, Soldier, ProgramKerja, ProgramKerjaTim, Absensi, LaporanHarian, LaporanHarianSesi, JadwalPiket };
