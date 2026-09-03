@@ -9,6 +9,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
 import { formatDate } from "../../lib/dateUtils";
+import { isEligiblePiket } from "../../lib/piketEligibility";
 import { useToast } from "../../hooks/useToast";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
@@ -259,6 +260,9 @@ export default function SoldierDashboard() {
   const [swapHistory, setSwapHistory] = useState([]);
   const [swapHistoryLoading, setSwapHistoryLoading] = useState(false);
 
+  // Riwayat tukar jadwal hanya relevan untuk anggota aktif yang eligible piket
+  const piketEligible = useMemo(() => isEligiblePiket(user), [user]);
+
   const fetchSwapHistory = useCallback(async () => {
     try {
       setSwapHistoryLoading(true);
@@ -272,8 +276,8 @@ export default function SoldierDashboard() {
   }, []);
 
   useEffect(() => {
-    fetchSwapHistory();
-  }, [fetchSwapHistory, piketRefreshTrigger]);
+    if (piketEligible) fetchSwapHistory();
+  }, [fetchSwapHistory, piketRefreshTrigger, piketEligible]);
 
   // ── STATE ABSENSI ────────────────────────────────────────────────────────
   const toLocalToday = () => {
@@ -1062,7 +1066,8 @@ export default function SoldierDashboard() {
               </div>
             </div>
 
-            {/* Riwayat Pengajuan Tukar Jadwal */}
+            {/* Riwayat Pengajuan Tukar Jadwal (hanya anggota aktif eligible piket) */}
+            {piketEligible && (
             <div className="bg-white border border-gray-200 rounded-lg shadow-dashCard p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
@@ -1140,6 +1145,7 @@ export default function SoldierDashboard() {
                 </div>
               )}
             </div>
+            )}
           </div>
 
           {/* ── 5. REKAP ABSENSI — DETAIL ── */}

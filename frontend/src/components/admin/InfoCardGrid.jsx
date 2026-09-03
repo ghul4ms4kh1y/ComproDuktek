@@ -1,6 +1,10 @@
-export default function InfoCardGrid({ cards }) {
+export default function InfoCardGrid({ cards, cols = 4 }) {
+  const colsClass =
+    cols === 6
+      ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4"
+      : "grid sm:grid-cols-2 lg:grid-cols-4 gap-4";
   return (
-    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className={colsClass}>
       {cards.map((card, index) => (
         <div
           key={index}
