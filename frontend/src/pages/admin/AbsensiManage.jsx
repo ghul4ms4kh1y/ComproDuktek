@@ -327,26 +327,35 @@ export default function AbsensiManage() {
   const metrics = useMemo(() => {
     if (!absensiList || absensiList.length === 0) return null;
 
-    const hadir = absensiList.filter((a) => a.status === "hadir").length;
-    const tidakHadir = absensiList.filter(
-      (a) => !["hadir", "belum_diisi"].includes(a.status),
-    ).length;
-    const belumIsi = absensiList.filter(
-      (a) => a.status === "belum_diisi",
-    ).length;
+    const countBy = (status) =>
+      absensiList.filter((a) => a.status === status).length;
 
     return {
       total: absensiList.length,
-      hadir,
-      tidakHadir,
-      belumIsi,
+      hadir: countBy("hadir"),
+      sakit: countBy("sakit"),
+      izin: countBy("izin"),
+      dd: countBy("dd"),
+      bp: countBy("bp"),
+      dl: countBy("dl"),
+      dik: countBy("dik"),
+      satgas: countBy("satgas"),
+      tk: countBy("tk"),
+      belumIsi: countBy("belum_diisi"),
     };
   }, [absensiList]);
 
   const infoCards = [
     { label: "Total Personel", value: metrics?.total || 0, loading },
     { label: "Hadir", value: metrics?.hadir || 0, loading },
-    { label: "Tidak Hadir", value: metrics?.tidakHadir || 0, loading },
+    { label: "Sakit", value: metrics?.sakit || 0, loading },
+    { label: "Izin", value: metrics?.izin || 0, loading },
+    { label: "Dinas Dalam", value: metrics?.dd || 0, loading },
+    { label: "Bawah Perintah", value: metrics?.bp || 0, loading },
+    { label: "Dinas Luar", value: metrics?.dl || 0, loading },
+    { label: "Pendidikan", value: metrics?.dik || 0, loading },
+    { label: "Satgas", value: metrics?.satgas || 0, loading },
+    { label: "Tanpa Keterangan", value: metrics?.tk || 0, loading },
     { label: "Belum Diisi", value: metrics?.belumIsi || 0, loading },
   ];
 
@@ -431,7 +440,7 @@ export default function AbsensiManage() {
       />
 
       <div className="mb-5">
-        <InfoCardGrid cards={infoCards} />
+        <InfoCardGrid cards={infoCards} cols={6} />
       </div>
 
       {/* Tabs */}
