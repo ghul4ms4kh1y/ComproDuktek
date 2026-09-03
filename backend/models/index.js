@@ -41,6 +41,8 @@ Soldier.belongsTo(OrgStructure, { foreignKey: 'org_structure_id' });
 // Relasi OrgStructure ke ProgramKerja (1 jabatan bisa punya banyak proker)
 OrgStructure.hasMany(ProgramKerja, { foreignKey: 'pic_org_structure_id' });
 ProgramKerja.belongsTo(OrgStructure, { as: 'pic', foreignKey: 'pic_org_structure_id' });
+Soldier.hasMany(ProgramKerja, { as: 'programKerjaPic', foreignKey: 'pic_soldier_id' });
+ProgramKerja.belongsTo(Soldier, { as: 'picSoldier', foreignKey: 'pic_soldier_id' });
 
 // Relasi many-to-many: tim anggota program kerja
 ProgramKerja.belongsToMany(Soldier, { through: ProgramKerjaTim, as: 'tim', foreignKey: 'proker_id', otherKey: 'soldier_id' });

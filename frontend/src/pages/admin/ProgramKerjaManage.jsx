@@ -3,6 +3,7 @@ import { formatDate } from "../../lib/dateUtils";
 import {
   Search,
   ArrowUpDown,
+  Filter,
   Plus,
   Edit2,
   Trash2,
@@ -88,7 +89,14 @@ const ProgramCard = ({ item, onEdit, onDelete, onHapusPerencanaan }) => (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600 mt-2">
         <div>
           <p className="font-semibold text-gray-700">Penanggung Jawab:</p>
-          {item.pic ? (
+          {item.picSoldier ? (
+            <div>
+              <div className="font-medium">{item.picSoldier.full_name || item.picSoldier.username}</div>
+              <div className="text-xs text-gray-500">
+                {item.picSoldier.pangkat || "Pangkat belum diisi"}
+              </div>
+            </div>
+          ) : item.pic ? (
             <div>
               <div className="font-medium">{item.pic.position}</div>
               <div className="text-xs text-gray-500">
@@ -229,6 +237,7 @@ export default function ProgramKerjaManage() {
 
   // Filter State
   const [q, setQ] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("deadline_asc");
   const [selectedMonth, setSelectedMonth] = useState(getRealtimeMonth());
 
@@ -280,7 +289,7 @@ export default function ProgramKerjaManage() {
 
   const loadSoldiers = () => {
     api
-      .get("/soldiers")
+      .get("/soldiers", { params: { status: "aktif" } })
       .then((res) => {
         const data = res.data.data || res.data || [];
         setSoldierOptions(data);
@@ -326,8 +335,8 @@ export default function ProgramKerjaManage() {
         values.alasan_keterlambatan || "",
       );
       formData.append(
-        "pic_org_structure_id",
-        values.pic_org_structure_id || "",
+        "pic_soldier_id",
+        values.pic_soldier_id || "",
       );
       formData.append("tim_ids", JSON.stringify(timIds || []));
       if (filePerencanaan) {
@@ -452,17 +461,23 @@ export default function ProgramKerjaManage() {
   const filteredAndSortedItems = useMemo(() => {
     let result = [...rawItems];
 
-    result = result.filter((item) => {
-      if (selectedMonth === "all") return true;
-      if (!item.tanggal_mulai) return false;
-      return item.tanggal_mulai.startsWith(selectedMonth);
-    });
+    if (selectedMonth !== "all") {
+      result = result.filter((item) => {
+        if (!item.tanggal_mulai) return false;
+        return item.tanggal_mulai.startsWith(selectedMonth);
+      });
+    }
+
+    if (statusFilter !== "all") {
+      result = result.filter((item) => item.status === statusFilter);
+    }
 
     if (q.trim()) {
       const lowerQ = q.toLowerCase();
       result = result.filter(
         (item) =>
           (item.program || "").toLowerCase().includes(lowerQ) ||
+          (item.picSoldier?.full_name || "").toLowerCase().includes(lowerQ) ||
           (item.pic?.name || "").toLowerCase().includes(lowerQ) ||
           (item.pic?.position || "").toLowerCase().includes(lowerQ),
       );
@@ -473,6 +488,7 @@ export default function ProgramKerjaManage() {
       const progB = (b.program || "").toLowerCase();
       const dateA = a.deadline ? new Date(a.deadline).getTime() : 0;
       const dateB = b.deadline ? new Date(b.deadline).getTime() : 0;
+      const statusRank = { merah: 1, biru: 2, hijau: 3 };
 
       switch (sortBy) {
         case "nama_asc":
@@ -483,13 +499,17 @@ export default function ProgramKerjaManage() {
           return dateA - dateB;
         case "deadline_desc":
           return dateB - dateA;
+        case "status_terlambat_first":
+          return (statusRank[a.status] || 99) - (statusRank[b.status] || 99);
+        case "status_selesai_first":
+          return (statusRank[b.status] || 99) - (statusRank[a.status] || 99);
         default:
           return 0;
       }
     });
 
     return result;
-  }, [rawItems, q, sortBy, selectedMonth]);
+  }, [rawItems, q, sortBy, selectedMonth, statusFilter]);
 
   return (
     <div className="font-dash">
@@ -516,11 +536,11 @@ export default function ProgramKerjaManage() {
 
         <div className="flex flex-col sm:flex-row gap-3 shrink-0">
           <div className="relative w-full sm:w-auto">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full sm:w-48 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+              className="w-full sm:w-48 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
             >
               <option value="all">Semua Waktu</option>
               {availableMonths.map((m) => (
@@ -533,14 +553,30 @@ export default function ProgramKerjaManage() {
 
           <div className="relative w-full sm:w-auto">
             <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full sm:w-48 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+            >
+              <option value="all">Semua Status</option>
+              <option value="hijau">Selesai (Hijau)</option>
+              <option value="biru">Dalam Pengerjaan (Biru)</option>
+              <option value="merah">Terlambat (Merah)</option>
+            </select>
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          </div>
+
+          <div className="relative w-full sm:w-auto">
+            <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full sm:w-56 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+              className="w-full sm:w-56 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
             >
               <option value="deadline_asc">Deadline Terdekat</option>
               <option value="deadline_desc">Deadline Terjauh</option>
               <option value="nama_asc">Nama Program (A - Z)</option>
               <option value="nama_desc">Nama Program (Z - A)</option>
+              <option value="status_terlambat_first">Status: Terlambat Dahulu</option>
+              <option value="status_selesai_first">Status: Selesai Dahulu</option>
             </select>
             <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>

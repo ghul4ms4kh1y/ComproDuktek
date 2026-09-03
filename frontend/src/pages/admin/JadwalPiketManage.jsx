@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarCheck, RefreshCw, RotateCcw, AlertCircle } from "lucide-react";
+import { CalendarCheck, RefreshCw, RotateCcw, AlertCircle, Search, Filter, ArrowUpDown } from "lucide-react";
 import api from "../../services/api";
 import { formatDate } from "../../lib/dateUtils";
 import ConfirmModal from "../../components/admin/ConfirmModal";
@@ -67,6 +67,9 @@ export default function JadwalPiketManage() {
   const [pendingItems, setPendingItems] = useState([]);
   const [pendingSwapItems, setPendingSwapItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [q, setQ] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [sortBy, setSortBy] = useState("tanggal_asc");
   const [activeTab, setActiveTab] = useState("jadwal");
   const [editingItem, setEditingItem] = useState(null);
   const [deleteItem, setDeleteItem] = useState(null);
@@ -81,6 +84,58 @@ export default function JadwalPiketManage() {
   const rotationCount = soldiers.length
     ? Math.ceil(daysCount / soldiers.length)
     : "—";
+
+  const filteredAndSortedItems = useMemo(() => {
+    let result = [...items];
+
+    if (filterStatus !== "all") {
+      result = result.filter((item) => item.status === filterStatus);
+    }
+
+    if (q.trim()) {
+      const lowerQ = q.toLowerCase();
+      result = result.filter((item) => {
+        const soldierName = (item.Soldier?.full_name || "").toLowerCase();
+        const soldierUname = (item.Soldier?.username || "").toLowerCase();
+        const soldierPangkat = (item.Soldier?.pangkat || "").toLowerCase();
+        const keterangan = (item.keterangan || "").toLowerCase();
+        const tanggal = (item.tanggal_piket || "").toLowerCase();
+        return (
+          soldierName.includes(lowerQ) ||
+          soldierUname.includes(lowerQ) ||
+          soldierPangkat.includes(lowerQ) ||
+          keterangan.includes(lowerQ) ||
+          tanggal.includes(lowerQ)
+        );
+      });
+    }
+
+    result.sort((a, b) => {
+      const dateA = a.tanggal_piket || "";
+      const dateB = b.tanggal_piket || "";
+      const nameA = (a.Soldier?.full_name || a.Soldier?.username || "").toLowerCase();
+      const nameB = (b.Soldier?.full_name || b.Soldier?.username || "").toLowerCase();
+      const statusOrder = { scheduled: 1, completed: 2, absent: 3 };
+
+      switch (sortBy) {
+        case "tanggal_desc":
+          return dateB.localeCompare(dateA);
+        case "nama_asc":
+          return nameA.localeCompare(nameB);
+        case "nama_desc":
+          return nameB.localeCompare(nameA);
+        case "status_asc":
+          return (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99);
+        case "status_desc":
+          return (statusOrder[b.status] || 99) - (statusOrder[a.status] || 99);
+        case "tanggal_asc":
+        default:
+          return dateA.localeCompare(dateB);
+      }
+    });
+
+    return result;
+  }, [items, q, filterStatus, sortBy]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -333,8 +388,52 @@ export default function JadwalPiketManage() {
               <RotateCcw className="w-4 h-4" /> Reset Bulan Ini
             </button>
           </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 mb-5">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Cari nama prajurit, pangkat, tanggal, atau keterangan..."
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
+              />
+            </div>
+
+            <div className="relative shrink-0 w-full sm:w-auto">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="w-full sm:w-44 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+              >
+                <option value="all">Semua Status</option>
+                <option value="scheduled">Terjadwal</option>
+                <option value="completed">Selesai</option>
+                <option value="absent">Tidak Hadir</option>
+              </select>
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
+
+            <div className="relative shrink-0 w-full sm:w-auto">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full sm:w-60 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+              >
+                <option value="tanggal_asc">Tanggal (Terlama / Awal)</option>
+                <option value="tanggal_desc">Tanggal (Terbaru / Akhir)</option>
+                <option value="nama_asc">Nama Anggota (A - Z)</option>
+                <option value="nama_desc">Nama Anggota (Z - A)</option>
+                <option value="status_asc">Status (Terjadwal Dahulu)</option>
+                <option value="status_desc">Status (Tidak Hadir Dahulu)</option>
+              </select>
+              <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
+          </div>
+
           <JadwalTable
-            items={items}
+            items={filteredAndSortedItems}
             today={today}
             loading={loading}
             onEdit={setEditingItem}
@@ -511,7 +610,7 @@ function JadwalTable({ items, today, loading, onEdit, onDelete }) {
       {!loading && items.length === 0 && (
         <div className="py-12 text-center text-dashNavy/50">
           <CalendarCheck className="w-10 h-10 mx-auto mb-2 opacity-50" />
-          Belum ada jadwal piket untuk bulan ini.
+          Tidak ada data jadwal piket yang sesuai.
         </div>
       )}
     </div>

@@ -7,6 +7,7 @@ const Soldier = sequelize.define('Soldier', {
   password: { type: DataTypes.STRING(255), allowNull: false },
   full_name: { type: DataTypes.STRING(150), allowNull: true },
   photo: { type: DataTypes.STRING(255), allowNull: true },
+  pangkat: { type: DataTypes.STRING(100), allowNull: true },
   status: { type: DataTypes.ENUM('aktif', 'nonaktif'), allowNull: false, defaultValue: 'aktif' },
   org_structure_id: { type: DataTypes.INTEGER, allowNull: true },
 }, {

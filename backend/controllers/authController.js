@@ -36,6 +36,10 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Username/email atau password salah.' });
     }
 
+    if (role === 'soldier' && user.status !== 'aktif') {
+      return res.status(403).json({ message: 'Akun anggota nonaktif.' });
+    }
+
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return res.status(401).json({ message: 'Username/email atau password salah.' });
@@ -83,6 +87,10 @@ exports.me = async (req, res) => {
     }
     
     if (!currentUser) return res.status(404).json({ message: "User not found" });
+    if (role === 'soldier' && currentUser.status !== 'aktif') {
+      res.clearCookie('token');
+      return res.status(403).json({ message: 'Akun anggota nonaktif.' });
+    }
 
     const userData = { ...currentUser.toJSON(), role };
     res.json({ user: userData });

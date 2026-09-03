@@ -39,6 +39,10 @@ const ProgramKerja = sequelize.define('ProgramKerja', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  pic_soldier_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   admin_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

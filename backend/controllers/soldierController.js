@@ -63,8 +63,12 @@ exports.updateProfile = async (req, res) => {
 // Mendapatkan semua anggota (Soldier) beserta jabatannya
 exports.getAllSoldiers = async (req, res) => {
   try {
-    const { eligible } = req.query;
+    const { eligible, status } = req.query;
+    const where = {};
+    if (status) where.status = status;
+
     const soldiers = await Soldier.findAll({
+      where,
       include: [
         {
           model: OrgStructure,
@@ -78,7 +82,7 @@ exports.getAllSoldiers = async (req, res) => {
         ? soldiers.filter(
             (soldier) =>
               soldier.status === "aktif" &&
-              isEligibleRank(soldier.OrgStructure?.rank),
+              isEligibleRank(soldier.pangkat),
           )
         : soldiers;
     res.json(data);
@@ -110,7 +114,7 @@ exports.getSoldierById = async (req, res) => {
 exports.updateSoldier = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, full_name, password, status } = req.body;
+    const { username, full_name, pangkat, password, status } = req.body;
 
     const soldier = await Soldier.findByPk(id);
     if (!soldier) {
@@ -127,6 +131,9 @@ exports.updateSoldier = async (req, res) => {
     }
     if (full_name) {
       soldier.full_name = full_name;
+    }
+    if (pangkat !== undefined) {
+      soldier.pangkat = pangkat || null;
     }
     if (password) {
       soldier.password = await bcrypt.hash(password, 10);

@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Clock,
   ArrowUpDown,
+  Filter,
 } from "lucide-react";
 
 // ── helpers ─────────────────────────────────────────────────────────────────
@@ -100,7 +101,10 @@ function EditModal({ record, onClose, onSaved, showToast }) {
     onClose();
 
     try {
-      const res = await api.put(`/absensi/${record.id}`, { status, keterangan });
+      const res = await api.put(`/absensi/${record.id}`, {
+        status,
+        keterangan,
+      });
       onSaved(res.data?.absensi ?? optimisticRecord, false);
     } catch (e) {
       onSaved(record, false);
@@ -206,7 +210,9 @@ function ReviewModal({ record, onClose, onSaved, showToast }) {
 
         <div className="bg-gray-50 border border-gray-100 rounded-md p-3 mb-2 text-sm space-y-1">
           <div>
-            <span className="font-semibold text-dashNavy/60">Status saat ini: </span>
+            <span className="font-semibold text-dashNavy/60">
+              Status saat ini:{" "}
+            </span>
             <StatusBadge status={record.status} />
           </div>
           <div>
@@ -216,7 +222,9 @@ function ReviewModal({ record, onClose, onSaved, showToast }) {
           {record.keterangan_sanggahan && (
             <div>
               <span className="font-semibold text-dashNavy/60">Alasan: </span>
-              <span className="text-dashNavy">{record.keterangan_sanggahan}</span>
+              <span className="text-dashNavy">
+                {record.keterangan_sanggahan}
+              </span>
             </div>
           )}
         </div>
@@ -300,7 +308,12 @@ export default function AbsensiManage() {
       setAbsensiList((list) =>
         list.map((item) =>
           item.id === savedAbsensi.id
-            ? { ...item, ...savedAbsensi, Soldier: item.Soldier, Admin: item.Admin }
+            ? {
+                ...item,
+                ...savedAbsensi,
+                Soldier: item.Soldier,
+                Admin: item.Admin,
+              }
             : item,
         ),
       );
@@ -313,24 +326,28 @@ export default function AbsensiManage() {
 
   const metrics = useMemo(() => {
     if (!absensiList || absensiList.length === 0) return null;
-    
-    const hadir = absensiList.filter(a => a.status === 'hadir').length;
-    const tidakHadir = absensiList.filter(a => !['hadir', 'belum_diisi'].includes(a.status)).length;
-    const belumIsi = absensiList.filter(a => a.status === 'belum_diisi').length;
+
+    const hadir = absensiList.filter((a) => a.status === "hadir").length;
+    const tidakHadir = absensiList.filter(
+      (a) => !["hadir", "belum_diisi"].includes(a.status),
+    ).length;
+    const belumIsi = absensiList.filter(
+      (a) => a.status === "belum_diisi",
+    ).length;
 
     return {
       total: absensiList.length,
       hadir,
       tidakHadir,
-      belumIsi
+      belumIsi,
     };
   }, [absensiList]);
 
   const infoCards = [
-    { label: 'Total Personel', value: metrics?.total || 0, loading },
-    { label: 'Hadir', value: metrics?.hadir || 0, loading },
-    { label: 'Tidak Hadir', value: metrics?.tidakHadir || 0, loading },
-    { label: 'Belum Diisi', value: metrics?.belumIsi || 0, loading },
+    { label: "Total Personel", value: metrics?.total || 0, loading },
+    { label: "Hadir", value: metrics?.hadir || 0, loading },
+    { label: "Tidak Hadir", value: metrics?.tidakHadir || 0, loading },
+    { label: "Belum Diisi", value: metrics?.belumIsi || 0, loading },
   ];
 
   const [page, setPage] = useState(1);
@@ -338,19 +355,35 @@ export default function AbsensiManage() {
   const [filterStatus, setFilterStatus] = useState("all");
 
   const filtered = absensiList.filter((a) => {
-    const name = (a.Soldier?.full_name ?? a.Soldier?.username ?? "").toLowerCase();
+    const name = (
+      a.Soldier?.full_name ??
+      a.Soldier?.username ??
+      ""
+    ).toLowerCase();
     const position = (a.Soldier?.OrgStructure?.position ?? "").toLowerCase();
+    const pangkat = (a.Soldier?.pangkat ?? "").toLowerCase();
     const lowerQ = q.toLowerCase();
-    
-    const matchSearch = name.includes(lowerQ) || position.includes(lowerQ);
+
+    const matchSearch =
+      name.includes(lowerQ) ||
+      position.includes(lowerQ) ||
+      pangkat.includes(lowerQ);
     const matchStatus = filterStatus === "all" || a.status === filterStatus;
-    
+
     return matchSearch && matchStatus;
   });
 
   const filteredAndSorted = [...filtered].sort((a, b) => {
-    const nameA = (a.Soldier?.full_name ?? a.Soldier?.username ?? "").toLowerCase();
-    const nameB = (b.Soldier?.full_name ?? b.Soldier?.username ?? "").toLowerCase();
+    const nameA = (
+      a.Soldier?.full_name ??
+      a.Soldier?.username ??
+      ""
+    ).toLowerCase();
+    const nameB = (
+      b.Soldier?.full_name ??
+      b.Soldier?.username ??
+      ""
+    ).toLowerCase();
     const statusA = (a.status ?? "").toLowerCase();
     const statusB = (b.status ?? "").toLowerCase();
 
@@ -368,7 +401,10 @@ export default function AbsensiManage() {
 
   const ITEMS_PER_PAGE = 12;
   const totalPages = Math.ceil(filteredAndSorted.length / ITEMS_PER_PAGE);
-  const paginatedData = filteredAndSorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const paginatedData = filteredAndSorted.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE,
+  );
 
   useEffect(() => {
     setPage(1);
@@ -439,9 +475,9 @@ export default function AbsensiManage() {
       {tab === "absensi" && (
         <>
           {/* Controls */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-5">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
             {/* Date navigator */}
-            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2.5">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 h-[42px]">
               <button
                 id="prev-day"
                 onClick={prevDay}
@@ -474,16 +510,15 @@ export default function AbsensiManage() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Cari nama atau jabatan..."
-                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
+                className="w-full h-[42px] pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
               />
             </div>
 
-            {/* Filter Status */}
             <div className="relative shrink-0 w-full sm:w-auto">
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full sm:w-44 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm text-dashNavy bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+                className="w-full sm:w-44 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
               >
                 <option value="all">Semua Status</option>
                 <option value="hadir">Hadir</option>
@@ -497,6 +532,7 @@ export default function AbsensiManage() {
                 <option value="tk">Tanpa Keterangan</option>
                 <option value="belum_diisi">Belum Diisi</option>
               </select>
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
 
             {/* Sort */}
@@ -504,7 +540,7 @@ export default function AbsensiManage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full sm:w-56 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm text-dashNavy bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+                className="w-full sm:w-56 h-[42px] pl-9 pr-6 py-2 border border-gray-200 rounded-lg text-sm text-dashNavy leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
               >
                 <option value="hierarki">Urutan Jabatan (Hierarki)</option>
                 <option value="nama_asc">Nama (A - Z)</option>
@@ -518,7 +554,7 @@ export default function AbsensiManage() {
             <button
               id="refresh-absensi"
               onClick={fetchAbsensi}
-              className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:bg-dashAccent/90 transition"
+              className="h-[42px] inline-flex items-center justify-center bg-dashAccent text-white rounded-md px-4 text-sm font-semibold hover:bg-dashAccent/90 transition"
             >
               Muat Ulang
             </button>
@@ -538,12 +574,24 @@ export default function AbsensiManage() {
               <table className="w-full text-sm text-dashNavy">
                 <thead className="bg-gray-50 text-dashNavy text-left">
                   <tr>
-                    <th className="text-left px-4 py-3 font-semibold">Nama Anggota</th>
-                    <th className="text-left px-4 py-3 font-semibold">Jabatan</th>
-                    <th className="text-center px-4 py-3 font-semibold">Status</th>
-                    <th className="text-center px-4 py-3 font-semibold">Sanggahan</th>
-                    <th className="text-left px-4 py-3 font-semibold">Keterangan</th>
-                    <th className="text-center px-4 py-3 font-semibold">Aksi</th>
+                    <th className="text-left px-4 py-3 font-semibold">
+                      Nama Anggota
+                    </th>
+                    <th className="text-left px-4 py-3 font-semibold">
+                      Jabatan
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold">
+                      Status
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold">
+                      Sanggahan
+                    </th>
+                    <th className="text-left px-4 py-3 font-semibold">
+                      Keterangan
+                    </th>
+                    <th className="text-center px-4 py-3 font-semibold">
+                      Aksi
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -603,7 +651,7 @@ export default function AbsensiManage() {
               </table>
             )}
           </div>
-          
+
           {totalPages > 1 && (
             <div className="flex gap-2 justify-center mt-6">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -634,8 +682,12 @@ export default function AbsensiManage() {
                 <tr>
                   <th className="text-left px-4 py-3 font-semibold">Anggota</th>
                   <th className="text-left px-4 py-3 font-semibold">Tanggal</th>
-                  <th className="text-center px-4 py-3 font-semibold">Status Saat Ini</th>
-                  <th className="text-center px-4 py-3 font-semibold">Usulan</th>
+                  <th className="text-center px-4 py-3 font-semibold">
+                    Status Saat Ini
+                  </th>
+                  <th className="text-center px-4 py-3 font-semibold">
+                    Usulan
+                  </th>
                   <th className="text-left px-4 py-3 font-semibold">Alasan</th>
                   <th className="text-center px-4 py-3 font-semibold">Aksi</th>
                 </tr>
@@ -649,7 +701,9 @@ export default function AbsensiManage() {
                     <td className="px-4 py-3 font-medium">
                       {a.Soldier?.full_name ?? a.Soldier?.username ?? "—"}
                     </td>
-                    <td className="px-4 py-3 text-dashNavy/70 tabular-nums">{formatDate(a.tanggal)}</td>
+                    <td className="px-4 py-3 text-dashNavy/70 tabular-nums">
+                      {formatDate(a.tanggal)}
+                    </td>
                     <td className="px-4 py-3 text-center">
                       <StatusBadge status={a.status} />
                     </td>

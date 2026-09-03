@@ -5,7 +5,7 @@ import PageHeader from "../../components/admin/PageHeader";
 import FormModal from "../../components/admin/FormModal";
 import Toast from "../../components/admin/Toast";
 import { useToast } from "../../hooks/useToast";
-import { Search, ArrowUpDown } from "lucide-react";
+import { Search, ArrowUpDown, Filter } from "lucide-react";
 
 const statusOptions = [
   { value: "aktif", label: "Aktif" },
@@ -24,6 +24,11 @@ const fields = [
     label: "Username",
     type: "text",
     required: true,
+  },
+  {
+    name: "pangkat",
+    label: "Pangkat",
+    type: "text",
   },
   {
     name: "status",
@@ -47,6 +52,8 @@ const sortOptions = [
   { value: "nama_desc", label: "Nama Lengkap (Z - A)" },
   { value: "uname_asc", label: "Username (A - Z)" },
   { value: "uname_desc", label: "Username (Z - A)" },
+  { value: "status_aktif_first", label: "Status (Aktif Dahulu)" },
+  { value: "status_nonaktif_first", label: "Status (Nonaktif Dahulu)" },
 ];
 
 const ITEMS_PER_PAGE = 12;
@@ -57,6 +64,7 @@ export default function SoldierManage() {
 
   const [q, setQ] = useState("");
   const [sortBy, setSortBy] = useState("hierarki");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
 
   const [editing, setEditing] = useState(null);
@@ -84,12 +92,19 @@ export default function SoldierManage() {
   const filteredAndSortedSoldiers = useMemo(() => {
     let result = [...soldiers];
 
+    if (statusFilter !== "all") {
+      result = result.filter(
+        (s) => (s.status || "aktif") === statusFilter,
+      );
+    }
+
     if (q.trim()) {
       const lowerQ = q.toLowerCase();
       result = result.filter(
         (s) =>
           (s.full_name || "").toLowerCase().includes(lowerQ) ||
           (s.username || "").toLowerCase().includes(lowerQ) ||
+          (s.pangkat || "").toLowerCase().includes(lowerQ) ||
           (s.OrgStructure?.position || "").toLowerCase().includes(lowerQ),
       );
     }
@@ -99,6 +114,8 @@ export default function SoldierManage() {
       const nameB = (b.full_name || "").toLowerCase();
       const unameA = (a.username || "").toLowerCase();
       const unameB = (b.username || "").toLowerCase();
+      const statusA = a.status || "aktif";
+      const statusB = b.status || "aktif";
 
       switch (sortBy) {
         case "nama_asc":
@@ -109,6 +126,12 @@ export default function SoldierManage() {
           return unameA.localeCompare(unameB);
         case "uname_desc":
           return unameB.localeCompare(unameA);
+        case "status_aktif_first":
+          if (statusA === statusB) return nameA.localeCompare(nameB);
+          return statusA === "aktif" ? -1 : 1;
+        case "status_nonaktif_first":
+          if (statusA === statusB) return nameA.localeCompare(nameB);
+          return statusA === "nonaktif" ? -1 : 1;
         case "hierarki":
         default: {
           const orderA = a.OrgStructure?.display_order ?? 999999;
@@ -119,11 +142,11 @@ export default function SoldierManage() {
     });
 
     return result;
-  }, [soldiers, q, sortBy]);
+  }, [soldiers, q, sortBy, statusFilter]);
 
   useEffect(() => {
     setPage(1);
-  }, [q, sortBy]);
+  }, [q, sortBy, statusFilter]);
 
   const totalPages = Math.ceil(
     filteredAndSortedSoldiers.length / ITEMS_PER_PAGE,
@@ -191,7 +214,7 @@ export default function SoldierManage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Cari nama lengkap, username, atau jabatan..."
+            placeholder="Cari nama lengkap, username, pangkat, atau jabatan..."
             value={q}
             onChange={(e) => setQ(e.target.value)}
             className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
@@ -200,9 +223,22 @@ export default function SoldierManage() {
 
         <div className="relative shrink-0 w-full sm:w-auto">
           <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full sm:w-44 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+          >
+            <option value="all">Semua Status</option>
+            <option value="aktif">Status: Aktif</option>
+            <option value="nonaktif">Status: Nonaktif</option>
+          </select>
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        </div>
+
+        <div className="relative shrink-0 w-full sm:w-auto">
+          <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full sm:w-64 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+            className="w-full sm:w-64 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
           >
             {sortOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -225,6 +261,9 @@ export default function SoldierManage() {
                 Username
               </th>
               <th scope="col" className="px-4 py-3 font-semibold">
+                Pangkat
+              </th>
+              <th scope="col" className="px-4 py-3 font-semibold">
                 Jabatan
               </th>
               <th scope="col" className="px-4 py-3 font-semibold">
@@ -239,7 +278,7 @@ export default function SoldierManage() {
             {loading && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="px-4 py-6 text-center text-dashNavy/50"
                 >
                   Memuat data...
@@ -249,7 +288,7 @@ export default function SoldierManage() {
             {!loading && paginatedData.length === 0 && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="px-4 py-6 text-center text-dashNavy/50"
                 >
                   {q.trim() !== ""
@@ -265,6 +304,9 @@ export default function SoldierManage() {
                     {soldier.full_name || "-"}
                   </td>
                   <td className="px-4 py-3">{soldier.username}</td>
+                  <td className="px-4 py-3 text-dashNavy/80 font-medium">
+                    {soldier.pangkat || "-"}
+                  </td>
                   <td className="px-4 py-3 text-dashNavy/60">
                     {soldier.OrgStructure?.position || "-"}
                   </td>
@@ -314,6 +356,7 @@ export default function SoldierManage() {
             ? {
                 full_name: editing.full_name || "",
                 username: editing.username || "",
+                pangkat: editing.pangkat || "",
                 status: editing.status || "aktif",
                 password: "",
               }

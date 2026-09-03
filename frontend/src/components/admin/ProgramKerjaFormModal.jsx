@@ -50,12 +50,12 @@ export default function ProgramKerjaFormModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto font-dash">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center px-4 py-6 overflow-y-auto font-dash">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="proker-form-modal-title"
-        className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-3xl p-6"
+        className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-3xl max-h-[90vh] p-5 overflow-y-auto"
       >
         <h3
           id="proker-form-modal-title"
@@ -65,7 +65,7 @@ export default function ProgramKerjaFormModal({
         </h3>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="md:col-span-2">
               <label
                 htmlFor="field-program"
@@ -85,23 +85,23 @@ export default function ProgramKerjaFormModal({
 
             <div className="md:col-span-2">
               <label
-                htmlFor="field-pic_org_structure_id"
+                htmlFor="field-pic_soldier_id"
                 className="text-sm font-medium text-dashNavy block mb-1"
               >
                 Penanggung Jawab (PIC)
               </label>
               <select
-                id="field-pic_org_structure_id"
-                value={values.pic_org_structure_id || ""}
+                id="field-pic_soldier_id"
+                value={values.pic_soldier_id || ""}
                 onChange={(e) =>
-                  handleChange("pic_org_structure_id", e.target.value)
+                  handleChange("pic_soldier_id", e.target.value)
                 }
                 className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
               >
                 <option value="">Pilih...</option>
-                {orgStructures.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
+                {soldiers.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.full_name || s.username} — {s.pangkat || "Pangkat belum diisi"}
                   </option>
                 ))}
               </select>
@@ -116,7 +116,7 @@ export default function ProgramKerjaFormModal({
               </label>
               <textarea
                 id="field-keterangan"
-                rows={4}
+                rows={3}
                 value={values.keterangan || ""}
                 onChange={(e) => handleChange("keterangan", e.target.value)}
                 className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
@@ -264,7 +264,7 @@ export default function ProgramKerjaFormModal({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+          <div className="flex justify-end gap-3 pt-4 mt-4 border-t border-gray-100">
             <button
               type="button"
               onClick={onCancel}
