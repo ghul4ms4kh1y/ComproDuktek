@@ -4,13 +4,34 @@ import InfoCardGrid from "../../components/admin/InfoCardGrid";
 import PageHeader from "../../components/admin/PageHeader";
 import FormModal from "../../components/admin/FormModal";
 import Toast from "../../components/admin/Toast";
+import ConfirmModal from "../../components/admin/ConfirmModal";
 import { useToast } from "../../hooks/useToast";
 import { Search, ArrowUpDown, Filter } from "lucide-react";
 
-const statusOptions = [
-  { value: "aktif", label: "Aktif" },
-  { value: "nonaktif", label: "Nonaktif" },
-];
+const pangkatOptions = [
+  "Jenderal TNI",
+  "Letnan Jenderal TNI",
+  "Mayor Jenderal TNI",
+  "Brigadir Jenderal TNI",
+  "Kolonel",
+  "Letnan Kolonel",
+  "Mayor",
+  "Kapten",
+  "Letnan Satu",
+  "Letnan Dua",
+  "Pembantu Letnan Satu",
+  "Pembantu Letnan Dua",
+  "Sersan Mayor",
+  "Sersan Kepala",
+  "Sersan Satu",
+  "Sersan Dua",
+  "Kopral Kepala",
+  "Kopral Satu",
+  "Kopral Dua",
+  "Prajurit Kepala",
+  "Prajurit Satu",
+  "Prajurit Dua",
+].map((nama) => ({ value: nama, label: nama }));
 
 const fields = [
   {
@@ -28,14 +49,8 @@ const fields = [
   {
     name: "pangkat",
     label: "Pangkat",
-    type: "text",
-  },
-  {
-    name: "status",
-    label: "Status Anggota",
     type: "select",
-    required: true,
-    options: statusOptions,
+    options: [{ value: "", label: "Pilih Pangkat..." }, ...pangkatOptions],
   },
   {
     name: "password",
@@ -69,6 +84,8 @@ export default function SoldierManage() {
 
   const [editing, setEditing] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [statusToggleTarget, setStatusToggleTarget] = useState(null);
+  const [statusToggleLoading, setStatusToggleLoading] = useState(false);
 
   const { toast, showToast } = useToast();
 
@@ -198,6 +215,47 @@ export default function SoldierManage() {
     }
   };
 
+  const handleToggleStatus = async (soldier) => {
+    if ((soldier.status || "aktif") === "aktif") {
+      setStatusToggleTarget(soldier);
+      return;
+    }
+    try {
+      await api.put(`/soldiers/${soldier.id}`, { status: "aktif" });
+      showToast(
+        `Akun ${soldier.full_name || soldier.username} berhasil diaktifkan.`,
+      );
+      fetchData();
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Gagal mengubah status akun.",
+        "error",
+      );
+    }
+  };
+
+  const confirmDeactivate = async () => {
+    if (!statusToggleTarget) return;
+    setStatusToggleLoading(true);
+    try {
+      await api.put(`/soldiers/${statusToggleTarget.id}`, {
+        status: "nonaktif",
+      });
+      showToast(
+        `Akun ${statusToggleTarget.full_name || statusToggleTarget.username} berhasil dinonaktifkan.`,
+      );
+      setStatusToggleTarget(null);
+      fetchData();
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Gagal menonaktifkan akun.",
+        "error",
+      );
+    } finally {
+      setStatusToggleLoading(false);
+    }
+  };
+
   return (
     <div className="font-dash">
       <PageHeader
@@ -311,13 +369,27 @@ export default function SoldierManage() {
                     {soldier.OrgStructure?.position || "-"}
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${(soldier.status || "aktif") === "aktif" ? "bg-green-100 text-green-700 border-green-200" : "bg-red-100 text-red-700 border-red-200"}`}
-                    >
-                      {(soldier.status || "aktif") === "aktif"
-                        ? "Aktif"
-                        : "Nonaktif"}
-                    </span>
+                    {(() => {
+                      const isActive = (soldier.status || "aktif") === "aktif";
+                      return (
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={isActive}
+                          aria-label={
+                            isActive
+                              ? "Nonaktifkan akun"
+                              : "Aktifkan akun"
+                          }
+                          onClick={() => handleToggleStatus(soldier)}
+                          className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-dashAccent/40 ${isActive ? "bg-green-500" : "bg-gray-100 border border-gray-300"}`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${isActive ? "translate-x-6" : "translate-x-1"}`}
+                          />
+                        </button>
+                      );
+                    })()}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     <button
@@ -357,7 +429,6 @@ export default function SoldierManage() {
                 full_name: editing.full_name || "",
                 username: editing.username || "",
                 pangkat: editing.pangkat || "",
-                status: editing.status || "aktif",
                 password: "",
               }
             : {}
@@ -365,6 +436,16 @@ export default function SoldierManage() {
         submitting={submitting}
         onCancel={() => setEditing(null)}
         onSubmit={handleSubmit}
+      />
+
+      <ConfirmModal
+        open={!!statusToggleTarget}
+        headerTitle="Nonaktifkan Akun Anggota?"
+        title={`Apakah Anda yakin ingin menonaktifkan akun anggota ${statusToggleTarget?.full_name || statusToggleTarget?.username || ""}? Akun yang nonaktif tidak akan bisa login ke sistem.`}
+        confirmText="Ya, Nonaktifkan"
+        loading={statusToggleLoading}
+        onCancel={() => setStatusToggleTarget(null)}
+        onConfirm={confirmDeactivate}
       />
 
       <Toast toast={toast} />
