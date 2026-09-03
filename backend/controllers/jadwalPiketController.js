@@ -18,10 +18,10 @@ const getDatesInMonth = (bulan, tahun) => {
   return dates;
 };
 
-const soldierInclude = (attributes = ["id", "full_name", "username"]) => ({
+const soldierInclude = (attributes = ["id", "full_name", "username", "pangkat", "status"]) => ({
   model: Soldier,
   attributes,
-  include: [{ model: OrgStructure, attributes: ["position", "rank"] }],
+  include: [{ model: OrgStructure, attributes: ["position"] }],
 });
 
 const getEligibleIds = async () =>

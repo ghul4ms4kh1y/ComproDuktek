@@ -882,7 +882,7 @@ export default function SoldierDashboard() {
                           <div className="flex justify-between">
                             <span>Penanggung Jawab:</span>
                             <span className="text-gray-500 font-medium">
-                              {proker.pic?.position || "Belum ditentukan"}
+                              {proker.picSoldier?.full_name || proker.picSoldier?.username || proker.pic?.position || "Belum ditentukan"}
                             </span>
                           </div>
                           <div className="flex justify-between">

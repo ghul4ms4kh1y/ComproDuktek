@@ -20,7 +20,7 @@ export default function TeamPickerField({
     return soldiers.filter((s) => {
       const name = (s.full_name || "").toLowerCase();
       const username = (s.username || "").toLowerCase();
-      const pangkat = (s.Pangkat?.nama || s.OrgStructure?.rank || "").toLowerCase();
+      const pangkat = (s.pangkat || s.Pangkat?.nama || s.OrgStructure?.rank || "").toLowerCase();
       return (
         name.includes(lower) ||
         username.includes(lower) ||
@@ -63,7 +63,7 @@ export default function TeamPickerField({
         />
       </div>
 
-      <div className="max-h-44 overflow-y-auto border border-gray-200 rounded-md divide-y divide-gray-50">
+      <div className="max-h-32 overflow-y-auto border border-gray-200 rounded-md divide-y divide-gray-50">
         {filtered.length === 0 ? (
           <p className="text-xs text-gray-400 text-center py-4">
             Soldier tidak ditemukan.
@@ -85,7 +85,7 @@ export default function TeamPickerField({
               <span className="text-sm text-gray-700">
                 {s.full_name || s.username || `Soldier #${s.id}`}{" "}
                 <span className="text-gray-400">
-                  ({s.Pangkat?.nama || s.OrgStructure?.rank || "Pangkat belum diisi"})
+                  ({s.pangkat || s.Pangkat?.nama || s.OrgStructure?.rank || "Pangkat belum diisi"})
                 </span>
               </span>
             </label>

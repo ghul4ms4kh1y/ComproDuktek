@@ -5,6 +5,16 @@ const { Op } = require("sequelize");
 const computeProkerStatus = require("../utils/computeProkerStatus");
 const { deleteDocumentFromDisk } = require("../utils/fileHelper");
 
+const onlyActiveSoldierIds = async (ids) => {
+  const uniqueIds = [...new Set(ids.filter(Boolean).map(Number))];
+  if (uniqueIds.length === 0) return [];
+  const soldiers = await Soldier.findAll({
+    where: { id: { [Op.in]: uniqueIds }, status: "aktif" },
+    attributes: ["id"],
+  });
+  return soldiers.map((soldier) => soldier.id);
+};
+
 exports.index = async (req, res) => {
   try {
     const { page = 1, limit = 10, q = "", status = "", sortBy, sortOrder = 'ASC' } = req.query;
@@ -38,8 +48,17 @@ exports.index = async (req, res) => {
         },
         {
           model: Soldier,
+          as: "picSoldier",
+          attributes: ["id", "username", "full_name", "pangkat", "status"],
+          where: { status: "aktif" },
+          required: false,
+        },
+        {
+          model: Soldier,
           as: "tim",
-          attributes: ["id", "username", "full_name"],
+          attributes: ["id", "username", "full_name", "pangkat", "status"],
+          where: { status: "aktif" },
+          required: false,
           through: { attributes: [] },
         },
       ],
@@ -90,8 +109,17 @@ exports.show = async (req, res) => {
         },
         {
           model: Soldier,
+          as: "picSoldier",
+          attributes: ["id", "username", "full_name", "pangkat", "status"],
+          where: { status: "aktif" },
+          required: false,
+        },
+        {
+          model: Soldier,
           as: "tim",
-          attributes: ["id", "username", "full_name"],
+          attributes: ["id", "username", "full_name", "pangkat", "status"],
+          where: { status: "aktif" },
+          required: false,
           through: { attributes: [] },
         },
       ],
@@ -120,6 +148,9 @@ exports.create = async (req, res) => {
     if (!payload.pic_org_structure_id) {
       payload.pic_org_structure_id = null;
     }
+    if (!payload.pic_soldier_id) {
+      payload.pic_soldier_id = null;
+    }
 
     // Pastikan jika kosong, mutlak jadi null, BUKAN string kosong
     if (!payload.tanggal_selesai) payload.tanggal_selesai = null;
@@ -133,6 +164,14 @@ exports.create = async (req, res) => {
       timIds = [];
     }
     delete payload.tim_ids;
+
+    if (payload.pic_soldier_id) {
+      const activePicIds = await onlyActiveSoldierIds([payload.pic_soldier_id]);
+      if (activePicIds.length === 0) {
+        return res.status(400).json({ message: "PIC harus anggota aktif." });
+      }
+    }
+    timIds = await onlyActiveSoldierIds(timIds);
 
     // Dokumen perencanaan (disimpan sebagai NAMA FILE di folder private)
     if (req.files && req.files.file_perencanaan && req.files.file_perencanaan[0]) {
@@ -177,6 +216,16 @@ exports.update = async (req, res) => {
     }
     delete payload.tim_ids;
 
+    if (payload.pic_soldier_id) {
+      const activePicIds = await onlyActiveSoldierIds([payload.pic_soldier_id]);
+      if (activePicIds.length === 0) {
+        return res.status(400).json({ message: "PIC harus anggota aktif." });
+      }
+    }
+    if (timIds !== undefined) {
+      timIds = await onlyActiveSoldierIds(timIds);
+    }
+
     // Dokumen perencanaan baru: hapus file lama dari disk dulu, baru simpan nama baru
     if (req.files && req.files.file_perencanaan && req.files.file_perencanaan[0]) {
       if (item.file_perencanaan) {
@@ -190,6 +239,9 @@ exports.update = async (req, res) => {
 
     if (!payload.pic_org_structure_id) {
       payload.pic_org_structure_id = null;
+    }
+    if (!payload.pic_soldier_id) {
+      payload.pic_soldier_id = null;
     }
 
     // Trik Mencegah Error DB: Ubah string kosong menjadi NULL

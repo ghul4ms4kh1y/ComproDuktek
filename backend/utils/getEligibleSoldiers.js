@@ -1,4 +1,4 @@
-const { Soldier, OrgStructure } = require("../models");
+const { Soldier } = require("../models");
 
 const eligibleRankPrefixes = [
   "letnan satu",
@@ -35,13 +35,9 @@ const isEligibleRank = (rank) => {
 const getEligibleSoldiers = () =>
   Soldier.findAll({
     where: { status: "aktif" },
-    include: [{ model: OrgStructure, attributes: ["rank"], required: true }],
-    order: [
-      [OrgStructure, "display_order", "ASC"],
-      ["id", "ASC"],
-    ],
+    order: [["id", "ASC"]],
   }).then((soldiers) =>
-    soldiers.filter((soldier) => isEligibleRank(soldier.OrgStructure?.rank)),
+    soldiers.filter((soldier) => isEligibleRank(soldier.pangkat)),
   );
 
 module.exports = {

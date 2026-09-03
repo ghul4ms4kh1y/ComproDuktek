@@ -25,7 +25,10 @@ const absensiController = {
       const targetDate = getLocalDateString(tanggal);
 
       // Lazy Generation: If this endpoint is hit, ensure records exist for the given date for all soldiers
-      const soldiers = await Soldier.findAll({ attributes: ["id"] });
+      const soldiers = await Soldier.findAll({
+        where: { status: "aktif" },
+        attributes: ["id"],
+      });
       const absensiData = soldiers.map((s) => ({
         soldier_id: s.id,
         tanggal: targetDate,
@@ -56,11 +59,14 @@ const absensiController = {
         include: [
           {
             model: Soldier,
+            where: { status: "aktif" },
             attributes: [
               "id",
               "username",
               "full_name",
               "photo",
+              "pangkat",
+              "status",
               "org_structure_id",
             ],
             include: [
