@@ -733,8 +733,8 @@ export default function SoldierDashboard() {
                   {user?.full_name || user?.username}
                 </h3>
                 <p className="text-sm text-gray-500 mt-0.5 truncate">
-                  {user?.OrgStructure?.rank || user?.OrgStructure?.position
-                    ? [user?.OrgStructure?.rank, user?.OrgStructure?.position]
+                  {(user?.pangkat || user?.OrgStructure?.rank) || user?.OrgStructure?.position
+                    ? [user?.pangkat || user?.OrgStructure?.rank, user?.OrgStructure?.position]
                         .filter(Boolean)
                         .join(" · ")
                     : "Pangkat & jabatan belum diisi"}
@@ -1120,9 +1120,9 @@ export default function SoldierDashboard() {
                               <span className="font-medium text-gray-700">
                                 {partner?.full_name || partner?.username || "-"}
                               </span>
-                              {partner?.OrgStructure?.position && (
+                              {(partner?.OrgStructure?.position || partner?.pangkat || partner?.OrgStructure?.rank) && (
                                 <p className="text-[10px] text-gray-400">
-                                  {partner.OrgStructure.position} {partner.OrgStructure.rank ? `(${partner.OrgStructure.rank})` : ""}
+                                  {partner?.OrgStructure?.position || ""} {partner?.pangkat || partner?.OrgStructure?.rank ? `(${partner?.pangkat || partner?.OrgStructure?.rank})` : ""}
                                 </p>
                               )}
                             </td>
