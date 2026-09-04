@@ -8,31 +8,6 @@ import ConfirmModal from "../../components/admin/ConfirmModal";
 import { useToast } from "../../hooks/useToast";
 import { Search, ArrowUpDown, Filter } from "lucide-react";
 
-const pangkatOptions = [
-  "Jenderal TNI",
-  "Letnan Jenderal TNI",
-  "Mayor Jenderal TNI",
-  "Brigadir Jenderal TNI",
-  "Kolonel",
-  "Letnan Kolonel",
-  "Mayor",
-  "Kapten",
-  "Letnan Satu",
-  "Letnan Dua",
-  "Pembantu Letnan Satu",
-  "Pembantu Letnan Dua",
-  "Sersan Mayor",
-  "Sersan Kepala",
-  "Sersan Satu",
-  "Sersan Dua",
-  "Kopral Kepala",
-  "Kopral Satu",
-  "Kopral Dua",
-  "Prajurit Kepala",
-  "Prajurit Satu",
-  "Prajurit Dua",
-].map((nama) => ({ value: nama, label: nama }));
-
 const fields = [
   {
     name: "full_name",
@@ -49,8 +24,7 @@ const fields = [
   {
     name: "pangkat",
     label: "Pangkat",
-    type: "select",
-    options: [{ value: "", label: "Pilih Pangkat..." }, ...pangkatOptions],
+    type: "text",
   },
   {
     name: "password",
