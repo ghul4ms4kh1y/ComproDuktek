@@ -14,6 +14,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { getReadTime } from '../../hooks/useReadTime';
+import { useSEO } from '../../hooks/useSEO';
 
 export default function NewsDetail() {
   const { id } = useParams();
@@ -22,6 +23,13 @@ export default function NewsDetail() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Dynamic SEO untuk artikel berita
+  useSEO({
+    title: item?.title,
+    description: item?.content ? item.content.replace(/\s+/g, ' ').substring(0, 155) + '...' : undefined,
+    image: item?.thumbnail ? (item.thumbnail.startsWith('http') ? item.thumbnail : `https://pussiberad.mil.id${item.thumbnail}`) : undefined,
+  });
 
   useEffect(() => {
     setLoading(true);

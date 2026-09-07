@@ -116,6 +116,7 @@ const programKerjaValidation = [
 ];
 
 module.exports = {
+  handleValidationErrors,
   newsValidation,
   productValidation,
   galleryValidation,

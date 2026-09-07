@@ -12,12 +12,20 @@ import {
     Send,
     Loader2
 } from 'lucide-react';
+import { useSEO } from '../../hooks/useSEO';
 
 export default function ProductDetail() {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Dynamic SEO untuk produk
+    useSEO({
+        title: product?.name ? `Produk: ${product.name}` : undefined,
+        description: product?.description ? product.description.replace(/\s+/g, ' ').substring(0, 155) + '...' : undefined,
+        image: product?.image ? (product.image.startsWith('http') ? product.image : `https://pussiberad.mil.id${product.image}`) : undefined,
+    });
 
     useEffect(() => {
         setLoading(true);

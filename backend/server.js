@@ -26,7 +26,7 @@ const app = express();
 
 app.use(
   helmet({
-    crossOriginResourcePolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -39,45 +39,10 @@ app.use(
 );
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
 
-/**
- * Parsing body request diselesaikan SEKALI di sini, untuk seluruh aplikasi:
- * - JSON / urlencoded biasa -> ditangani express.json()/urlencoded()
- * - multipart/form-data (dipakai saat form mengirim FormData, baik ada file
- *   maupun tidak) -> ditangani multer di sini
- *
- * Dengan begini, route CRUD manapun (termasuk yang tidak upload gambar,
- * seperti FAQ) otomatis bisa membaca req.body dari FormData tanpa perlu
- * menambahkan middleware multer satu per satu di tiap route, dan tidak
- * bergantung pada bagaimana frontend memformat requestnya.
- */
-app.use((req, res, next) => {
-  if (req.is('multipart/form-data')) {
-    // BYPASS: multipart untuk /api/program-kerja ditangani multer khusus
-    // (uploadDocument: pdf/doc/docx) di route-nya masing-masing. FileFilter
-    // gambar di upload.any() di bawah akan menolak dokumen tersebut.
-    if (req.originalUrl.startsWith('/api/program-kerja')) {
-      return next();
-    }
-    upload.any()(req, res, (err) => {
-      if (err) {
-        // "Unexpected end of form" terjadi saat klien mengirim form multipart
-        // yang tidak lengkap (misalnya koneksi terputus atau boundary tidak
-        // ditutup dengan benar). Ini tidak berbahaya, cukup kembalikan 400.
-        if (err.message && err.message.toLowerCase().includes('unexpected end of form')) {
-          return res.status(400).json({ message: 'Form tidak lengkap atau koneksi terputus saat upload.' });
-        }
-        return next(err);
-      }
-      next();
-    });
-  } else {
-    express.json()(req, res, (err) => {
-      if (err) return next(err);
-      express.urlencoded({ extended: true })(req, res, next);
-    });
-  }
-});
-
+// Parsing body request standar (JSON dan URL-Encoded). 
+// File upload multipart ditangani secara terisolasi pada route masing-masing yang terotentikasi.
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser());
 
 

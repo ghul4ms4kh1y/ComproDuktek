@@ -21,8 +21,10 @@ export default function HeroSlider() {
         <img
           key={src}
           src={src}
-          alt={`Ilustrasi Dukungan Teknologi Siber ${i + 1}`} // Alt text dinamis
-          loading="lazy" // Lazy loading native
+          alt={`Ilustrasi Dukungan Teknologi Siber ${i + 1}`}
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchpriority={i === 0 ? "high" : "auto"}
+          decoding="async"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
             i === current ? "opacity-100" : "opacity-0"
           }`}
