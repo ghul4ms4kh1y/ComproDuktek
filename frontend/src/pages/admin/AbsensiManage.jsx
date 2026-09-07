@@ -17,7 +17,9 @@ import {
   Clock,
   ArrowUpDown,
   Filter,
+  Download,
 } from "lucide-react";
+import { exportToExcel, formatDDMMYYYY } from "../../utils/exportUtils";
 
 // ── helpers ─────────────────────────────────────────────────────────────────
 const toLocalDateString = (d = new Date()) => {
@@ -561,9 +563,30 @@ export default function AbsensiManage() {
             </div>
 
             <button
+              onClick={() => {
+                const exportData = filteredAndSorted.map((a, idx) => ({
+                  No: idx + 1,
+                  Tanggal: formatDDMMYYYY(a.tanggal || tanggal),
+                  "Nama Lengkap": a.Soldier?.full_name || a.Soldier?.username || "-",
+                  Pangkat: a.Soldier?.pangkat || "-",
+                  Jabatan: a.Soldier?.OrgStructure?.position || "-",
+                  Status: STATUS_LABELS[a.status] || a.status || "Belum Diisi",
+                  Keterangan: a.keterangan || "-",
+                  "Status Sanggahan": SANGGAHAN_LABELS[a.status_sanggahan] || "-",
+                }));
+                exportToExcel(exportData, `Rekap_Absensi_${formatDDMMYYYY(tanggal)}`, "Presensi");
+              }}
+              className="h-[42px] px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
+              title="Export Rekap ke Excel (.xlsx)"
+            >
+              <Download className="w-4 h-4" />
+              <span>Export Excel</span>
+            </button>
+
+            <button
               id="refresh-absensi"
               onClick={fetchAbsensi}
-              className="h-[42px] inline-flex items-center justify-center bg-dashAccent text-white rounded-md px-4 text-sm font-semibold hover:bg-dashAccent/90 transition"
+              className="h-[42px] inline-flex items-center justify-center bg-dashAccent text-white rounded-md px-4 text-sm font-semibold hover:bg-dashAccent/90 transition shrink-0"
             >
               Muat Ulang
             </button>

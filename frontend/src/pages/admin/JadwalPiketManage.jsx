@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarCheck, RefreshCw, RotateCcw, AlertCircle, Search, Filter, ArrowUpDown } from "lucide-react";
+import { CalendarCheck, RefreshCw, RotateCcw, AlertCircle, Search, Filter, ArrowUpDown, Download } from "lucide-react";
 import api from "../../services/api";
 import { formatDate } from "../../lib/dateUtils";
 import ConfirmModal from "../../components/admin/ConfirmModal";
@@ -8,6 +8,7 @@ import Toast from "../../components/admin/Toast";
 import InfoCardGrid from "../../components/admin/InfoCardGrid";
 import PageHeader from "../../components/admin/PageHeader";
 import { useToast } from "../../hooks/useToast";
+import { exportToExcel, formatDDMMYYYY } from "../../utils/exportUtils";
 
 const BULAN = [
   "Januari",
@@ -430,6 +431,28 @@ export default function JadwalPiketManage() {
               </select>
               <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
+
+            <button
+              onClick={() => {
+                const exportData = filteredAndSortedItems.map((item, idx) => ({
+                  No: idx + 1,
+                  Tanggal: formatDDMMYYYY(item.tanggal_piket),
+                  Hari: getDayName(item.tanggal_piket),
+                  "Nama Anggota": item.Soldier?.nama || item.Soldier?.username || "-",
+                  Pangkat: item.Soldier?.pangkat || "-",
+                  NRP: item.Soldier?.nrp || "-",
+                  Jabatan: item.Soldier?.jabatan || "-",
+                  Status: statusOptions.find((s) => s.value === item.status)?.label || item.status,
+                  Keterangan: item.keterangan || "-",
+                }));
+                exportToExcel(exportData, `Jadwal_Piket_${BULAN[bulan - 1]}_${tahun}`, "Jadwal Piket");
+              }}
+              className="h-[42px] px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
+              title="Export Jadwal ke Excel (.xlsx)"
+            >
+              <Download className="w-4 h-4" />
+              <span>Export Excel</span>
+            </button>
           </div>
 
           <JadwalTable

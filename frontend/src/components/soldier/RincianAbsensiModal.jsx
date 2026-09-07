@@ -6,7 +6,9 @@ import {
   ChevronLeft,
   ChevronRight,
   AlertCircle,
+  Download,
 } from "lucide-react";
+import { exportToExcel, formatDDMMYYYY } from "../../utils/exportUtils";
 
 // Mapping status — duplikasi dari Dashboard.jsx agar tidak menyentuh file yang sudah ada
 const ABSENSI_STATUS_COLORS = {
@@ -223,7 +225,7 @@ export default function RincianAbsensiModal({
         </div>
 
         {/* Baris filter */}
-        <div className="flex flex-col sm:flex-row gap-3 px-5 py-3 border-b border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-3 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <label className="text-xs font-semibold text-gray-500 whitespace-nowrap">
               Filter Status
@@ -252,6 +254,28 @@ export default function RincianAbsensiModal({
               placeholder="Cari tanggal..."
               className="w-full sm:w-44 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-dashAccent"
             />
+            <button
+              onClick={() => {
+                const exportData = list.map((item, idx) => ({
+                  No: idx + 1,
+                  Tanggal: formatDDMMYYYY(item.tanggal),
+                  Status: ABSENSI_STATUS_LABELS[item.status] || item.status,
+                  "Status Sanggahan": SANGGAHAN_LABELS[item.sanggahan_status] || "-",
+                  "Alasan Sanggahan": item.sanggahan_alasan || "-",
+                  Keterangan: item.keterangan || "-",
+                }));
+                exportToExcel(
+                  exportData,
+                  `Rekap_Absensi_${MONTH_NAMES[bulan - 1]}_${tahun}`,
+                  `Absensi ${MONTH_NAMES[bulan - 1]}`
+                );
+              }}
+              className="h-[38px] px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-sm transition shrink-0"
+              title="Export data absensi satu bulan penuh ke Excel"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Export Excel</span>
+            </button>
           </div>
         </div>
 

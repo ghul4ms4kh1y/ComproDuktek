@@ -14,7 +14,9 @@ import {
   ArrowUpDown,
   Users,
   Calendar,
+  Download,
 } from "lucide-react";
+import { exportToExcel, formatDDMMYYYY } from "../../utils/exportUtils";
 
 export default function LaporanManage() {
   const [laporan, setLaporan] = useState([]);
@@ -206,9 +208,48 @@ export default function LaporanManage() {
         </div>
 
         <button
+          onClick={() => {
+            const exportData = [];
+            filteredAndSorted.forEach((lap) => {
+              const prajurit = lap.Soldier?.full_name || lap.Soldier?.username || "-";
+              const jabatan = lap.Soldier?.OrgStructure?.position || "-";
+              if (lap.LaporanHarianSesis && lap.LaporanHarianSesis.length > 0) {
+                lap.LaporanHarianSesis.forEach((sesi, sIdx) => {
+                  exportData.push({
+                    Tanggal: formatDDMMYYYY(lap.tanggal),
+                    "Nama Personel": prajurit,
+                    Jabatan: jabatan,
+                    Sesi: sesi.sesi || `Sesi ${sIdx + 1}`,
+                    Kegiatan: sesi.aktivitas || "-",
+                    Hasil: sesi.hasil || "-",
+                    Keterangan: sesi.keterangan || "-",
+                  });
+                });
+              } else {
+                exportData.push({
+                  Tanggal: formatDDMMYYYY(lap.tanggal),
+                  "Nama Personel": prajurit,
+                  Jabatan: jabatan,
+                  Sesi: "-",
+                  Kegiatan: "Tidak ada rincian sesi",
+                  Hasil: "-",
+                  Keterangan: "-",
+                });
+              }
+            });
+            exportToExcel(exportData, `Rekap_Laporan_Harian_${tanggal ? formatDDMMYYYY(tanggal) : "Semua"}`, "Laporan Harian");
+          }}
+          className="h-[42px] px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
+          title="Export Laporan ke Excel (.xlsx)"
+        >
+          <Download className="w-4 h-4" />
+          <span>Export Excel</span>
+        </button>
+
+        <button
           id="refresh-laporan"
           onClick={fetchLaporan}
-          className="bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:bg-dashAccent/90 transition"
+          className="h-[42px] inline-flex items-center justify-center bg-dashAccent text-white rounded-md px-4 text-sm font-semibold hover:bg-dashAccent/90 transition shrink-0"
         >
           Muat Ulang
         </button>
