@@ -6,7 +6,8 @@ import FormModal from "../../components/admin/FormModal";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import { useToast } from "../../hooks/useToast";
-import { Search, ArrowUpDown, Filter } from "lucide-react";
+import { Search, ArrowUpDown, Filter, Download } from "lucide-react";
+import { exportToExcel, exportToCSV } from "../../utils/exportUtils";
 
 const fields = [
   {
@@ -62,6 +63,30 @@ export default function SoldierManage() {
   const [statusToggleLoading, setStatusToggleLoading] = useState(false);
 
   const { toast, showToast } = useToast();
+
+  const handleExportExcel = () => {
+    const exportData = filteredAndSortedSoldiers.map((s, idx) => ({
+      No: idx + 1,
+      "Nama Lengkap": s.full_name || "-",
+      Username: s.username,
+      Pangkat: s.pangkat || "-",
+      Jabatan: s.OrgStructure?.position || "-",
+      Status: (s.status || "aktif") === "aktif" ? "Aktif" : "Nonaktif",
+    }));
+    exportToExcel(exportData, "Data_Personel_Prajurit", "Personel");
+  };
+
+  const handleExportCSV = () => {
+    const exportData = filteredAndSortedSoldiers.map((s, idx) => ({
+      No: idx + 1,
+      "Nama Lengkap": s.full_name || "-",
+      Username: s.username,
+      Pangkat: s.pangkat || "-",
+      Jabatan: s.OrgStructure?.position || "-",
+      Status: (s.status || "aktif") === "aktif" ? "Aktif" : "Nonaktif",
+    }));
+    exportToCSV(exportData, "Data_Personel_Prajurit");
+  };
 
   const fetchData = async () => {
     try {
@@ -279,6 +304,17 @@ export default function SoldierManage() {
             ))}
           </select>
           <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleExportExcel}
+            className="h-[42px] px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition"
+            title="Export ke Excel (.xlsx)"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export Excel</span>
+          </button>
         </div>
       </div>
 

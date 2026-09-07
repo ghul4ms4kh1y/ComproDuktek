@@ -10,7 +10,7 @@ import {
 import api from "../../services/api";
 import MiniCalendar from "../../components/common/MiniCalendar";
 import DonutChart from "../../components/admin/DonutChart";
-import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
+import { isHiddenNode } from "../../constants/appConstants";
 
 const widgets = [
   { key: "totalNews", label: "Total Berita", icon: Newspaper, tint: "navy" },
@@ -69,7 +69,7 @@ export default function Dashboard() {
       .get("/org-structures", { params: { limit: 1000 } })
       .then((r) => {
         // FILTERING: Buang semua node bayangan/spacer agar tidak dihitung
-        const actualMembers = r.data.data.filter(
+        const actualMembers = (r.data.data || []).filter(
           (m) => !isHiddenNode(m.position),
         );
 
@@ -78,13 +78,17 @@ export default function Dashboard() {
       .catch(() => setMembers([]));
   }, []);
 
-  const segments = useMemo(() => members
-    ? MEMBER_CATEGORIES.map((c) => ({
-        label: c.label,
-        color: c.color,
-        value: members.filter((m) => m.box_color === c.key).length,
-      })).filter((s) => s.value > 0)
-    : [], [members]);
+  const segments = useMemo(
+    () =>
+      members
+        ? MEMBER_CATEGORIES.map((c) => ({
+            label: c.label,
+            color: c.color,
+            value: members.filter((m) => m.box_color === c.key).length,
+          })).filter((s) => s.value > 0)
+        : [],
+    [members],
+  );
 
   const totalMembers = members ? members.length : 0;
 
@@ -146,3 +150,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
