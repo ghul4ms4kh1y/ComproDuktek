@@ -25,8 +25,11 @@ exports.index = async (req, res) => {
     const offset = (Number(page) - 1) * Number(limit);
 
     let order = [['created_at', 'DESC']];
-    if (sortBy) {
-        order = [[sortBy, sortOrder]];
+    const allowedSortFields = ['created_at', 'sender_name', 'sender_email', 'subject', 'status'];
+    const safeOrderDirection = ['ASC', 'DESC'].includes(String(sortOrder).toUpperCase()) ? sortOrder.toUpperCase() : 'ASC';
+
+    if (sortBy && allowedSortFields.includes(sortBy)) {
+        order = [[sortBy, safeOrderDirection]];
     }
 
     const { rows, count } = await Message.findAndCountAll({

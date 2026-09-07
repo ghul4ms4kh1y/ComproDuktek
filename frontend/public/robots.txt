@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin-portal
+Disallow: /soldier
 Disallow: /api/
+
+Sitemap: https://pussiberad.mil.id/sitemap.xml

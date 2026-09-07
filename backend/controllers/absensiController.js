@@ -225,6 +225,26 @@ const absensiController = {
           .status(404)
           .json({ message: "Data absensi tidak ditemukan" });
 
+      const validStatuses = [
+        "hadir",
+        "sakit",
+        "izin",
+        "tk",
+        "dd",
+        "bp",
+        "dl",
+        "dik",
+        "satgas",
+      ];
+
+      if (!status_usulan || !validStatuses.includes(status_usulan)) {
+        return res.status(400).json({ message: "Status usulan tidak valid." });
+      }
+
+      if (!keterangan_sanggahan || typeof keterangan_sanggahan !== "string" || keterangan_sanggahan.trim() === "") {
+        return res.status(400).json({ message: "Keterangan sanggahan wajib diisi." });
+      }
+
       // Security check: soldier can only appeal their own record
       if (absensi.soldier_id !== req.user.id) {
         return res

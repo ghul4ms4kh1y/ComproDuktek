@@ -39,12 +39,15 @@ exports.updateProfile = async (req, res) => {
     }
 
     if (password) {
+      if (typeof password !== "string" || password.length < 8) {
+        return res.status(400).json({ message: "Password baru minimal 8 karakter." });
+      }
       if (!oldPassword) {
-        return res.status(400).json({ message: "Password lama wajib diisi" });
+        return res.status(400).json({ message: "Password lama wajib diisi." });
       }
       const valid = await bcrypt.compare(oldPassword, soldier.password);
       if (!valid) {
-        return res.status(401).json({ message: "Password lama salah" });
+        return res.status(401).json({ message: "Password lama salah." });
       }
       soldier.password = await bcrypt.hash(password, 10);
     }

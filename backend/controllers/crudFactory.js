@@ -89,8 +89,11 @@ function crudFactory(Model, options = {}) {
         }
 
         let order = defaultOrder;
-        if (sortBy) {
-          order = [[sortBy, sortOrder]];
+        const modelAttributes = Object.keys(Model.rawAttributes || {});
+        const safeOrderDirection = ['ASC', 'DESC'].includes(String(sortOrder).toUpperCase()) ? sortOrder.toUpperCase() : 'ASC';
+
+        if (sortBy && modelAttributes.includes(sortBy)) {
+          order = [[sortBy, safeOrderDirection]];
         }
 
         const offset = (Number(page) - 1) * Number(limit);
