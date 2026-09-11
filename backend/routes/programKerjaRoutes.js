@@ -46,6 +46,9 @@ router.put(
   programKerjaController.uploadHasil,
 );
 
+// Hapus dokumen hasil (admin atau soldier PJ/tim)
+router.delete('/:id/file-hasil', requireAuth, programKerjaController.removeFileHasil);
+
 // Download aman — requireAuth SAJA di level route, karena pengecekan
 // role admin/PJ/tim dilakukan MANUAL di dalam controller (aturan conditional).
 router.get('/:id/download/perencanaan', requireAuth, programKerjaController.downloadPerencanaan);

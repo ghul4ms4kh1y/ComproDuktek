@@ -389,6 +389,38 @@ exports.removeFilePerencanaan = async (req, res) => {
   }
 };
 
+// DELETE /:id/file-hasil — admin atau soldier (PJ/tim) bisa menghapus dokumen hasil
+exports.removeFileHasil = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await ProgramKerja.findByPk(id);
+    if (!item)
+      return res.status(404).json({ message: "Program kerja tidak ditemukan." });
+
+    if (!(await canAccessDocuments(item, req))) {
+      return res
+        .status(403)
+        .json({ message: "Anda tidak memiliki akses untuk menghapus dokumen ini." });
+    }
+
+    if (!item.file_hasil) {
+      return res.status(404).json({ message: "Dokumen hasil belum diunggah." });
+    }
+
+    deleteDocumentFromDisk(item.file_hasil);
+    item.file_hasil = null;
+    await item.save();
+
+    res.json({
+      message: "Dokumen hasil berhasil dihapus.",
+      data: item,
+    });
+  } catch (error) {
+    console.error("Error removeFileHasil:", error);
+    res.status(500).json({ message: "Gagal menghapus dokumen hasil." });
+  }
+};
+
 // PUT /:id/hasil (soldier: PJ atau anggota tim) — upload dokumen hasil
 exports.uploadHasil = async (req, res) => {
   try {
@@ -446,10 +478,26 @@ async function canAccessDocuments(item, req) {
   return isPic || isTimMember;
 }
 
+// Helper: get MIME type based on extension
+const getMimeType = (filename) => {
+  const ext = path.extname(filename).toLowerCase();
+  const mimeTypes = {
+    ".pdf": "application/pdf",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".doc": "application/msword",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".txt": "text/plain",
+  };
+  return mimeTypes[ext] || "application/octet-stream";
+};
+
 // GET /:id/download/perencanaan — admin selalu boleh; soldier hanya PIC/tim
 exports.downloadPerencanaan = async (req, res) => {
   try {
     const { id } = req.params;
+    const { mode } = req.query; // 'preview' | undefined
     const item = await ProgramKerja.findByPk(id);
     if (!item)
       return res.status(404).json({ message: "Program kerja tidak ditemukan." });
@@ -471,6 +519,20 @@ exports.downloadPerencanaan = async (req, res) => {
       "proker-documents",
       item.file_perencanaan,
     );
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: "File fisik tidak ditemukan pada server." });
+    }
+
+    if (mode === "preview") {
+      res.setHeader("Content-Type", getMimeType(item.file_perencanaan));
+      res.setHeader(
+        "Content-Disposition",
+        `inline; filename="${encodeURIComponent(item.file_perencanaan)}"`
+      );
+      return res.sendFile(filePath);
+    }
+
     res.download(filePath, item.file_perencanaan);
   } catch (error) {
     console.error("Error downloadPerencanaan:", error);
@@ -482,6 +544,7 @@ exports.downloadPerencanaan = async (req, res) => {
 exports.downloadHasil = async (req, res) => {
   try {
     const { id } = req.params;
+    const { mode } = req.query; // 'preview' | undefined
     const item = await ProgramKerja.findByPk(id);
     if (!item)
       return res.status(404).json({ message: "Program kerja tidak ditemukan." });
@@ -503,6 +566,20 @@ exports.downloadHasil = async (req, res) => {
       "proker-documents",
       item.file_hasil,
     );
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: "File fisik tidak ditemukan pada server." });
+    }
+
+    if (mode === "preview") {
+      res.setHeader("Content-Type", getMimeType(item.file_hasil));
+      res.setHeader(
+        "Content-Disposition",
+        `inline; filename="${encodeURIComponent(item.file_hasil)}"`
+      );
+      return res.sendFile(filePath);
+    }
+
     res.download(filePath, item.file_hasil);
   } catch (error) {
     console.error("Error downloadHasil:", error);
