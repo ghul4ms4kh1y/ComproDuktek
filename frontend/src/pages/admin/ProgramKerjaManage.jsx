@@ -13,6 +13,7 @@ import {
   Users,
   FileText,
   Download,
+  Eye,
 } from "lucide-react";
 import api from "../../services/api";
 import ProgramKerjaFormModal from "../../components/admin/ProgramKerjaFormModal";
@@ -20,6 +21,7 @@ import ConfirmModal from "../../components/admin/ConfirmModal";
 import Toast from "../../components/admin/Toast";
 import InfoCardGrid from "../../components/admin/InfoCardGrid";
 import PageHeader from "../../components/admin/PageHeader";
+import DocumentPreviewModal from "../../components/common/DocumentPreviewModal";
 import { HIDDEN_NODES, isHiddenNode } from "../../constants/appConstants";
 import { useToast } from "../../hooks/useToast";
 
@@ -68,7 +70,14 @@ const StatusBadge = ({ status }) => {
   }
 };
 
-const ProgramCard = ({ item, onEdit, onDelete, onHapusPerencanaan }) => (
+const ProgramCard = ({
+  item,
+  onEdit,
+  onDelete,
+  onHapusPerencanaan,
+  onHapusHasil,
+  onPreview,
+}) => (
   <div
     className={`flex flex-col md:flex-row md:items-center justify-between bg-white border ${item.is_selesai ? "border-green-200 bg-green-50/30" : "border-gray-200"} rounded-lg p-4 shadow-sm hover:border-dashAccent/40 transition gap-4`}
   >
@@ -163,8 +172,22 @@ const ProgramCard = ({ item, onEdit, onDelete, onHapusPerencanaan }) => (
           {item.file_perencanaan ? (
             <div className="flex flex-wrap items-center gap-1.5 mt-1">
               <button
+                onClick={() =>
+                  onPreview({
+                    title: `Perencanaan: ${item.program}`,
+                    fileName: item.file_perencanaan,
+                    fileEndpoint: `/program-kerja/${item.id}/download/perencanaan?mode=preview`,
+                    downloadEndpoint: `/api/program-kerja/${item.id}/download/perencanaan`,
+                  })
+                }
+                className="text-dashAccent font-semibold hover:underline flex items-center gap-1"
+              >
+                <Eye className="w-3 h-3" /> Preview
+              </button>
+              <span className="text-gray-300">|</span>
+              <button
                 onClick={() => onEdit(item)}
-                className="text-dashAccent font-semibold hover:underline"
+                className="text-gray-500 font-semibold hover:underline hover:text-dashNavy"
               >
                 Ganti File
               </button>
@@ -191,17 +214,28 @@ const ProgramCard = ({ item, onEdit, onDelete, onHapusPerencanaan }) => (
             <FileText className="w-3.5 h-3.5 text-gray-400" /> Dokumen Hasil:
           </p>
           {item.file_hasil ? (
-            <button
-              onClick={() =>
-                window.open(
-                  `/api/program-kerja/${item.id}/download/hasil`,
-                  "_blank",
-                )
-              }
-              className="text-dashAccent font-semibold hover:underline mt-1 flex items-center gap-1"
-            >
-              <Download className="w-3.5 h-3.5" /> Download / Lihat File
-            </button>
+            <div className="flex flex-wrap items-center gap-1.5 mt-1">
+              <button
+                onClick={() =>
+                  onPreview({
+                    title: `Hasil: ${item.program}`,
+                    fileName: item.file_hasil,
+                    fileEndpoint: `/program-kerja/${item.id}/download/hasil?mode=preview`,
+                    downloadEndpoint: `/api/program-kerja/${item.id}/download/hasil`,
+                  })
+                }
+                className="text-dashAccent font-semibold hover:underline flex items-center gap-1"
+              >
+                <Eye className="w-3.5 h-3.5" /> Preview
+              </button>
+              <span className="text-gray-300">|</span>
+              <button
+                onClick={() => onHapusHasil(item)}
+                className="text-red-500 font-semibold hover:underline"
+              >
+                Hapus
+              </button>
+            </div>
           ) : (
             <span className="text-gray-400 italic mt-1 block">
               Belum diunggah oleh PJ/tim
@@ -255,6 +289,14 @@ export default function ProgramKerjaManage() {
   const [hapusPerencanaanOpen, setHapusPerencanaanOpen] = useState(false);
   const [itemHapusPerencanaan, setItemHapusPerencanaan] = useState(null);
   const [deletingPerencanaan, setDeletingPerencanaan] = useState(false);
+
+  // State Modal Confirm Hapus Dokumen Hasil
+  const [hapusHasilOpen, setHapusHasilOpen] = useState(false);
+  const [itemHapusHasil, setItemHapusHasil] = useState(null);
+  const [deletingHasil, setDeletingHasil] = useState(false);
+
+  // State Modal Preview Dokumen
+  const [previewDoc, setPreviewDoc] = useState(null); // { title, fileName, fileEndpoint, downloadEndpoint }
 
   const { toast, showToast } = useToast();
 
@@ -413,6 +455,30 @@ export default function ProgramKerjaManage() {
       );
     } finally {
       setDeletingPerencanaan(false);
+    }
+  };
+
+  const openHapusHasil = (item) => {
+    setItemHapusHasil(item);
+    setHapusHasilOpen(true);
+  };
+
+  const executeHapusHasil = async () => {
+    if (!itemHapusHasil) return;
+    setDeletingHasil(true);
+    try {
+      await api.delete(`/program-kerja/${itemHapusHasil.id}/file-hasil`);
+      showToast("Dokumen hasil berhasil dihapus.");
+      setHapusHasilOpen(false);
+      setItemHapusHasil(null);
+      loadData();
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Gagal menghapus dokumen hasil.",
+        "error",
+      );
+    } finally {
+      setDeletingHasil(false);
     }
   };
 
@@ -638,6 +704,8 @@ export default function ProgramKerjaManage() {
                 onEdit={openEdit}
                 onDelete={openDeleteConfirm}
                 onHapusPerencanaan={openHapusPerencanaan}
+                onHapusHasil={openHapusHasil}
+                onPreview={setPreviewDoc}
               />
             ))}
           </div>
@@ -677,6 +745,26 @@ export default function ProgramKerjaManage() {
         loading={deletingPerencanaan}
         onCancel={() => setHapusPerencanaanOpen(false)}
         onConfirm={executeHapusPerencanaan}
+      />
+
+      <ConfirmModal
+        open={hapusHasilOpen}
+        headerTitle="Hapus Dokumen Hasil"
+        title={`Yakin ingin menghapus dokumen hasil untuk program "${itemHapusHasil?.program}"? File tidak dapat dikembalikan.`}
+        confirmText="Hapus"
+        loading={deletingHasil}
+        onCancel={() => setHapusHasilOpen(false)}
+        onConfirm={executeHapusHasil}
+      />
+
+      {/* Modal Preview Dokumen */}
+      <DocumentPreviewModal
+        isOpen={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        title={previewDoc?.title}
+        fileName={previewDoc?.fileName}
+        fileEndpoint={previewDoc?.fileEndpoint}
+        downloadEndpoint={previewDoc?.downloadEndpoint}
       />
 
       <Toast toast={toast} />

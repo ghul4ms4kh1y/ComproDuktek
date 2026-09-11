@@ -16,6 +16,7 @@ import ConfirmModal from "../../components/admin/ConfirmModal";
 import MiniCalendar from "../../components/common/MiniCalendar";
 import PiketUpdateModal from "../../components/soldier/PiketUpdateModal";
 import RincianAbsensiModal from "../../components/soldier/RincianAbsensiModal";
+import DocumentPreviewModal from "../../components/common/DocumentPreviewModal";
 import {
   User,
   Lock,
@@ -37,6 +38,7 @@ import {
   GraduationCap,
   Users,
   Download,
+  Eye,
   CornerDownRight,
   ClipboardList,
   ArrowRightLeft,
@@ -254,6 +256,9 @@ export default function SoldierDashboard() {
   const [prokerPage, setProkerPage] = useState(1);
   const [hasilFiles, setHasilFiles] = useState({}); // { [prokerId]: File }
   const [uploadingHasilId, setUploadingHasilId] = useState(null);
+  const [hapusHasilConfirmProker, setHapusHasilConfirmProker] = useState(null);
+  const [deletingHasilId, setDeletingHasilId] = useState(null);
+  const [previewDoc, setPreviewDoc] = useState(null); // { title, fileName, fileEndpoint, downloadEndpoint }
 
   // State Piket Calendar & Usulan Tukar
   const [piketRefreshTrigger, setPiketRefreshTrigger] = useState(0);
@@ -536,6 +541,25 @@ export default function SoldierDashboard() {
       );
     } finally {
       setUploadingHasilId(null);
+    }
+  };
+
+  // Handle Hapus Dokumen Hasil oleh PJ / anggota tim
+  const handleDeleteHasil = async () => {
+    if (!hapusHasilConfirmProker) return;
+    try {
+      setDeletingHasilId(hapusHasilConfirmProker.id);
+      await api.delete(`/program-kerja/${hapusHasilConfirmProker.id}/file-hasil`);
+      showToast("Dokumen hasil berhasil dihapus.", "success");
+      setHapusHasilConfirmProker(null);
+      loadProkers();
+    } catch (err) {
+      showToast(
+        err.response?.data?.message || "Gagal menghapus dokumen hasil.",
+        "error",
+      );
+    } finally {
+      setDeletingHasilId(null);
     }
   };
 
@@ -924,15 +948,16 @@ export default function SoldierDashboard() {
                           {proker.file_perencanaan ? (
                             <button
                               onClick={() =>
-                                window.open(
-                                  `/api/program-kerja/${proker.id}/download/perencanaan`,
-                                  "_blank",
-                                )
+                                setPreviewDoc({
+                                  title: `Instruksi: ${proker.program}`,
+                                  fileName: proker.file_perencanaan,
+                                  fileEndpoint: `/program-kerja/${proker.id}/download/perencanaan?mode=preview`,
+                                  downloadEndpoint: `/api/program-kerja/${proker.id}/download/perencanaan`,
+                                })
                               }
-                              className="text-xs text-dashAccent font-semibold hover:underline flex items-center gap-1"
+                              className="text-xs text-dashAccent font-semibold hover:underline flex items-center gap-1.5"
                             >
-                              <Download className="w-3.5 h-3.5" /> Download
-                              Instruksi
+                              <Eye className="w-3.5 h-3.5" /> Lihat Dokumen Instruksi
                             </button>
                           ) : (
                             <p className="text-xs text-gray-400 italic">
@@ -941,15 +966,42 @@ export default function SoldierDashboard() {
                           )}
 
                           <div>
-                            <p className="text-xs text-gray-600 font-semibold mb-1">
-                              Dokumen Hasil:
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-xs text-gray-600 font-semibold">
+                                Dokumen Hasil:
+                              </p>
                               {proker.file_hasil && (
-                                <span className="font-normal text-gray-400">
-                                  {" "}
-                                  (terupload: {proker.file_hasil})
-                                </span>
+                                <div className="flex items-center gap-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setPreviewDoc({
+                                        title: `Hasil: ${proker.program}`,
+                                        fileName: proker.file_hasil,
+                                        fileEndpoint: `/program-kerja/${proker.id}/download/hasil?mode=preview`,
+                                        downloadEndpoint: `/api/program-kerja/${proker.id}/download/hasil`,
+                                      })
+                                    }
+                                    className="text-[11px] text-dashAccent font-semibold hover:underline flex items-center gap-1"
+                                  >
+                                    <Eye className="w-3 h-3" /> Lihat Hasil
+                                  </button>
+                                  <span className="text-gray-300">|</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setHapusHasilConfirmProker(proker)}
+                                    className="text-[11px] text-red-500 font-semibold hover:underline flex items-center gap-1"
+                                  >
+                                    <Trash2 className="w-3 h-3" /> Hapus
+                                  </button>
+                                </div>
                               )}
-                            </p>
+                            </div>
+                            {proker.file_hasil && (
+                              <p className="text-[11px] text-gray-400 truncate mb-1.5">
+                                Terupload: {proker.file_hasil}
+                              </p>
+                            )}
                             <input
                               type="file"
                               accept=".pdf,.doc,.docx"
@@ -1842,6 +1894,27 @@ export default function SoldierDashboard() {
           onSanggahanSubmitted={fetchAbsensi}
         />
       )}
+
+      {/* --- MODAL KONFIRMASI HAPUS DOKUMEN HASIL --- */}
+      <ConfirmModal
+        open={!!hapusHasilConfirmProker}
+        headerTitle="Hapus Dokumen Hasil"
+        title={`Yakin ingin menghapus dokumen hasil untuk program kerja "${hapusHasilConfirmProker?.program}"? File tidak dapat dikembalikan.`}
+        confirmText="Hapus Dokumen"
+        loading={!!deletingHasilId}
+        onCancel={() => setHapusHasilConfirmProker(null)}
+        onConfirm={handleDeleteHasil}
+      />
+
+      {/* --- MODAL PREVIEW DOKUMEN (PDF / DOCX) --- */}
+      <DocumentPreviewModal
+        isOpen={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        title={previewDoc?.title}
+        fileName={previewDoc?.fileName}
+        fileEndpoint={previewDoc?.fileEndpoint}
+        downloadEndpoint={previewDoc?.downloadEndpoint}
+      />
     </div>
   );
 }
