@@ -37,7 +37,7 @@ export default function Login() {
       <div className="bg-white rounded-lg shadow-dashCard border border-gray-200 w-full max-w-sm p-8">
         <div className="w-11 h-11 flex items-center justify-center mx-auto mb-4">
           <img
-            src="/logo.png"
+            src="/logo.webp"
             alt="Logo Dukteksi"
             width="40"
             height="40"
@@ -65,6 +65,7 @@ export default function Login() {
             <input
               id="identifier"
               type="text"
+              autoComplete="username"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               className="w-full border border-gray-200 rounded-md px-3 py-2 mt-1 text-sm text-black focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
@@ -81,6 +82,7 @@ export default function Login() {
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-200 rounded-md px-3 py-2 mt-1 text-sm text-black focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"

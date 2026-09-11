@@ -17,14 +17,14 @@ export default function Footer() {
               {/* Logo & Branding Title */}
               <div className="flex items-center gap-3 mb-4">
                 <img
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="Logo Satlak Dukteksi"
                   width="48"
                   height="48"
                   className="h-12 w-auto object-contain shrink-0"
                 />
                 <img
-                  src="/pussiberad_logo.png"
+                  src="/pussiberad_logo.webp"
                   alt="Logo PUSSIBERAD"
                   width="48"
                   height="48"
