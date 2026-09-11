@@ -72,7 +72,7 @@ export default function About() {
             <div className="lg:col-span-5 relative flex items-center justify-center min-h-[380px]">
               <div className="absolute left-0 bottom-4 w-44 md:w-56 h-60 md:h-72 rounded-b-full overflow-hidden border-4 border-white dark:border-darkpanel shadow-xl bg-slate-900 group hover:scale-105 transition-transform duration-500 z-10">
                  <img
-                   src="/logo.png"
+                   src="/logo.webp"
                    alt="Logo Satlak Dukteksi"
                    width="176"
                    height="288"
@@ -83,7 +83,7 @@ export default function About() {
 
               <div className="absolute right-2 top-0 w-52 md:w-60 h-72 md:h-84 rounded-t-full overflow-hidden border-4 border-white dark:border-darkpanel shadow-2xl bg-navy group hover:scale-105 transition-transform duration-500 z-20">
                  <img
-                   src="/pussiberad_logo.png"
+                   src="/pussiberad_logo.webp"
                    alt="Logo PUSSIBERAD"
                    width="208"
                    height="336"
@@ -131,7 +131,7 @@ export default function About() {
 
               <div className="relative w-56 h-56 md:w-80 md:h-80 rounded-full p-6 bg-white dark:bg-gray-100 border border-gray-100 shadow-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                 <img
-                   src="/logo.png"
+                   src="/logo.webp"
                    alt="Logo Satlak Dukteksi"
                    width="240"
                    height="240"

@@ -111,7 +111,7 @@ export default function Landing() {
                 className="flex items-center gap-6 mx-6 whitespace-nowrap"
               >
                 <img
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="Logo Satlak"
                   width="40"
                   height="40"
@@ -121,7 +121,7 @@ export default function Landing() {
                   KRTRIMA RAKSA MANDALAM
                 </span>
                 <img
-                  src="/pussiberad_logo.png"
+                  src="/pussiberad_logo.webp"
                   alt="Logo Pussiberad"
                   width="40"
                   height="40"

@@ -1,5 +1,3 @@
-import * as XLSX from "xlsx";
-
 /**
  * Format string tanggal atau objek Date ke dd-mm-yyyy
  * @param {string|Date} dateVal 
@@ -23,12 +21,13 @@ export function formatDDMMYYYY(dateVal) {
  * @param {string} fileName - Base filename without extension
  * @param {string} sheetName - Name of worksheet
  */
-export function exportToExcel(data, fileName = "export-data", sheetName = "Data") {
+export async function exportToExcel(data, fileName = "export-data", sheetName = "Data") {
   if (!data || !data.length) {
     alert("Tidak ada data untuk diekspor!");
     return;
   }
 
+  const XLSX = await import("xlsx");
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
@@ -52,12 +51,13 @@ export function exportToExcel(data, fileName = "export-data", sheetName = "Data"
 /**
  * Export array of objects to CSV file (.csv)
  */
-export function exportToCSV(data, fileName = "export-data") {
+export async function exportToCSV(data, fileName = "export-data") {
   if (!data || !data.length) {
     alert("Tidak ada data untuk diekspor!");
     return;
   }
 
+  const XLSX = await import("xlsx");
   const worksheet = XLSX.utils.json_to_sheet(data);
   const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
   const blob = new Blob([csvOutput], { type: "text/csv;charset=utf-8;" });

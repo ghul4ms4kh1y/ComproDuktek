@@ -37,7 +37,7 @@ export default function Navbar() {
         {/* Logo Satlak */}
         <NavLink to="/" className="flex items-center gap-3 group">
            <img
-             src="/logo.png"
+             src="/logo.webp"
              alt="Logo Dukteksi"
              width="40"
              height="40"

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const heroImages = ["/bg-3.png", "/bg-2.png", "/bg-1.png"];
+const heroImages = ["/bg-3.webp", "/bg-2.webp", "/bg-1.webp"];
 
 const SLIDE_DURATION = 5000;
 
@@ -22,8 +22,9 @@ export default function HeroSlider() {
           key={src}
           src={src}
           alt={`Ilustrasi Dukungan Teknologi Siber ${i + 1}`}
+          width="1672"
+          height="941"
           loading={i === 0 ? "eager" : "lazy"}
-          fetchpriority={i === 0 ? "high" : "auto"}
           decoding="async"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
             i === current ? "opacity-100" : "opacity-0"
