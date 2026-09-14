@@ -17,9 +17,22 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    headers: {
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'SAMEORIGIN',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
     proxy: {
       '/api': 'http://localhost:5000',
       '/uploads': 'http://localhost:5000',
+    },
+  },
+  preview: {
+    port: 4173,
+    headers: {
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'SAMEORIGIN',
+      'Cross-Origin-Opener-Policy': 'same-origin',
     },
   },
 });

@@ -27,11 +27,22 @@ const app = express();
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginOpenerPolicy: { policy: "same-origin" },
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+    frameguard: {
+      action: "sameorigin",
+    },
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "blob:"],
+        imgSrc: ["'self'", "data:", "blob:", "http:", "https:"],
         scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
         connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:5173'],
       },
     },
@@ -53,8 +64,11 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// File upload statis (thumbnail berita, gambar produk, foto galeri)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// File upload statis (thumbnail berita, gambar produk, foto galeri) dengan caching 7 hari
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  maxAge: '7d',
+  immutable: true,
+}));
 
 // URL admin API di-noindex secara konsep (tidak ditautkan di navigasi publik)
 app.use('/api/auth', authRoutes);
