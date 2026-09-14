@@ -42,6 +42,8 @@ import {
   CornerDownRight,
   ClipboardList,
   ArrowRightLeft,
+  Send,
+  Inbox,
 } from "lucide-react";
 import { exportToExcel } from "../../utils/exportUtils";
 
@@ -265,6 +267,16 @@ export default function SoldierDashboard() {
   const [piketModalSchedule, setPiketModalSchedule] = useState(null);
   const [swapHistory, setSwapHistory] = useState([]);
   const [swapHistoryLoading, setSwapHistoryLoading] = useState(false);
+  const [swapTab, setSwapTab] = useState("outgoing"); // 'outgoing' | 'incoming'
+
+  const outgoingSwaps = useMemo(
+    () => swapHistory.filter((item) => item.is_requester),
+    [swapHistory],
+  );
+  const incomingSwaps = useMemo(
+    () => swapHistory.filter((item) => !item.is_requester),
+    [swapHistory],
+  );
 
   // Riwayat tukar jadwal hanya relevan untuk anggota aktif yang eligible piket
   const piketEligible = useMemo(() => isEligiblePiket(user), [user]);
@@ -1135,27 +1147,77 @@ export default function SoldierDashboard() {
               </div>
             </div>
 
-            {/* Riwayat Pengajuan Tukar Jadwal (hanya anggota aktif eligible piket) */}
+            {/* Aktivitas Tukar Jadwal Piket (hanya anggota aktif eligible piket) */}
             {piketEligible && (
               <div className="bg-white border border-gray-200 rounded-lg shadow-dashCard p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                    <ArrowRightLeft className="w-4 h-4 text-dashAccent" />
-                    Riwayat Pengajuan Tukar Jadwal Piket
-                  </h3>
-                  <span className="text-xs text-gray-400 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-full font-medium">
-                    {swapHistory.length} Pengajuan
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                  <div>
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                      <ArrowRightLeft className="w-4 h-4 text-dashAccent" />
+                      Aktivitas Tukar Jadwal Piket
+                    </h3>
+                    <p className="text-[11px] text-gray-400 mt-0.5">
+                      {swapTab === "outgoing"
+                        ? "Daftar jadwal piket yang Anda ajukan untuk bertukar dengan rekan lain."
+                        : "Daftar pertukaran jadwal yang diajukan oleh rekan lain ke jadwal piket Anda."}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg text-xs self-start sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={() => setSwapTab("outgoing")}
+                      className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
+                        swapTab === "outgoing"
+                          ? "bg-white text-dashNavy shadow-sm font-semibold"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      <Send className="w-3.5 h-3.5 text-dashAccent" />
+                      Pengajuan Saya
+                      <span
+                        className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          swapTab === "outgoing"
+                            ? "bg-dashAccent/10 text-dashAccent"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {outgoingSwaps.length}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSwapTab("incoming")}
+                      className={`px-3 py-1.5 rounded-md font-medium transition flex items-center gap-1.5 ${
+                        swapTab === "incoming"
+                          ? "bg-white text-dashNavy shadow-sm font-semibold"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      <Inbox className="w-3.5 h-3.5 text-dashAccent" />
+                      Ditukar oleh Rekan
+                      <span
+                        className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          swapTab === "incoming"
+                            ? "bg-dashAccent/10 text-dashAccent"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {incomingSwaps.length}
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
                 {swapHistoryLoading ? (
                   <p className="text-gray-400 py-4 text-xs">
                     Memuat riwayat tukar...
                   </p>
-                ) : swapHistory.length === 0 ? (
+                ) : (swapTab === "outgoing" ? outgoingSwaps : incomingSwaps).length === 0 ? (
                   <div className="text-center py-6 border border-dashed border-gray-200 rounded-lg">
                     <p className="text-xs text-gray-400">
-                      Belum ada riwayat pengajuan tukar jadwal piket.
+                      {swapTab === "outgoing"
+                        ? "Belum ada pengajuan tukar jadwal yang Anda buat."
+                        : "Belum ada rekan yang mengajukan tukar ke jadwal piket Anda."}
                     </p>
                   </div>
                 ) : (
@@ -1163,15 +1225,31 @@ export default function SoldierDashboard() {
                     <table className="w-full text-xs text-gray-500">
                       <thead>
                         <tr className="bg-gray-50 text-gray-400 uppercase border-b border-gray-100">
-                          <th className="text-left px-3 py-2.5 font-semibold">
-                            Tgl Piket Saya
-                          </th>
-                          <th className="text-left px-3 py-2.5 font-semibold">
-                            Pengganti
-                          </th>
-                          <th className="text-left px-3 py-2.5 font-semibold">
-                            Tgl Pengganti
-                          </th>
+                          {swapTab === "outgoing" ? (
+                            <>
+                              <th className="text-left px-3 py-2.5 font-semibold">
+                                Tgl Piket Saya (Semula)
+                              </th>
+                              <th className="text-left px-3 py-2.5 font-semibold">
+                                Ditukar Dengan
+                              </th>
+                              <th className="text-left px-3 py-2.5 font-semibold">
+                                Tgl Piket Rekan
+                              </th>
+                            </>
+                          ) : (
+                            <>
+                              <th className="text-left px-3 py-2.5 font-semibold">
+                                Pemohon (Rekan yang Mengajukan)
+                              </th>
+                              <th className="text-left px-3 py-2.5 font-semibold">
+                                Tgl Piket Pemohon
+                              </th>
+                              <th className="text-left px-3 py-2.5 font-semibold">
+                                Tgl Piket Saya (Semula)
+                              </th>
+                            </>
+                          )}
                           <th className="text-left px-3 py-2.5 font-semibold">
                             Alasan
                           </th>
@@ -1181,21 +1259,15 @@ export default function SoldierDashboard() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
-                        {swapHistory.map((item) => {
-                          const isSource = item.soldier_id === user?.id;
-                          const partner = isSource
-                            ? item.SwapWithSchedule?.Soldier
-                            : item.Soldier;
-                          const myDate = isSource
-                            ? item.tanggal_piket
-                            : item.SwapWithSchedule?.tanggal_piket;
-                          const partnerDate = isSource
-                            ? item.SwapWithSchedule?.tanggal_piket
-                            : item.tanggal_piket;
+                        {(swapTab === "outgoing" ? outgoingSwaps : incomingSwaps).map((item) => {
+                          const requesterPerson = item.requester;
+                          const partnerPerson = item.partner;
+                          const requesterDate = item.requester_date;
+                          const partnerDate = item.partner_date;
 
                           const statusBadge = {
                             pending: {
-                              text: "Menunggu Persetujuan",
+                              text: "Menunggu Persetujuan Admin",
                               class:
                                 "bg-amber-50 text-amber-700 border-amber-200",
                             },
@@ -1217,35 +1289,54 @@ export default function SoldierDashboard() {
                             class: "bg-gray-50 text-gray-500 border-gray-200",
                           };
 
+                          const renderPersonCell = (person) => (
+                            <div>
+                              <span className="font-medium text-gray-700">
+                                {person?.full_name || person?.username || "-"}
+                              </span>
+                              {(person?.OrgStructure?.position ||
+                                person?.pangkat ||
+                                person?.OrgStructure?.rank) && (
+                                <p className="text-[10px] text-gray-400">
+                                  {person?.OrgStructure?.position || ""}{" "}
+                                  {person?.pangkat || person?.OrgStructure?.rank
+                                    ? `(${person?.pangkat || person?.OrgStructure?.rank})`
+                                    : ""}
+                                </p>
+                              )}
+                            </div>
+                          );
+
                           return (
                             <tr
                               key={item.id}
                               className="hover:bg-gray-50/60 transition"
                             >
-                              <td className="px-3 py-3 font-semibold text-dashNavy">
-                                {formatDate(myDate)}
-                              </td>
-                              <td className="px-3 py-3">
-                                <span className="font-medium text-gray-700">
-                                  {partner?.full_name ||
-                                    partner?.username ||
-                                    "-"}
-                                </span>
-                                {(partner?.OrgStructure?.position ||
-                                  partner?.pangkat ||
-                                  partner?.OrgStructure?.rank) && (
-                                  <p className="text-[10px] text-gray-400">
-                                    {partner?.OrgStructure?.position || ""}{" "}
-                                    {partner?.pangkat ||
-                                    partner?.OrgStructure?.rank
-                                      ? `(${partner?.pangkat || partner?.OrgStructure?.rank})`
-                                      : ""}
-                                  </p>
-                                )}
-                              </td>
-                              <td className="px-3 py-3 text-gray-700 font-medium">
-                                {formatDate(partnerDate)}
-                              </td>
+                              {swapTab === "outgoing" ? (
+                                <>
+                                  <td className="px-3 py-3 font-semibold text-dashNavy">
+                                    {formatDate(requesterDate)}
+                                  </td>
+                                  <td className="px-3 py-3">
+                                    {renderPersonCell(partnerPerson)}
+                                  </td>
+                                  <td className="px-3 py-3 text-gray-700 font-medium">
+                                    {formatDate(partnerDate)}
+                                  </td>
+                                </>
+                              ) : (
+                                <>
+                                  <td className="px-3 py-3">
+                                    {renderPersonCell(requesterPerson)}
+                                  </td>
+                                  <td className="px-3 py-3 text-gray-700 font-medium">
+                                    {formatDate(requesterDate)}
+                                  </td>
+                                  <td className="px-3 py-3 font-semibold text-dashNavy">
+                                    {formatDate(partnerDate)}
+                                  </td>
+                                </>
+                              )}
                               <td
                                 className="px-3 py-3 text-gray-600 max-w-[200px] truncate"
                                 title={item.swap_reason}

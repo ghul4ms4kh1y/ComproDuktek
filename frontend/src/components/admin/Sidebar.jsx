@@ -11,7 +11,7 @@ export default function Sidebar({ collapsed = false, setCollapsed, unread, mobil
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin-portal/login');
+    navigate('/portal-dukteksi/login');
   };
 
   return (

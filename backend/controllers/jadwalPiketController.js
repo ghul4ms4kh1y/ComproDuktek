@@ -543,6 +543,7 @@ exports.ajukanUsulanTukar = async (req, res) => {
         .json({ message: "Jadwal pengganti tidak memenuhi syarat piket." });
 
     sourceJadwal.swap_with_schedule_id = targetJadwal.id;
+    sourceJadwal.swap_requester_id = req.user.id;
     sourceJadwal.swap_reason = String(swap_reason).trim();
     sourceJadwal.swap_approval_status = "pending";
     await sourceJadwal.save();
@@ -609,8 +610,7 @@ exports.reviewUsulanTukar = async (req, res) => {
       targetJadwal.soldier_id = sourceSoldierId;
       sourceJadwal.swap_approval_status = "approved";
       sourceJadwal.swap_reviewed_by_admin_id = req.user.id;
-      targetJadwal.swap_approval_status = "approved";
-      targetJadwal.swap_reviewed_by_admin_id = req.user.id;
+      targetJadwal.swap_approval_status = "none";
       await sourceJadwal.save({ transaction });
       await targetJadwal.save({ transaction });
     });
@@ -635,15 +635,8 @@ exports.mySwaps = async (req, res) => {
     const soldierId = req.user.id;
     const mySwaps = await JadwalPiket.findAll({
       where: {
-        [Op.or]: [
-          {
-            soldier_id: soldierId,
-            swap_approval_status: { [Op.ne]: "none" },
-          },
-          {
-            swap_with_schedule_id: { [Op.ne]: null },
-          },
-        ],
+        swap_with_schedule_id: { [Op.ne]: null },
+        swap_approval_status: { [Op.ne]: "none" },
       },
       include: [
         soldierInclude(),
@@ -652,16 +645,40 @@ exports.mySwaps = async (req, res) => {
           as: "SwapWithSchedule",
           include: [soldierInclude()],
         },
+        {
+          ...soldierInclude(),
+          as: "SwapRequester",
+        },
       ],
       order: [["updated_at", "DESC"]],
-      limit: 50,
+      limit: 100,
     });
 
-    const filteredSwaps = mySwaps.filter(
-      (item) =>
-        (item.soldier_id === soldierId && item.swap_approval_status !== "none") ||
-        item.SwapWithSchedule?.soldier_id === soldierId
-    );
+    const filteredSwaps = [];
+    for (const item of mySwaps) {
+      const isApproved = item.swap_approval_status === "approved";
+      const requesterId =
+        item.swap_requester_id ||
+        (isApproved ? item.SwapWithSchedule?.soldier_id : item.soldier_id);
+      const requester =
+        item.SwapRequester ||
+        (isApproved ? item.SwapWithSchedule?.Soldier : item.Soldier);
+      const partner = isApproved
+        ? item.Soldier
+        : item.SwapWithSchedule?.Soldier;
+      const partnerId = partner?.id;
+
+      if (requesterId === soldierId || partnerId === soldierId) {
+        const isRequester = requesterId === soldierId;
+        const plain = item.toJSON();
+        plain.is_requester = isRequester;
+        plain.requester = requester;
+        plain.partner = partner;
+        plain.requester_date = item.tanggal_piket;
+        plain.partner_date = item.SwapWithSchedule?.tanggal_piket;
+        filteredSwaps.push(plain);
+      }
+    }
 
     res.json({ data: filteredSwaps });
   } catch (error) {

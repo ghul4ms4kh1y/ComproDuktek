@@ -13,7 +13,7 @@ export default function BottomNav({ unread }) {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin-portal/login');
+    navigate('/portal-dukteksi/login');
   };
 
   return (

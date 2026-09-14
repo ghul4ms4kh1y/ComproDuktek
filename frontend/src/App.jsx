@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 
 import PublicLayout from "./layouts/PublicLayout";
 import AdminLayout from "./layouts/AdminLayout";
@@ -60,8 +60,12 @@ export default function App() {
           <Route path="/kontak" element={<Contact />} />
         </Route>
 
-        {/* Admin / Login */}
-        <Route path="/admin-portal/login" element={<Login />} />
+        {/* Auth / Login */}
+        <Route path="/portal-dukteksi/login" element={<Login />} />
+        <Route
+          path="/admin-portal/login"
+          element={<Navigate to="/portal-dukteksi/login" replace />}
+        />
         <Route
           path="/admin-portal"
           element={
