@@ -67,6 +67,7 @@ Admin.hasMany(JadwalPiket, { as: 'reviewedPikets', foreignKey: 'reviewed_by_admi
 JadwalPiket.belongsTo(Admin, { as: 'reviewer', foreignKey: 'reviewed_by_admin_id' });
 Soldier.hasMany(JadwalPiket, { foreignKey: 'soldier_id' });
 JadwalPiket.belongsTo(Soldier, { foreignKey: 'soldier_id' });
+JadwalPiket.belongsTo(Soldier, { as: 'SwapRequester', foreignKey: 'swap_requester_id' });
 JadwalPiket.belongsTo(JadwalPiket, { as: 'SwapWithSchedule', foreignKey: 'swap_with_schedule_id' });
 
 module.exports = { sequelize, Admin, News, Product, Gallery, Message, OrgStructure, Soldier, ProgramKerja, ProgramKerjaTim, Absensi, LaporanHarian, LaporanHarianSesi, JadwalPiket };

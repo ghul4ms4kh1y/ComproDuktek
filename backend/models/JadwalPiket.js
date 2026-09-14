@@ -52,6 +52,10 @@ const JadwalPiket = sequelize.define('JadwalPiket', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  swap_requester_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   swap_reason: {
     type: DataTypes.TEXT,
     allowNull: true,
