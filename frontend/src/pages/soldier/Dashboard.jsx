@@ -549,7 +549,9 @@ export default function SoldierDashboard() {
     if (!hapusHasilConfirmProker) return;
     try {
       setDeletingHasilId(hapusHasilConfirmProker.id);
-      await api.delete(`/program-kerja/${hapusHasilConfirmProker.id}/file-hasil`);
+      await api.delete(
+        `/program-kerja/${hapusHasilConfirmProker.id}/file-hasil`,
+      );
       showToast("Dokumen hasil berhasil dihapus.", "success");
       setHapusHasilConfirmProker(null);
       loadProkers();
@@ -602,7 +604,7 @@ export default function SoldierDashboard() {
       });
       setActiveModal(null);
       await refreshUser();
-      showToast("success", "Profil berhasil diperbarui.");
+      showToast("Profil berhasil diperbarui.", "success");
     } catch (err) {
       setMessageEdit({
         type: "error",
@@ -664,7 +666,7 @@ export default function SoldierDashboard() {
               e.currentTarget.style.display = "none";
             }}
           />
-          <span className="text-navy dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors font-extrabold text-sm md:text-lg tracking-tight uppercase leading-none">
+          <span className="text-navy  group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors font-extrabold text-sm md:text-lg tracking-tight uppercase leading-none">
             SATLAK DUKTEKSI
           </span>
         </div>
@@ -758,8 +760,13 @@ export default function SoldierDashboard() {
                   {user?.full_name || user?.username}
                 </h3>
                 <p className="text-sm text-gray-500 mt-0.5 truncate">
-                  {(user?.pangkat || user?.OrgStructure?.rank) || user?.OrgStructure?.position
-                    ? [user?.pangkat || user?.OrgStructure?.rank, user?.OrgStructure?.position]
+                  {user?.pangkat ||
+                  user?.OrgStructure?.rank ||
+                  user?.OrgStructure?.position
+                    ? [
+                        user?.pangkat || user?.OrgStructure?.rank,
+                        user?.OrgStructure?.position,
+                      ]
                         .filter(Boolean)
                         .join(" · ")
                     : "Pangkat & jabatan belum diisi"}
@@ -911,7 +918,10 @@ export default function SoldierDashboard() {
                           <div className="flex justify-between">
                             <span>Penanggung Jawab:</span>
                             <span className="text-gray-500 font-medium">
-                              {proker.picSoldier?.full_name || proker.picSoldier?.username || proker.pic?.position || "Belum ditentukan"}
+                              {proker.picSoldier?.full_name ||
+                                proker.picSoldier?.username ||
+                                proker.pic?.position ||
+                                "Belum ditentukan"}
                             </span>
                           </div>
                           <div className="flex justify-between">
@@ -957,7 +967,8 @@ export default function SoldierDashboard() {
                               }
                               className="text-xs text-dashAccent font-semibold hover:underline flex items-center gap-1.5"
                             >
-                              <Eye className="w-3.5 h-3.5" /> Lihat Dokumen Instruksi
+                              <Eye className="w-3.5 h-3.5" /> Lihat Dokumen
+                              Instruksi
                             </button>
                           ) : (
                             <p className="text-xs text-gray-400 italic">
@@ -989,7 +1000,9 @@ export default function SoldierDashboard() {
                                   <span className="text-gray-300">|</span>
                                   <button
                                     type="button"
-                                    onClick={() => setHapusHasilConfirmProker(proker)}
+                                    onClick={() =>
+                                      setHapusHasilConfirmProker(proker)
+                                    }
                                     className="text-[11px] text-red-500 font-semibold hover:underline flex items-center gap-1"
                                   >
                                     <Trash2 className="w-3 h-3" /> Hapus
@@ -1015,7 +1028,10 @@ export default function SoldierDashboard() {
                             />
                             <button
                               onClick={() => handleUploadHasil(proker)}
-                              disabled={uploadingHasilId === proker.id || !hasilFiles[proker.id]}
+                              disabled={
+                                uploadingHasilId === proker.id ||
+                                !hasilFiles[proker.id]
+                              }
                               className="mt-1.5 text-xs bg-dashAccent text-white rounded-md px-3 py-1.5 font-semibold hover:brightness-95 disabled:opacity-50 transition"
                             >
                               {uploadingHasilId === proker.id
@@ -1121,83 +1137,136 @@ export default function SoldierDashboard() {
 
             {/* Riwayat Pengajuan Tukar Jadwal (hanya anggota aktif eligible piket) */}
             {piketEligible && (
-            <div className="bg-white border border-gray-200 rounded-lg shadow-dashCard p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                  <ArrowRightLeft className="w-4 h-4 text-dashAccent" />
-                  Riwayat Pengajuan Tukar Jadwal Piket
-                </h3>
-                <span className="text-xs text-gray-400 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-full font-medium">
-                  {swapHistory.length} Pengajuan
-                </span>
+              <div className="bg-white border border-gray-200 rounded-lg shadow-dashCard p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                    <ArrowRightLeft className="w-4 h-4 text-dashAccent" />
+                    Riwayat Pengajuan Tukar Jadwal Piket
+                  </h3>
+                  <span className="text-xs text-gray-400 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-full font-medium">
+                    {swapHistory.length} Pengajuan
+                  </span>
+                </div>
+
+                {swapHistoryLoading ? (
+                  <p className="text-gray-400 py-4 text-xs">
+                    Memuat riwayat tukar...
+                  </p>
+                ) : swapHistory.length === 0 ? (
+                  <div className="text-center py-6 border border-dashed border-gray-200 rounded-lg">
+                    <p className="text-xs text-gray-400">
+                      Belum ada riwayat pengajuan tukar jadwal piket.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs text-gray-500">
+                      <thead>
+                        <tr className="bg-gray-50 text-gray-400 uppercase border-b border-gray-100">
+                          <th className="text-left px-3 py-2.5 font-semibold">
+                            Tgl Piket Saya
+                          </th>
+                          <th className="text-left px-3 py-2.5 font-semibold">
+                            Pengganti
+                          </th>
+                          <th className="text-left px-3 py-2.5 font-semibold">
+                            Tgl Pengganti
+                          </th>
+                          <th className="text-left px-3 py-2.5 font-semibold">
+                            Alasan
+                          </th>
+                          <th className="text-center px-3 py-2.5 font-semibold">
+                            Status Persetujuan
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {swapHistory.map((item) => {
+                          const isSource = item.soldier_id === user?.id;
+                          const partner = isSource
+                            ? item.SwapWithSchedule?.Soldier
+                            : item.Soldier;
+                          const myDate = isSource
+                            ? item.tanggal_piket
+                            : item.SwapWithSchedule?.tanggal_piket;
+                          const partnerDate = isSource
+                            ? item.SwapWithSchedule?.tanggal_piket
+                            : item.tanggal_piket;
+
+                          const statusBadge = {
+                            pending: {
+                              text: "Menunggu Persetujuan",
+                              class:
+                                "bg-amber-50 text-amber-700 border-amber-200",
+                            },
+                            approved: {
+                              text: "Disetujui Admin",
+                              class:
+                                "bg-green-50 text-green-700 border-green-200",
+                            },
+                            rejected: {
+                              text: "Ditolak Admin",
+                              class: "bg-red-50 text-red-700 border-red-200",
+                            },
+                            none: {
+                              text: "-",
+                              class: "bg-gray-50 text-gray-500 border-gray-200",
+                            },
+                          }[item.swap_approval_status] || {
+                            text: item.swap_approval_status,
+                            class: "bg-gray-50 text-gray-500 border-gray-200",
+                          };
+
+                          return (
+                            <tr
+                              key={item.id}
+                              className="hover:bg-gray-50/60 transition"
+                            >
+                              <td className="px-3 py-3 font-semibold text-dashNavy">
+                                {formatDate(myDate)}
+                              </td>
+                              <td className="px-3 py-3">
+                                <span className="font-medium text-gray-700">
+                                  {partner?.full_name ||
+                                    partner?.username ||
+                                    "-"}
+                                </span>
+                                {(partner?.OrgStructure?.position ||
+                                  partner?.pangkat ||
+                                  partner?.OrgStructure?.rank) && (
+                                  <p className="text-[10px] text-gray-400">
+                                    {partner?.OrgStructure?.position || ""}{" "}
+                                    {partner?.pangkat ||
+                                    partner?.OrgStructure?.rank
+                                      ? `(${partner?.pangkat || partner?.OrgStructure?.rank})`
+                                      : ""}
+                                  </p>
+                                )}
+                              </td>
+                              <td className="px-3 py-3 text-gray-700 font-medium">
+                                {formatDate(partnerDate)}
+                              </td>
+                              <td
+                                className="px-3 py-3 text-gray-600 max-w-[200px] truncate"
+                                title={item.swap_reason}
+                              >
+                                {item.swap_reason || "-"}
+                              </td>
+                              <td className="px-3 py-3 text-center">
+                                <span
+                                  className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold border ${statusBadge.class}`}
+                                >
+                                  {statusBadge.text}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
-
-              {swapHistoryLoading ? (
-                <p className="text-gray-400 py-4 text-xs">Memuat riwayat tukar...</p>
-              ) : swapHistory.length === 0 ? (
-                <div className="text-center py-6 border border-dashed border-gray-200 rounded-lg">
-                  <p className="text-xs text-gray-400">Belum ada riwayat pengajuan tukar jadwal piket.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-gray-500">
-                    <thead>
-                      <tr className="bg-gray-50 text-gray-400 uppercase border-b border-gray-100">
-                        <th className="text-left px-3 py-2.5 font-semibold">Tgl Piket Saya</th>
-                        <th className="text-left px-3 py-2.5 font-semibold">Pengganti</th>
-                        <th className="text-left px-3 py-2.5 font-semibold">Tgl Pengganti</th>
-                        <th className="text-left px-3 py-2.5 font-semibold">Alasan</th>
-                        <th className="text-center px-3 py-2.5 font-semibold">Status Persetujuan</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {swapHistory.map((item) => {
-                        const isSource = item.soldier_id === user?.id;
-                        const partner = isSource ? item.SwapWithSchedule?.Soldier : item.Soldier;
-                        const myDate = isSource ? item.tanggal_piket : item.SwapWithSchedule?.tanggal_piket;
-                        const partnerDate = isSource ? item.SwapWithSchedule?.tanggal_piket : item.tanggal_piket;
-
-                        const statusBadge = {
-                          pending: { text: "Menunggu Persetujuan", class: "bg-amber-50 text-amber-700 border-amber-200" },
-                          approved: { text: "Disetujui Admin", class: "bg-green-50 text-green-700 border-green-200" },
-                          rejected: { text: "Ditolak Admin", class: "bg-red-50 text-red-700 border-red-200" },
-                          none: { text: "-", class: "bg-gray-50 text-gray-500 border-gray-200" },
-                        }[item.swap_approval_status] || { text: item.swap_approval_status, class: "bg-gray-50 text-gray-500 border-gray-200" };
-
-                        return (
-                          <tr key={item.id} className="hover:bg-gray-50/60 transition">
-                            <td className="px-3 py-3 font-semibold text-dashNavy">
-                              {formatDate(myDate)}
-                            </td>
-                            <td className="px-3 py-3">
-                              <span className="font-medium text-gray-700">
-                                {partner?.full_name || partner?.username || "-"}
-                              </span>
-                              {(partner?.OrgStructure?.position || partner?.pangkat || partner?.OrgStructure?.rank) && (
-                                <p className="text-[10px] text-gray-400">
-                                  {partner?.OrgStructure?.position || ""} {partner?.pangkat || partner?.OrgStructure?.rank ? `(${partner?.pangkat || partner?.OrgStructure?.rank})` : ""}
-                                </p>
-                              )}
-                            </td>
-                            <td className="px-3 py-3 text-gray-700 font-medium">
-                              {formatDate(partnerDate)}
-                            </td>
-                            <td className="px-3 py-3 text-gray-600 max-w-[200px] truncate" title={item.swap_reason}>
-                              {item.swap_reason || "-"}
-                            </td>
-                            <td className="px-3 py-3 text-center">
-                              <span className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold border ${statusBadge.class}`}>
-                                {statusBadge.text}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
             )}
           </div>
 
