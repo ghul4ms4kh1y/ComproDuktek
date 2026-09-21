@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const heroImages = ["/bg-3.webp", "/bg-2.webp", "/bg-1.webp"];
+const heroImages = ["/bg-4.webp", "/bg-3.webp", "/bg-2.webp", "/bg-1.webp"];
 
 const SLIDE_DURATION = 5000;
 
