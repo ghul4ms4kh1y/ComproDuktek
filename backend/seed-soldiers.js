@@ -1,5 +1,6 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const { sequelize, Admin, OrgStructure, Soldier } = require('./models');
 const { Op } = require('sequelize');
 
@@ -17,7 +18,9 @@ async function seed() {
       }
     });
 
-    const defaultPassword = await bcrypt.hash('prajurit123', 10);
+const crypto = require('crypto');
+
+    const defaultPassword = await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10);
     let createdCount = 0;
 
     for (const structure of structures) {
@@ -55,7 +58,7 @@ async function seed() {
       }
     }
 
-    console.log(`${createdCount} akun Prajurit/Soldier berhasil dibuat dengan password default: prajurit123`);
+    console.log(`${createdCount} akun Prajurit/Soldier berhasil dibuat. Password acak telah di-hash; distribusikan secara aman.`);
     process.exit(0);
   } catch (err) {
     console.error('Gagal melakukan seed:', err.message);

@@ -27,7 +27,7 @@ async function seed() {
 
     console.log('Admin awal berhasil dibuat:');
     console.log('  Username:', process.env.SEED_ADMIN_USERNAME);
-    console.log('  Password:', process.env.SEED_ADMIN_PASSWORD, '(segera ganti setelah login pertama)');
+    console.log('  (password diambil dari env; tidak ditampilkan demi keamanan)');
     process.exit(0);
   } catch (err) {
     console.error('Gagal membuat admin awal:', err.message);
