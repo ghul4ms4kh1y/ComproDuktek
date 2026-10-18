@@ -31,8 +31,10 @@ exports.index = async (req, res) => {
     }
     
     let order = [["created_at", "DESC"]];
-    if (sortBy) {
-        order = [[sortBy, sortOrder]];
+    const allowedSortFields = Object.keys(ProgramKerja.rawAttributes || {});
+    const safeSortOrder = ['ASC', 'DESC'].includes(String(sortOrder).toUpperCase()) ? String(sortOrder).toUpperCase() : 'ASC';
+    if (sortBy && allowedSortFields.includes(sortBy)) {
+        order = [[sortBy, safeSortOrder]];
     }
 
     const { rows, count } = await ProgramKerja.findAndCountAll({
@@ -141,6 +143,10 @@ exports.show = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const payload = { ...req.body };
+    // Hanya nama file dari multer yang boleh menentukan dokumen; abaikan input body.
+    delete payload.file_perencanaan;
+    delete payload.file_hasil;
+    delete payload.id;
     payload.admin_id = req.user.id;
 
     payload.is_selesai = payload.is_selesai === "true" || payload.is_selesai === true;
@@ -190,7 +196,7 @@ exports.create = async (req, res) => {
     console.error("Error saat create proker:", error);
     res.status(500).json({
       message: "Gagal membuat data.",
-      error: error.message,
+      error: 'Gagal membuat data.',
     });
   }
 };
@@ -203,8 +209,11 @@ exports.update = async (req, res) => {
       return res.status(404).json({ message: "Data tidak ditemukan." });
 
     const payload = { ...req.body };
-
-    // tim_ids dikirim sebagai JSON string dari frontend (multipart/form-data).
+    // Abaikan field dokumen dari body; hanya multer yang boleh mengisinya.
+    delete payload.file_perencanaan;
+    delete payload.file_hasil;
+    delete payload.admin_id;
+    delete payload.id;
     // Jika tidak dikirim, JANGAN ubah tim yang sudah ada.
     let timIds;
     if (req.body.tim_ids !== undefined) {
@@ -357,7 +366,7 @@ exports.soldierUpdate = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Gagal memperbarui status.", error: error.message });
+      .json({ message: "Gagal memperbarui status." });
   }
 };
 
@@ -512,13 +521,12 @@ exports.downloadPerencanaan = async (req, res) => {
       return res.status(404).json({ message: "Dokumen belum diunggah." });
     }
 
-    const filePath = path.join(
-      __dirname,
-      "..",
-      "private-uploads",
-      "proker-documents",
-      item.file_perencanaan,
-    );
+    const baseDir = path.resolve(__dirname, '..', 'private-uploads', 'proker-documents');
+    const safeName = path.basename(item.file_perencanaan);
+    const filePath = path.resolve(baseDir, safeName);
+    if (!filePath.startsWith(baseDir + path.sep)) {
+      return res.status(400).json({ message: 'Nama file tidak valid.' });
+    }
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ message: "File fisik tidak ditemukan pada server." });
@@ -559,13 +567,12 @@ exports.downloadHasil = async (req, res) => {
       return res.status(404).json({ message: "Dokumen belum diunggah." });
     }
 
-    const filePath = path.join(
-      __dirname,
-      "..",
-      "private-uploads",
-      "proker-documents",
-      item.file_hasil,
-    );
+    const baseDir = path.resolve(__dirname, '..', 'private-uploads', 'proker-documents');
+    const safeName = path.basename(item.file_hasil);
+    const filePath = path.resolve(baseDir, safeName);
+    if (!filePath.startsWith(baseDir + path.sep)) {
+      return res.status(400).json({ message: 'Nama file tidak valid.' });
+    }
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ message: "File fisik tidak ditemukan pada server." });
