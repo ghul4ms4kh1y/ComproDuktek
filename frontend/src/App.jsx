@@ -34,6 +34,7 @@ const Inbox = lazy(() => import("./pages/admin/Inbox"));
 
 // Soldier pages (Lazy loaded)
 const SoldierDashboard = lazy(() => import("./pages/soldier/Dashboard"));
+const SoldierChangePassword = lazy(() => import("./pages/soldier/ChangePassword"));
 
 function PageLoader() {
   return (
@@ -97,6 +98,7 @@ export default function App() {
           }
         >
           <Route path="dashboard" element={<SoldierDashboard />} />
+          <Route path="ganti-password" element={<SoldierChangePassword />} />
         </Route>
 
         <Route

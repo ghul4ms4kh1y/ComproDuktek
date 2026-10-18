@@ -10,6 +10,7 @@ const Soldier = sequelize.define('Soldier', {
   pangkat: { type: DataTypes.STRING(100), allowNull: true },
   status: { type: DataTypes.ENUM('aktif', 'nonaktif'), allowNull: false, defaultValue: 'aktif' },
   org_structure_id: { type: DataTypes.INTEGER, allowNull: true },
+  must_change_password: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 }, {
   tableName: 'soldiers',
 });

@@ -6,7 +6,7 @@ import FormModal from "../../components/admin/FormModal";
 import Toast from "../../components/admin/Toast";
 import ConfirmModal from "../../components/admin/ConfirmModal";
 import { useToast } from "../../hooks/useToast";
-import { Search, ArrowUpDown, Filter, Download } from "lucide-react";
+import { Search, ArrowUpDown, Filter, Download, KeyRound } from "lucide-react";
 import { exportToExcel, exportToCSV } from "../../utils/exportUtils";
 
 const fields = [
@@ -61,6 +61,9 @@ export default function SoldierManage() {
   const [submitting, setSubmitting] = useState(false);
   const [statusToggleTarget, setStatusToggleTarget] = useState(null);
   const [statusToggleLoading, setStatusToggleLoading] = useState(false);
+  const [resetTarget, setResetTarget] = useState(null);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetResult, setResetResult] = useState(null);
 
   const { toast, showToast } = useToast();
 
@@ -255,6 +258,24 @@ export default function SoldierManage() {
     }
   };
 
+  const handleResetPassword = async (soldier) => {
+    if (!window.confirm(`Reset password untuk ${soldier.full_name || soldier.username}? Password lama akan diganti dengan password sementara.`)) {
+      return;
+    }
+    setResetTarget(soldier);
+    setResetLoading(true);
+    try {
+      const res = await api.post(`/soldiers/${soldier.id}/reset-password`);
+      setResetResult({ soldier, temp: res.data?.temporary_password });
+      showToast("Password berhasil direset. Serahkan password sementara ke anggota.");
+    } catch (err) {
+      showToast(err.response?.data?.message || "Gagal reset password.", "error");
+    } finally {
+      setResetLoading(false);
+      setResetTarget(null);
+    }
+  };
+
   return (
     <div className="font-dash">
       <PageHeader
@@ -402,12 +423,22 @@ export default function SoldierManage() {
                     })()}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    <button
-                      onClick={() => setEditing(soldier)}
-                      className="flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white"
-                    >
-                      Edit
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setEditing(soldier)}
+                        className="flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleResetPassword(soldier)}
+                        disabled={resetLoading && resetTarget?.id === soldier.id}
+                        title="Reset password (generate acak)"
+                        className="flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap bg-amber-100 text-amber-700 hover:bg-amber-500 hover:text-white disabled:opacity-50"
+                      >
+                        <KeyRound className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -457,6 +488,34 @@ export default function SoldierManage() {
         onCancel={() => setStatusToggleTarget(null)}
         onConfirm={confirmDeactivate}
       />
+
+      {resetResult && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full space-y-3">
+            <h3 className="text-lg font-bold">Password Sementara</h3>
+            <p className="text-sm text-gray-600">
+              Serahkan password berikut ke <b>{resetResult.soldier?.full_name || resetResult.soldier?.username}</b>. Ia wajib menggantinya saat login.
+            </p>
+            <div className="flex items-center gap-2">
+              <code className="flex-1 bg-gray-100 px-3 py-2 rounded font-mono text-sm break-all">
+                {resetResult.temp}
+              </code>
+              <button
+                onClick={() => { navigator.clipboard?.writeText(resetResult.temp); showToast("Disalin."); }}
+                className="px-3 py-2 bg-dashAccent text-white rounded text-sm"
+              >
+                Salin
+              </button>
+            </div>
+            <button
+              onClick={() => setResetResult(null)}
+              className="w-full mt-2 px-3 py-2 border rounded text-sm"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
 
       <Toast toast={toast} />
     </div>

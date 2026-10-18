@@ -16,6 +16,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 600,
   },
   server: {
+    host: true,
+    allowedHosts: ['.devtunnels.ms'],
     port: 5173,
     headers: {
       'X-Content-Type-Options': 'nosniff',
@@ -23,8 +25,14 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin',
     },
     proxy: {
-      '/api': 'http://localhost:5000',
-      '/uploads': 'http://localhost:5000',
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/uploads': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
     },
   },
   preview: {

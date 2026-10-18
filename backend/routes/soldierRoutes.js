@@ -24,4 +24,7 @@ router.get("/:id", requireAuth, isAdmin, soldierController.getSoldierById);
 // Update data anggota (reset password, ganti username)
 router.put("/:id", requireAuth, isAdmin, soldierController.updateSoldier);
 
+// Reset password anggota (generate password acak sementara)
+router.post("/:id/reset-password", requireAuth, isAdmin, soldierController.resetSoldierPassword);
+
 module.exports = router;
