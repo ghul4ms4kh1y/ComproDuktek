@@ -3,3 +3,6 @@ dist/
 .env
 uploads/*
 !uploads/.gitkeep
+
+soldier-passwords.txt
+private-uploads/

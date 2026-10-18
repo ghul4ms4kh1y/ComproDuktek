@@ -1,5 +1,6 @@
 const { sequelize, OrgStructure, Soldier } = require('../models');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 /**
  * Menghapus 1 anggota. Kalau anggota ini punya bawahan langsung, parent_id
@@ -25,7 +26,7 @@ exports.remove = async (req, res) => {
     res.json({ message: 'Data berhasil dihapus.' });
   } catch (err) {
     await t.rollback();
-    res.status(500).json({ message: 'Gagal menghapus data.', error: err.message });
+    res.status(500).json({ message: 'Gagal menghapus data.' });
   }
 };
 
@@ -69,7 +70,7 @@ exports.reorder = async (req, res) => {
     res.json({ message: 'Urutan berhasil diperbarui.', data: updated });
   } catch (err) {
     await t.rollback();
-    res.status(500).json({ message: 'Gagal memperbarui urutan.', error: err.message });
+    res.status(500).json({ message: 'Gagal memperbarui urutan.' });
   }
 };
 
@@ -101,18 +102,22 @@ exports.emptyPosition = async (req, res) => {
 
     // 2. Reset akun Soldier (jika ada)
     const soldier = await Soldier.findOne({ where: { org_structure_id: id }, transaction: t });
+    let temporaryPassword = null;
     if (soldier) {
-      const defaultPassword = await bcrypt.hash(process.env.DEFAULT_SOLDIER_PASSWORD || 'prajurit123', 10);
+      temporaryPassword = crypto.randomBytes(8).toString('hex');
+      const hashed = await bcrypt.hash(temporaryPassword, 10);
       await soldier.update({
         full_name: item.position, // kembalikan ke nama jabatan
-        password: defaultPassword
+        password: hashed
       }, { transaction: t });
     }
 
     await t.commit();
-    res.json({ message: 'Identitas pejabat berhasil dikosongkan dan akun direset.' });
+    const response = { message: 'Identitas pejabat berhasil dikosongkan dan akun direset.' };
+    if (temporaryPassword) response.temporary_password = temporaryPassword;
+    res.json(response);
   } catch (err) {
     await t.rollback();
-    res.status(500).json({ message: 'Gagal mengosongkan identitas.', error: err.message });
+    res.status(500).json({ message: 'Gagal mengosongkan identitas.' });
   }
 };

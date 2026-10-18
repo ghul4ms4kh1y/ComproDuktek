@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const { Soldier, OrgStructure } = require("../models");
 const { isEligibleRank } = require("../utils/getEligibleSoldiers");
 
@@ -42,14 +43,18 @@ exports.updateProfile = async (req, res) => {
       if (typeof password !== "string" || password.length < 8) {
         return res.status(400).json({ message: "Password baru minimal 8 karakter." });
       }
-      if (!oldPassword) {
-        return res.status(400).json({ message: "Password lama wajib diisi." });
-      }
-      const valid = await bcrypt.compare(oldPassword, soldier.password);
-      if (!valid) {
-        return res.status(401).json({ message: "Password lama salah." });
+      // Jika wajib ganti password (akun baru/reset), oldPassword tidak diperlukan.
+      if (!soldier.must_change_password) {
+        if (!oldPassword) {
+          return res.status(400).json({ message: "Password lama wajib diisi." });
+        }
+        const valid = await bcrypt.compare(oldPassword, soldier.password);
+        if (!valid) {
+          return res.status(401).json({ message: "Password lama salah." });
+        }
       }
       soldier.password = await bcrypt.hash(password, 10);
+      soldier.must_change_password = false;
     }
 
     await soldier.save();
@@ -57,7 +62,7 @@ exports.updateProfile = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Terjadi kesalahan server", error: err.message });
+      .json({ message: "Terjadi kesalahan server" });
   }
 };
 
@@ -92,7 +97,7 @@ exports.getAllSoldiers = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Terjadi kesalahan server", error: err.message });
+      .json({ message: "Terjadi kesalahan server" });
   }
 };
 
@@ -109,7 +114,7 @@ exports.getSoldierById = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Terjadi kesalahan server", error: err.message });
+      .json({ message: "Terjadi kesalahan server" });
   }
 };
 
@@ -153,6 +158,28 @@ exports.updateSoldier = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Terjadi kesalahan server", error: err.message });
+      .json({ message: "Terjadi kesalahan server" });
+  }
+};
+
+
+// Reset password anggota oleh admin -> generate password acak sementara
+exports.resetSoldierPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const soldier = await Soldier.findByPk(id);
+    if (!soldier) {
+      return res.status(404).json({ message: "Anggota tidak ditemukan" });
+    }
+    const temporaryPassword = crypto.randomBytes(8).toString('hex');
+    soldier.password = await bcrypt.hash(temporaryPassword, 10);
+    soldier.must_change_password = true;
+    await soldier.save();
+    res.json({
+      message: "Password anggota berhasil direset. Serahkan password sementara ke anggota; ia wajib menggantinya saat login.",
+      temporary_password: temporaryPassword,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Terjadi kesalahan server" });
   }
 };

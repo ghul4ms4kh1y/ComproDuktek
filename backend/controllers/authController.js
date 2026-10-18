@@ -64,7 +64,7 @@ exports.login = async (req, res) => {
     
     res.json({ message: 'Login berhasil.', user: userData, token });
   } catch (err) {
-    res.status(500).json({ message: 'Terjadi kesalahan pada server.', error: err.message });
+    res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
   }
 };
 
@@ -95,6 +95,6 @@ exports.me = async (req, res) => {
     const userData = { ...currentUser.toJSON(), role };
     res.json({ user: userData });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
