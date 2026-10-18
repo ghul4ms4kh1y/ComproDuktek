@@ -116,7 +116,7 @@ function crudFactory(Model, options = {}) {
       } catch (err) {
         res
           .status(500)
-          .json({ message: "Gagal mengambil data.", error: err.message });
+          .json({ message: "Gagal mengambil data." });
       }
     },
 
@@ -129,7 +129,7 @@ function crudFactory(Model, options = {}) {
       } catch (err) {
         res
           .status(500)
-          .json({ message: "Gagal mengambil data.", error: err.message });
+          .json({ message: "Gagal mengambil data." });
       }
     },
 
@@ -155,7 +155,7 @@ function crudFactory(Model, options = {}) {
       } catch (err) {
         res
           .status(400)
-          .json({ message: "Gagal menambahkan data.", error: err.message });
+          .json({ message: "Gagal menambahkan data." });
       }
     },
 
@@ -189,7 +189,7 @@ function crudFactory(Model, options = {}) {
       } catch (err) {
         res
           .status(400)
-          .json({ message: "Gagal memperbarui data.", error: err.message });
+          .json({ message: "Gagal memperbarui data." });
       }
     },
 
@@ -212,7 +212,7 @@ function crudFactory(Model, options = {}) {
       } catch (err) {
         res
           .status(500)
-          .json({ message: "Gagal menghapus data.", error: err.message });
+          .json({ message: "Gagal menghapus data." });
       }
     },
 
