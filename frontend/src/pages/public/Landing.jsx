@@ -39,8 +39,6 @@ const highlights = [
   },
 ];
 
-
-
 export default function Landing() {
   const [news, setNews] = useState([]);
   const [products, setProducts] = useState([]);
@@ -65,9 +63,6 @@ export default function Landing() {
           <div className="absolute inset-0 bg-[#0c1839]/20 bg-gradient-to-r from-[#0c1839]/20 via-[#0c1839]/60 to-transparent" />
 
           <div className="relative z-10 px-8 md:px-16 lg:px-24 py-20 max-w-5xl animate-fade-in-up text-left">
-            <span className="text-xs font-bold tracking-widest text-blue-400 uppercase bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 inline-block mb-6 shadow-inner">
-              PUSSIBERAD TNI AD
-            </span>
             <h1 className="text-4xl md:text-6xl lg:text-6xl font-semibold text-white mb-6 leading-tight tracking-tight">
               Satuan Pelaksana Dukungan Teknologi Siber TNI AD
             </h1>
@@ -381,7 +376,7 @@ export default function Landing() {
                         </span>
                         <span className="text-white/70 flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5" />
-                          {formatDate(news[0].news_date, 'Terbaru')}
+                          {formatDate(news[0].news_date, "Terbaru")}
                         </span>
                       </div>
 
@@ -437,7 +432,7 @@ export default function Landing() {
                             Berita
                           </span>
                           <span className="text-inktext/50 text-[11px]">
-                             {formatDate(n.news_date, 'Terbaru')}
+                            {formatDate(n.news_date, "Terbaru")}
                           </span>
                         </div>
 
