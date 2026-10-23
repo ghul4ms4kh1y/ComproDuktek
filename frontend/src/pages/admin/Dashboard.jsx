@@ -68,7 +68,7 @@ export default function Dashboard() {
     api
       .get("/org-structures", { params: { limit: 1000 } })
       .then((r) => {
-        // FILTERING: Buang semua node bayangan/spacer agar tidak dihitung
+        // Abaikan node spacer agar tidak dihitung dalam distribusi
         const actualMembers = (r.data.data || []).filter(
           (m) => !isHiddenNode(m.position),
         );

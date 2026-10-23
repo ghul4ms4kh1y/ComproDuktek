@@ -58,12 +58,12 @@ export default function Landing() {
     <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen space-y-16 py-4 transition-colors duration-300">
       {/* Hero Section */}
       <section className="max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div className="relative rounded-[2.5rem] overflow-hidden flex items-center min-h-[75vh] shadow-xl shadow-navy/10 dark:shadow-black/40 border border-gray-100 dark:border-darkborder">
+        <div className="relative rounded-[2.5rem] overflow-hidden flex items-center min-h-[50vh] sm:min-h-[65vh] lg:min-h-[75vh] shadow-xl shadow-navy/10 dark:shadow-black/40 border border-gray-100 dark:border-darkborder">
           <HeroSlider />
           <div className="absolute inset-0 bg-[#0c1839]/20 bg-gradient-to-r from-[#0c1839]/20 via-[#0c1839]/60 to-transparent" />
 
-          <div className="relative z-10 px-8 md:px-16 lg:px-24 py-20 max-w-5xl animate-fade-in-up text-left">
-            <h1 className="text-4xl md:text-6xl lg:text-6xl font-semibold text-white mb-6 leading-tight tracking-tight">
+          <div className="relative z-10 px-8 md:px-16 lg:px-24 py-10 md:py-16 lg:py-20 max-w-5xl animate-fade-in-up text-left">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold text-white mb-6 leading-tight tracking-tight">
               Satuan Pelaksana Dukungan Teknologi Siber TNI AD
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-light mb-10 leading-relaxed max-w-2xl">
@@ -130,7 +130,7 @@ export default function Landing() {
 
       {/* Pilar Kemampuan */}
       <RevealSection className="max-w-screen-2xl mx-auto px-6 md:px-12">
-        <div className="bg-[#f8fafc] dark:bg-darkpanel py-16 px-8 md:px-12 rounded-[2.5rem] relative overflow-hidden border border-gray-100 dark:border-darkborder shadow-sm">
+        <div className="bg-[#f8fafc] dark:bg-darkpanel py-8 md:py-12 lg:py-16 px-8 md:px-12 rounded-[2.5rem] relative overflow-hidden border border-gray-100 dark:border-darkborder shadow-sm">
           <div className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 w-96 h-96 bg-navy/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-start relative z-10">
@@ -159,7 +159,7 @@ export default function Landing() {
           </div>
 
           {/* Grid Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
             {highlights.map((h) => {
               const IconComponent = h.icon;
               return (
@@ -240,7 +240,7 @@ export default function Landing() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 relative z-10">
               {products.map((p) => (
                 <Link
                   to={`/produk/${p.id || "#"}`}

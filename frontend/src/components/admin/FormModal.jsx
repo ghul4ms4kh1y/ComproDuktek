@@ -39,7 +39,6 @@ export default function FormModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto font-dash">
-      {/* max-w-lg diubah menjadi max-w-3xl agar layout grid 2 kolom lebih leluasa */}
       <div 
         role="dialog" 
         aria-modal="true" 
@@ -51,7 +50,6 @@ export default function FormModal({
         </h3>
 
         <form onSubmit={handleSubmit}>
-          {/* Kontainer Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {fields.map((f) => {
               if (f.showIf && !f.showIf(values)) return null;
@@ -59,7 +57,6 @@ export default function FormModal({
               return (
               <div
                 key={f.name}
-                // Logika pembacaan colSpan (jika 2 maka ambil full width, jika tidak maka setengah)
                 className={f.colSpan === 2 ? "md:col-span-2" : "md:col-span-1"}
               >
                 {f.type !== "checkbox" && (
