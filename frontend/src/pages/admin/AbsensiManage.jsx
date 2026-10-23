@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { exportToExcel, formatDDMMYYYY } from "../../utils/exportUtils";
 
-// ── helpers ─────────────────────────────────────────────────────────────────
 const toLocalDateString = (d = new Date()) => {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -69,7 +68,6 @@ const SANGGAHAN_LABELS = {
   rejected: "Ditolak",
 };
 
-// ── StatusBadge ──────────────────────────────────────────────────────────────
 function StatusBadge({ status }) {
   return (
     <span
@@ -80,7 +78,6 @@ function StatusBadge({ status }) {
   );
 }
 
-// ── EditModal ────────────────────────────────────────────────────────────────
 function EditModal({ record, onClose, onSaved, showToast }) {
   const [status, setStatus] = useState(record?.status ?? "belum_diisi");
   const [keterangan, setKeterangan] = useState(record?.keterangan ?? "");
@@ -174,7 +171,6 @@ function EditModal({ record, onClose, onSaved, showToast }) {
   );
 }
 
-// ── ReviewModal ──────────────────────────────────────────────────────────────
 function ReviewModal({ record, onClose, onSaved, showToast }) {
   const [loading, setLoading] = useState(false);
 
@@ -264,7 +260,6 @@ function ReviewModal({ record, onClose, onSaved, showToast }) {
   );
 }
 
-// ── main component ───────────────────────────────────────────────────────────
 export default function AbsensiManage() {
   const today = toLocalDateString();
   const [tab, setTab] = useState("absensi"); // "absensi" | "sanggahan"
@@ -482,13 +477,12 @@ export default function AbsensiManage() {
         </button>
       </div>
 
-      {/* ── TAB: ABSENSI ── */}
       {tab === "absensi" && (
         <>
           {/* Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
             {/* Date navigator */}
-            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 h-[42px]">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-2.5">
               <button
                 id="prev-day"
                 onClick={prevDay}
@@ -521,7 +515,7 @@ export default function AbsensiManage() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Cari nama atau jabatan..."
-                className="w-full h-[42px] pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
+                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
               />
             </div>
 
@@ -529,7 +523,7 @@ export default function AbsensiManage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full sm:w-44 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+                className="w-full sm:w-44 pl-9 pr-8 py-2.5 border border-gray-200 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
               >
                 <option value="all">Semua Status</option>
                 <option value="hadir">Hadir</option>
@@ -551,7 +545,7 @@ export default function AbsensiManage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full sm:w-56 h-[42px] pl-9 pr-6 py-2 border border-gray-200 rounded-lg text-sm text-dashNavy leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+                className="w-full sm:w-56 pl-9 pr-8 py-2.5 border border-gray-200 rounded-md text-sm text-dashNavy bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
               >
                 <option value="hierarki">Urutan Jabatan (Hierarki)</option>
                 <option value="nama_asc">Nama (A - Z)</option>
@@ -576,7 +570,7 @@ export default function AbsensiManage() {
                 }));
                 exportToExcel(exportData, `Rekap_Absensi_${formatDDMMYYYY(tanggal)}`, "Presensi");
               }}
-              className="h-[42px] px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
+              className="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
               title="Export Rekap ke Excel (.xlsx)"
             >
               <Download className="w-4 h-4" />
@@ -586,7 +580,7 @@ export default function AbsensiManage() {
             <button
               id="refresh-absensi"
               onClick={fetchAbsensi}
-              className="h-[42px] inline-flex items-center justify-center bg-dashAccent text-white rounded-md px-4 text-sm font-semibold hover:bg-dashAccent/90 transition shrink-0"
+              className="inline-flex items-center justify-center bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:bg-dashAccent/90 transition shrink-0"
             >
               Muat Ulang
             </button>
@@ -700,7 +694,6 @@ export default function AbsensiManage() {
         </>
       )}
 
-      {/* ── TAB: SANGGAHAN ── */}
       {tab === "sanggahan" && (
         <div className="bg-white border border-gray-200 rounded-lg shadow-dashCard overflow-x-auto">
           {sanggahanList.length === 0 ? (

@@ -360,7 +360,7 @@ export default function JadwalPiketManage() {
             <select
               value={bulan}
               onChange={(e) => setBulan(Number(e.target.value))}
-              className="w-full sm:w-44 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+              className="w-full sm:w-44 pl-9 pr-8 py-2.5 border border-gray-200 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
             >
               {BULAN.map((label, index) => (
                 <option key={label} value={index + 1}>
@@ -372,7 +372,7 @@ export default function JadwalPiketManage() {
               type="number"
               value={tahun}
               onChange={(e) => setTahun(Number(e.target.value))}
-              className="w-full sm:w-28 px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
+              className="w-full sm:w-28 px-3 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
             />
             <button
               onClick={handleGenerate}
@@ -398,7 +398,7 @@ export default function JadwalPiketManage() {
                 placeholder="Cari nama prajurit, pangkat, tanggal, atau keterangan..."
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
+                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
               />
             </div>
 
@@ -406,7 +406,7 @@ export default function JadwalPiketManage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full sm:w-44 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+                className="w-full sm:w-44 pl-9 pr-8 py-2.5 border border-gray-200 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
               >
                 <option value="all">Semua Status</option>
                 <option value="scheduled">Terjadwal</option>
@@ -420,7 +420,7 @@ export default function JadwalPiketManage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full sm:w-60 h-[42px] pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm leading-normal bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+                className="w-full sm:w-60 pl-9 pr-8 py-2.5 border border-gray-200 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
               >
                 <option value="tanggal_asc">Tanggal (Terlama / Awal)</option>
                 <option value="tanggal_desc">Tanggal (Terbaru / Akhir)</option>
@@ -447,7 +447,7 @@ export default function JadwalPiketManage() {
                 }));
                 exportToExcel(exportData, `Jadwal_Piket_${BULAN[bulan - 1]}_${tahun}`, "Jadwal Piket");
               }}
-              className="h-[42px] px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
+              className="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
               title="Export Jadwal ke Excel (.xlsx)"
             >
               <Download className="w-4 h-4" />
@@ -616,13 +616,13 @@ function JadwalTable({ items, today, loading, onEdit, onDelete }) {
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => onEdit(item)}
-                className="flex-1 inline-flex items-center justify-center rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-dashNavy hover:bg-dashSky/20"
+                className="flex-1 inline-flex items-center justify-center rounded-md border border-gray-200 px-3 py-2 text-sm font-semibold text-dashNavy hover:bg-dashSky/20 transition"
               >
                 Edit
               </button>
               <button
                 onClick={() => onDelete(item)}
-                className="flex-1 inline-flex items-center justify-center rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50"
+                className="flex-1 inline-flex items-center justify-center rounded-md border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 transition"
               >
                 Hapus
               </button>

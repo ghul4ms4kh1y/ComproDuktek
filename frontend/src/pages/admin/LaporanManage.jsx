@@ -169,10 +169,10 @@ export default function LaporanManage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Cari nama atau jabatan..."
-            className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
+            className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
           />
         </div>
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2.5">
+        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-2.5">
           <Calendar className="w-4 h-4 text-gray-400" />
           <input
             id="tanggal-filter-laporan"
@@ -196,7 +196,7 @@ export default function LaporanManage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full sm:w-64 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm text-dashNavy bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+            className="w-full sm:w-64 pl-9 pr-8 py-2.5 border border-gray-200 rounded-md text-sm text-dashNavy bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
           >
             <option value="hierarki">Urutan Jabatan (Hierarki)</option>
             <option value="nama_asc">Nama (A - Z)</option>
@@ -239,7 +239,7 @@ export default function LaporanManage() {
             });
             exportToExcel(exportData, `Rekap_Laporan_Harian_${tanggal ? formatDDMMYYYY(tanggal) : "Semua"}`, "Laporan Harian");
           }}
-          className="h-[42px] px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
+          className="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0"
           title="Export Laporan ke Excel (.xlsx)"
         >
           <Download className="w-4 h-4" />
@@ -249,7 +249,7 @@ export default function LaporanManage() {
         <button
           id="refresh-laporan"
           onClick={fetchLaporan}
-          className="h-[42px] inline-flex items-center justify-center bg-dashAccent text-white rounded-md px-4 text-sm font-semibold hover:bg-dashAccent/90 transition shrink-0"
+          className="inline-flex items-center justify-center bg-dashAccent text-white rounded-md px-4 py-2.5 text-sm font-semibold hover:bg-dashAccent/90 transition shrink-0"
         >
           Muat Ulang
         </button>

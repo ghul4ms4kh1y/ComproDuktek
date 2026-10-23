@@ -87,14 +87,14 @@ export default function Navbar() {
         <div className="lg:hidden flex items-center gap-4">
           <ThemeToggle />
           <button
-            className="text-navy dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 p-2 rounded-lg transition-colors focus:outline-none"
+            className="text-navy dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 p-2 rounded-lg transition-colors focus:outline-none flex items-center gap-1.5 text-sm font-semibold"
             onClick={() => setOpen(!open)}
             aria-label="Buka menu navigasi"
           >
           {open ? (
-            <X className="w-6 h-6" />
+            <><X className="w-6 h-6" /><span>Tutup</span></>
           ) : (
-            <Menu className="w-6 h-6" />
+            <><Menu className="w-6 h-6" /><span>Menu</span></>
           )}
           </button>
         </div>

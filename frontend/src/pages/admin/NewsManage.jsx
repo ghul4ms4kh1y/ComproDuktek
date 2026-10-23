@@ -57,13 +57,6 @@ const sortOptions = [
   { value: "kategori_desc", label: "Kategori (Z - A)", sortKey: "category" },
 ];
 
-const getCurrentMonth = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  return `${year}-${month}`;
-};
-
 const countByCategory = (items) => {
   const counts = {};
   items.forEach((item) => {
