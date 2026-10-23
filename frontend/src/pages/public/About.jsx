@@ -27,7 +27,7 @@ const logo_elements = [
 export default function About() {
   return (
     <div className="bg-white dark:bg-darkbg text-inktext dark:text-gray-300 min-h-screen transition-colors duration-300">
-      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-12 space-y-24">
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-12 space-y-12 md:space-y-16 lg:space-y-24">
 
         {/* Section 1: Hero Profile */}
         <RevealSection threshold={0.15} className="rounded-[2.5rem] p-8 md:p-12 -mt-20 relative overflow-hidden">
@@ -69,8 +69,8 @@ export default function About() {
               </div>
             </div>
 
-            <div className="lg:col-span-5 relative flex items-center justify-center min-h-[380px]">
-              <div className="absolute left-0 bottom-4 w-44 md:w-56 h-60 md:h-72 rounded-b-full overflow-hidden border-4 border-white dark:border-darkpanel shadow-xl bg-slate-900 group hover:scale-105 transition-transform duration-500 z-10">
+            <div className="lg:col-span-5 relative flex items-center justify-center min-h-[280px] sm:min-h-[380px]">
+              <div className="absolute left-0 bottom-4 w-36 sm:w-44 md:w-56 h-52 sm:h-60 md:h-72 rounded-b-full overflow-hidden border-4 border-white dark:border-darkpanel shadow-xl bg-slate-900 group hover:scale-105 transition-transform duration-500 z-10">
                  <img
                    src="/logo.webp"
                    alt="Logo Satlak Dukteksi"
@@ -81,7 +81,7 @@ export default function About() {
                  />
               </div>
 
-              <div className="absolute right-2 top-0 w-52 md:w-60 h-72 md:h-84 rounded-t-full overflow-hidden border-4 border-white dark:border-darkpanel shadow-2xl bg-navy group hover:scale-105 transition-transform duration-500 z-20">
+              <div className="absolute right-2 top-0 w-44 sm:w-52 md:w-60 h-60 sm:h-72 md:h-84 rounded-t-full overflow-hidden border-4 border-white dark:border-darkpanel shadow-2xl bg-navy group hover:scale-105 transition-transform duration-500 z-20">
                  <img
                    src="/pussiberad_logo.webp"
                    alt="Logo PUSSIBERAD"

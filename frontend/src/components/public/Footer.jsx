@@ -67,8 +67,8 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Kolom 2 (lg:col-span-3): Navigasi Cepat (Grid 2 Kolom @ 4 Navigasi) */}
-          <div className="lg:col-span-3">
+          {/* Kolom 2 (lg:col-span-2): Navigasi Cepat (Grid 2 Kolom @ 4 Navigasi) */}
+          <div className="lg:col-span-2">
             <h4 className="text-navy dark:text-gray-100 font-bold mb-4 tracking-tight uppercase text-xs">
               Navigasi Halaman
             </h4>
@@ -141,8 +141,8 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Kolom 3 (lg:col-span-2): Detail Kontak */}
-          <div className="lg:col-span-2">
+          {/* Kolom 3 (lg:col-span-3): Detail Kontak */}
+          <div className="lg:col-span-3">
             <h4 className="text-navy dark:text-gray-100 font-bold mb-4 tracking-tight uppercase text-xs">
               Hubungi Kami
             </h4>
