@@ -83,26 +83,22 @@ export default function CrudManager({
 
   useEffect(load, [page, q]);
 
-  const filteredAndSortedItems = useMemo(() => {
-    let result = [...items];
-
-    if (sortBy === "default") return result;
+  // Client-side sort per halaman untuk respon instan tanpa re-fetch
+  const displayItems = useMemo(() => {
+    if (sortBy === "default" || sortOptions.length === 0) return items;
 
     const sortOption = sortOptions.find((opt) => opt.value === sortBy);
-    if (!sortOption || !sortOption.sortKey) return result;
+    if (!sortOption || !sortOption.sortKey) return items;
 
     const sortKey = sortOption.sortKey;
     const isAscending = sortBy.includes("_asc");
 
-    result.sort((a, b) => {
+    return [...items].sort((a, b) => {
       const valA = (a[sortKey] || "").toString().toLowerCase();
       const valB = (b[sortKey] || "").toString().toLowerCase();
-
       const comparison = valA.localeCompare(valB);
       return isAscending ? comparison : -comparison;
     });
-
-    return result;
   }, [items, sortBy, sortOptions]);
 
   const openCreate = () => {
@@ -191,7 +187,7 @@ export default function CrudManager({
               setPage(1);
               setQ(e.target.value);
             }}
-            className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
+            className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition"
           />
         </div>
 
@@ -200,7 +196,7 @@ export default function CrudManager({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full sm:w-64 pl-9 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
+              className="w-full sm:w-64 pl-9 pr-8 py-2.5 border border-gray-200 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-dashAccent/40 focus:border-dashAccent transition appearance-none cursor-pointer"
             >
               {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -249,10 +245,7 @@ export default function CrudManager({
                 </td>
               </tr>
             )}
-            {(sortOptions.length > 0 && sortBy !== "default"
-              ? filteredAndSortedItems
-              : items
-            ).map((item) => {
+            {displayItems.map((item) => {
               const baseBtnClass =
                 "flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold transition whitespace-nowrap";
 
@@ -289,7 +282,7 @@ export default function CrudManager({
 
       {/* Mobile card view */}
       <div className="md:hidden space-y-3">
-        {items.map((item) => (
+        {displayItems.map((item) => (
           <div
             key={item.id}
             className="bg-white rounded-lg border border-gray-200 shadow-dashCard p-4"
@@ -300,16 +293,16 @@ export default function CrudManager({
                 {c.render ? c.render(item) : item[c.key]}
               </p>
             ))}
-            <div className="flex gap-3 mt-2 text-sm">
+            <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100">
               <button
                 onClick={() => openEdit(item)}
-                className="text-dashNavy underline"
+                className="flex-1 rounded-md px-3 py-1.5 text-xs font-semibold bg-dashAccent/10 text-dashAccent hover:bg-dashAccent hover:text-white transition text-center"
               >
                 Edit
               </button>
               <button
                 onClick={() => setDeleting(item)}
-                className="text-red-600 underline"
+                className="flex-1 rounded-md px-3 py-1.5 text-xs font-semibold bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition text-center"
               >
                 Hapus
               </button>
